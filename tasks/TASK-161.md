@@ -18,7 +18,6 @@ constraint.
 ```
 ::: chapter:ch-01                                  block directive: name:id, then attributes
 ::: subchapter:ch-01-s2 classes:highlighted        attributes as key:value
-::: epigraph caption "The beginning…" citation "Plato"   no id; key "value" pairs
 ::: figure:fig-01 source:image.png alt:"An image"  inline (single-line) directive: no exit
 ::: exit:ch-01                                     closes the block directive with that id
 ```
@@ -33,6 +32,12 @@ There are about 60 names (`b-ber-shapes-directives`):
 - draft and deprecated sets.
 
 `media`/`media-inline` are replaced per build from `media.yml`.
+
+"Existing projects" was checked on 2026-11-25 against all 262 b-ber projects
+in the canopycanopycanopy GitLab group (Findings). A form that none of them
+uses is not kept merely because a source accepts it: the single-line
+`epigraph`, the `key "value"` attribute form, and the 37 draft-only and
+deprecated-only names.
 
 ### How markdown-it works (the parts that matter here)
 
@@ -166,7 +171,8 @@ ourselves (MyST's architecture).**
   a parse. The build decides what is fatal. That way one run reports every
   problem in a file.
 - Attributes are parsed in one place (today's `grammar-attributes`, moved
-  in). It accepts both `key:value` and `key "value"`, because both are in use.
+  in). It accepts `key:value` only. `key "value"` was dropped on 2026-11-25:
+  no project uses it (see "Directive syntax").
 
 **2. A tree.** After `md.parse`, a small pass (about 100 lines) lifts the
 flat tokens into a tree. Directive nodes are typed: `{ type: 'directive',
@@ -222,9 +228,10 @@ target, on a cheap copy of the affected nodes.
 This is the specification the one directive rule implements. It was written
 from the three sources that define the syntax today: the name lists in
 `b-ber-shapes-directives`, the validator's grammar and the renderer's parsers.
-They disagree in 36 places (see the 2026-11-24 Findings). Where they
-disagree, the rule below is a **proposal** and says which source it follows;
-the maintainer decides. Rules where all three agree are stated plainly.
+They disagree in 36 places (see the 2026-11-24 Findings). The choices where
+they disagree were decided on 2026-11-25, after checking each against the 262
+b-ber projects on GitLab (Findings, "Decisions"). Rules where all three agree
+are stated plainly.
 
 Two principles decide most of the proposals:
 
@@ -237,7 +244,8 @@ Two principles decide most of the proposals:
   silently loses content. Otherwise it is a **warning**, and the output stays
   as it is today, unless the change is listed under "Intended output
   differences" below. So a project whose output is correct today keeps
-  building.
+  building. The GitLab survey is the check: no project that builds today
+  gains an error.
 
 #### Lines and fences
 
@@ -274,8 +282,7 @@ exit           = "exit" ":" id [ws+ text]               ; text: warning, ignored
 opener         = name [":" id] { ws+ (attribute | word) }
 name           = [a-z] [a-z0-9-]*                       ; must be registered
 id             = idchar+                                ; idchar: not ws
-attribute      = key ":" value                          ; key:value form
-               | key ws+ quoted                         ; key "value" form
+attribute      = key ":" value
 key            = keychar+                               ; keychar: not ws, ':', '"', "'"
 value          = quoted | bare
 quoted         = '"' [^"\n]* '"' | "'" [^'\n]* "'"
@@ -290,30 +297,35 @@ unanchored regex renders a figure).
 
 #### Names and kinds
 
-Names are lowercase and case-sensitive. 82 names are recognized: the 45 in
-`ALL_DIRECTIVES`, plus 28 draft-only and 9 deprecated-only names.
+Names are lowercase and case-sensitive. The 45 names in `ALL_DIRECTIVES`
+are recognized, plus `exit`. The 37 names that are only in `DRAFT_DIRECTIVES`
+or `DEPRECATED_DIRECTIVES` are removed from the registry: none of the 262
+GitLab projects uses one.
 
 | Kind | Names | Written as |
 | ---- | ----- | ---------- |
 | block, structural | frontmatter (8, including `epigraph`), bodymatter (11, including `subchapter`, `section`, `article`) and backmatter (8) sets | `::: name:id [attrs]`, content, `::: exit:id` |
 | block, misc | `pullquote`, `blockquote`, `dialogue`, `gallery`, `spread` | as above |
 | inline (single-line) | `figure`, `logo`, `audio`, `video`, `vimeo`, `iframe`, `media`, and the `-inline` variant of each except `logo` | one line, optionally followed by a caption. No exit |
-| draft | 31 names in `DRAFT_DIRECTIVES`. `credits` and `seriespage` are also backmatter, `pullquote` also misc | as a structural block |
-| deprecated | 10 names in `DEPRECATED_DIRECTIVES`. `subchapter` is also bodymatter | as a structural block |
+| draft, also in another set | `credits`, `seriespage` (backmatter) | as a structural block |
+| deprecated, also in another set | `subchapter` (bodymatter) | as a structural block |
 | reserved | `exit` | only to close a block |
 
 - `epigraph` is in both the frontmatter and misc sets. It is a **structural
   block** (`::: epigraph:id` … `::: exit:id`), which is how the renderer
-  treats it today. The single-line form documented in `grammar-epigraph` is
-  an open decision (below).
-- **Draft and deprecated names render as `chapter`**, with the original name
-  added as a class, and a warning: today's
+  treats it today. **The single-line form documented in `grammar-epigraph` is
+  not part of the syntax.** It has never rendered (the grammar is not
+  registered), and no project uses it; only the kitchen-sink fixture does,
+  and the fixture is rewritten to the block form. `::: epigraph` with no id is
+  `missing-id`.
+- **`subchapter`, `credits` and `seriespage` render as `chapter`**, with the
+  original name added as a class, and a warning: today's
   `render [epub:subchapter] is [deprecated]. substituting with [chapter]`.
-  This applies to every draft and deprecated name. Today it is reachable only
-  for the four that are also in another set. The other 37 render as literal
-  paragraph text, although the validator accepts them as blocks.
-  **Proposed:** substitute all of them, as the attributes code intends; see
-  open decisions.
+  This is today's behaviour, kept: `subchapter` is used 835 times in 195
+  projects, `credits` 133 times in 66.
+- **The 37 draft-only and deprecated-only names are unknown names.** Today they
+  render as literal paragraph text (the validator accepts them as blocks), so
+  output is unchanged.
 - **`pullquote` is not draft-substituted.** It is a misc block with its own
   `citation`. Today its membership of the draft set turns it into a chapter
   and drops `citation` as unsupported. **Proposed**, an intended output
@@ -329,33 +341,36 @@ Names are lowercase and case-sensitive. 82 names are recognized: the 45 in
   `::: figure`. It renders `::: figure source:x` and `::: chapter:` as literal
   text, and silently drops `::: video source:x`. The validator rejects all of
   them.
-- **Characters.** The canonical id is `[A-Za-z0-9_-]+`, which the output uses
-  unchanged. Any other non-whitespace character is accepted with a warning,
-  because the renderer accepts it today and writes it as `-` (`htmlId`):
-  `a.b` → `a-b`, `é` → `-`. **Proposed** (the validator rejects them). An id
-  that maps to the same output id as another in the file is an error.
+- **Characters.** An id is `[A-Za-z0-9_-]+`, which the output uses
+  unchanged. Any other character is an error (`id-characters`). Today the
+  renderer accepts it and writes it as `-` (`htmlId`: `a.b` → `a-b`), and the
+  validator rejects it. No project has such an id, so this breaks nothing,
+  and every id reaches the output exactly as written.
 - **Uniqueness.** Ids are compared as written.
   - Every directive id is unique **within its file**: they all become `id`
     attributes in one XHTML document.
-  - The ids of `figure`, `audio`, `video`, `vimeo`, `iframe` (and their
-    `-inline` variants, and `media`) are unique **within the book**: each
-    becomes a figure page, `figure<id>.xhtml` or `figure-<id>.xhtml`, in one
-    directory.
+  - The ids of the directives that get **a page of their own**, `figure`,
+    `audio`, `video`, `vimeo`, `iframe`, and a `media` that resolves to one of
+    them, are unique **within the book**: each becomes `figure<id>.xhtml` or
+    `figure-<id>.xhtml`, in one directory.
+  - The `-inline` variants get no page, so they are only unique within their
+    file. Reusing an inline figure's id in another file is fine: 30 of the
+    GitLab projects do it.
   - Block ids may repeat across files.
   - A duplicate is an error at the second occurrence, with a note at the
     first.
 
   Today the renderer enforces per-file uniqueness of block ids by accident
   (see Findings), plus a false positive (TASK-153), and never checks
-  `pullquote`, `blockquote` or figure ids. The validator checks nothing.
-  **Proposed.** It turns a duplicate pullquote id, or a figure id reused across
-  files, from a silent collision into an error: open decision.
+  `pullquote`, `blockquote` or figure ids. The validator checks nothing. With
+  the scope above, the GitLab projects have one real collision (in a proof of
+  concept), and no duplicate block id within a file.
 
 #### Attributes
 
 | Rule | Spec | Today |
 | ---- | ---- | ----- |
-| forms | `key:value` and `key "value"` (quoted only; `key value` is a key-less word) | renderer: `key:value` only; `key "value"` is silently ignored on a block, and a line in that form with no id renders as literal text. Only the unregistered `grammar-epigraph` parses it. Validator: `key:value` only |
+| form | `key:value` only. `key "value"` is a warning (`attribute-form`) and is ignored | renderer: `key:value` only; `key "value"` is silently ignored on a block, and a line in that form with no id renders as literal text. Only the unregistered `grammar-epigraph` parses it. Validator: `key:value` only. No project uses it |
 | quoting | `"…"` or `'…'`; the other quote may appear inside; no escapes; no newlines | renderer: same, except an unclosed quote runs to end of line. Validator: the other quote is rejected; a quoted value may span lines |
 | unquoted value | runs to the next space or tab; may contain `:` | renderer: same. Validator: rejects `:`, so every URL `source` fails |
 | unclosed quote | warning; the value runs to end of line | |
@@ -381,21 +396,28 @@ Names are lowercase and case-sensitive. 82 names are recognized: the 45 in
   Elsewhere they are ordinary text. Today the renderer goes on applying both
   after the block's `exit`, to the end of the file. The validator accepts
   speaker lines anywhere and rejects gallery items everywhere.
-- **`::: exit:<id>` closes the innermost open block, and `<id>` must be that
-  block's id.** This follows the validator. The renderer closes whichever
-  open block has the id, which misnests the output.
+- **`::: exit:<id>` closes the block named `<id>`, and any blocks still open
+  inside it.** An `exit` that skips past open blocks closes them implicitly,
+  the way an HTML end tag closes unclosed elements inside it, with a warning.
+  Today the renderer closes only the named block, which misnests the output,
+  and the validator rejects it. Real books rely on it: the i26 title pages
+  leave `subchapter:spread-contents` open and close it with the outer
+  `spread`'s exit. 19 such exits are in 17 GitLab projects (8 of them i26
+  title pages), and they build.
 
 | `exit:<id>` where `<id>` … | Result |
 | -------------------------- | ------ |
 | is the innermost open block's | closes it |
-| is an outer open block's | error at the exit, with a note at the inner block's opener. Recovery: the inner blocks close at this line, then the named one |
-| matches no open block (a typo, a block already closed, an inline directive's id) | error at the exit. The note names the innermost open block and its line, or says none is open, or says the id belongs to a single-line directive. Today: a `TypeError` crash in `grammar-pullquote` |
+| is an outer open block's | warning (`crossed-exit`) at the exit, with a note at each inner block's opener. The inner blocks close at this line, then the named one |
+| matches no open block (a typo, a block already closed, an inline directive's id) | warning (`unmatched-exit`) at the exit, and the line is ignored. The note names the innermost open block and its line, or says none is open, or says the id belongs to a single-line directive. Today it depends on context: inside an open pullquote or blockquote it closes that block (`the-world-is-unknown`'s typo `exit:affirmations-pullquotes`), otherwise `grammar-pullquote` crashes with a `TypeError` (`international-art-english-e-book` fails to build). 11 in 10 GitLab projects |
 | is missing | error at `exit` |
 
 - **An unclosed block** is a warning at its opener. It closes at the end of
   its Markdown container (end of file at the top level). That is today's
   behaviour for structural blocks, made uniform: today an unclosed
-  `pullquote` is left open in the output.
+  `pullquote` is left open in the output. 3 GitLab projects leave a block
+  open to the end of the file, one of them a published book
+  (`who-belongs-to-the-land`), so it stays a warning.
 
 #### Inline directives and captions
 
@@ -441,9 +463,15 @@ at render time**, on a copy of the node (TASK-160's parse once):
 What resolution needs: the node's id and inline flag, the target name, the
 parsed `media.yml` (`Project.media`), and the directive registry. Its
 diagnostics are anchored at the `media` line, with a note naming the
-`media.yml` key path (`m.web.type`). `bber check` resolves for every target in
-`builds`, so a missing key is reported before a build reaches it. A `media` id
-shares the figure id space (unique within the book), since it renders as one.
+`media.yml` key path (`m.web.type`).
+
+- **A missing target key is an error when that target is built**, as today.
+  `bber check` doesn't know which targets will be built, so there it is a
+  warning. Most entries define only some targets: 108 of the 136 entries in
+  the GitLab projects define `epub`, `mobi` and `reader` and nothing else.
+- **YAML merge keys (`<<`) keep working.** 18 entries use them.
+- A non-inline `media` id shares the page-figure id space (unique within the
+  book), since it renders as one.
 
 This replaces the string pass, which differs today in these ways:
 - it recognizes only exactly `::: ` at column 0;
@@ -489,28 +517,28 @@ interface Diagnostic {
 | Code | Severity | Span | Message (example) and notes |
 | ---- | -------- | ---- | --------------------------- |
 | `unknown-name` | warning | the name | Unknown directive `chaptr`. Did you mean `chapter`? Note: the line is rendered as text |
-| `draft-name` | warning | the name | `abstract` is a draft EPUB structural semantic and is rendered as `chapter` |
+| `draft-name` | warning | the name | `credits` is a draft EPUB structural semantic and is rendered as `chapter` |
 | `deprecated-name` | warning | the name | `subchapter` is deprecated and is rendered as `chapter` |
 | `missing-id` | error | the name, plus `:` if present | `chapter` needs an id: write `chapter:<id>` |
-| `id-characters` | warning | the id | The id `a.b` is written to the output as `a-b` |
-| `duplicate-id` | error | the second id | The id `a` is already used. Note at the first (may be in another file, for figure ids) |
-| `id-collision` | error | the second id | `a.b` and `a:b` are both written as `a-b`. Note at the first |
+| `id-characters` | error | the id | The id `a.b` may only contain letters, digits, `_` and `-` |
+| `duplicate-id` | error | the second id | The id `a` is already used. Note at the first (may be in another file, for page figures) |
 | `unknown-attribute` | warning | the attribute, key through value | `figure` has no attribute `bogus`; it is ignored |
 | `duplicate-attribute` | warning | the second attribute | `classes` is given twice; the last value is used. Note at the first |
 | `missing-value` | warning | the key and colon | `classes` has no value; write `classes:""` (for a boolean: `autoplay:yes`) |
 | `unterminated-quote` | warning | the opening quote to end of line | The value of `title` opens a quote that is not closed on this line |
 | `stray-word` | warning | the word | `extra` is not an attribute; attributes are written `key:value` |
+| `attribute-form` | warning | the key through the closing quote | `caption "…"` is ignored; write `caption:"…"` |
 | `missing-attribute` | error | the name and id | `figure:f` needs a `source` attribute |
 | `missing-asset` | error | the `source` value | No image `x.png` in `_images/` |
 | `unclosed-block` | warning | the opener line, fence to end | `chapter:a` is never closed; it ends at the end of the file (or: of the list item at line N). Note: add `::: exit:a` |
-| `unmatched-exit` | error | the exit line, fence to end | `exit:zzz` matches no open block. Note at the innermost open block's opener ("`chapter:a` is open here"), or "no block is open", or "`figure:zzz` is a single-line directive and has no exit" |
-| `crossed-exit` | error | the exit line | `exit:a` closes `chapter:a`, but `section:b`, opened inside it, is still open. Note at `section:b`'s opener |
+| `unmatched-exit` | warning | the exit line, fence to end | `exit:zzz` matches no open block. Note at the innermost open block's opener ("`chapter:a` is open here"), or "no block is open", or "`figure:zzz` is a single-line directive and has no exit" |
+| `crossed-exit` | warning | the exit line | `exit:a` also closes `section:b`, which is still open inside `chapter:a`. Note at `section:b`'s opener: add `::: exit:b` |
 | `exit-missing-id` | error | `exit` | `exit` needs the id of the block it closes |
 | `exit-trailing-text` | warning | the trailing text | Text after `exit:a` is ignored |
 | `unclosed-caption` | warning | the caption line | The caption is not closed; add a line containing only `::` |
 | `media-attributes` | error | the attributes | `media` takes no attributes; set them in `media.yml` under `m.<target>` |
 | `media-unknown-id` | error | the id | `media.yml` has no entry `m` |
-| `media-missing-target` | error | the id | `media.yml` entry `m` has no `pdf` key. Note: the `media.yml` path |
+| `media-missing-target` | error when building that target; warning in `bber check` | the id | `media.yml` entry `m` has no `pdf` key. Note: the `media.yml` path |
 | `media-bad-type` | error | the id | `media.yml` `m.web.type` is `chapter`; it must be an inline directive |
 
 **Tests the implementation must have:**
@@ -534,6 +562,11 @@ interface Diagnostic {
    produce the same diagnostics (#797's class of defect).
 8. **Kitchen-sink.** No errors, and an explicit list of the warnings it is
    expected to produce (today: `deprecated-name` for each `subchapter`).
+9. **The GitLab projects.** Run the parse over the clones of every project in
+   the canopycanopycanopy group (`gitlab-projects/` beside the b-ber
+   checkout; `_survey/survey.js` there finds them). No project that builds
+   today gains an error. The repos are private, so this is a script run before
+   the parser lands, not a CI job.
 
 #### Intended output differences
 
@@ -549,35 +582,36 @@ Output compatibility):
 - a lone word no longer swallows the next attribute;
 - speaker lines and gallery items after their block's `exit` are plain text;
 - crossed exits and unclosed pullquotes produce balanced output;
-- `key "value"` attributes take effect, and draft-only and deprecated-only
-  names render as `chapter` (if adopted).
+- an unmatched `exit` is ignored. Inside an open pullquote or blockquote it no
+  longer closes that block. That changes `the-world-is-unknown`, whose typo
+  closes its blockquote by accident; its source should be fixed. Elsewhere the
+  build no longer crashes (`international-art-english-e-book` builds again);
+- the kitchen-sink fixture's single-line epigraph is rewritten to the block
+  form, so the epigraph renders instead of appearing as literal text.
 
-#### Open decisions
+#### Decisions (2026-11-25)
 
-1. **`key "value"`.** Accept it everywhere, as above, or drop it with a
-   diagnostic? Today it has no effect anywhere, and the PRD's "both are in use"
-   holds only for `key:value`. Proposed: accept it, since the PRD and the
-   fixture both assume it.
-2. **The single-line `epigraph`** (`::: epigraph caption "…" citation "…"`, no
-   id, no exit), as documented in `grammar-epigraph` and used in the
-   kitchen-sink. Today it renders as literal text in every build. Proposed:
-   implement it as an inline variant of `epigraph`, chosen when there is no
-   `:id`. That makes `epigraph`'s kind depend on the line. The alternative is
-   a warning, with the fixture rewritten to the block form.
-3. **The 37 draft-only and deprecated-only names**: substitute `chapter` with a
-   warning (proposed, and what the validator and attributes code intend), or
-   `unknown-name`, which keeps today's literal-text output.
-4. **Duplicate ids where today is silent** (pullquote and blockquote ids,
-   figure ids across files): error (proposed) or warning.
-5. **Ids with characters outside `[A-Za-z0-9_-]`**: a warning (proposed) or
-   an error. Also: should an id that is not an XML name (leading digit or
-   `-`) warn, since EPUBCheck may reject it? Verify against EPUBCheck first.
-6. **`media.yml` with no key for a target**: an error (today's behaviour,
-   proposed), or fall back to `epub` for `pdf`, `sample` and `xml`, as their
-   figure templates do (TASK-160).
-7. **Severity of unknown names and unclosed blocks**: warning (proposed, by
-   the severity rule) versus the validator's error today. `bber check
-   --strict` could fail on warnings.
+The seven open decisions, settled after checking each against the 262 b-ber
+projects on GitLab (Findings):
+
+1. **`key "value"`: dropped.** No project uses it; only the kitchen-sink
+   fixture did. One attribute form: `key:value`.
+2. **The single-line `epigraph`: not implemented.** No project uses it, and it
+   has never rendered. The fixture is rewritten to the block form.
+3. **The 37 draft-only and deprecated-only names: removed from the registry.**
+   No project uses one. They are `unknown-name`, which keeps today's
+   literal-text output.
+4. **Duplicate ids: an error**, with the scope narrowed to what actually
+   collides (per file; per book only for figures with a page of their own).
+   As first written, the rule would have failed 30 projects.
+5. **Ids outside `[A-Za-z0-9_-]`: an error.** No project has one. Whether
+   EPUBCheck also rejects ids that are not XML names (a leading digit or `-`)
+   is still to be checked.
+6. **A `media.yml` entry with no key for the target: an error when building
+   that target**, as today, and a warning in `bber check`.
+7. **Unknown names and unclosed blocks: warnings.** So are crossed and
+   unmatched exits, which the first draft made errors: real books that build
+   today rely on both. `bber check --strict` fails on warnings, for CI.
 
 ### `bber check` uses the same grammar
 
@@ -666,9 +700,9 @@ own commit, with the regenerated snapshot showing the diff.
       forms, nesting, what `exit` may close), from the shapes, the
       validator's combinators and the current parsers. Today it exists only
       as the union of those three. Done in "Directive syntax"; its open
-      decisions belong to the review subtask
-- [ ] Decide which differences from today's output are intended, and list
-      them
+      decisions were settled on 2026-11-25 ("Decisions")
+- [x] Decide which differences from today's output are intended, and list
+      them: "Intended output differences", decided 2026-11-25
 - [x] Decide the validator question: a separate, thin package over the
       shared parse (2026-11-24)
 - [ ] File the implementation tasks in the Plan under #792 and update its
@@ -877,3 +911,43 @@ identical positions (bug 1).
 `grammar-media/src/index.ts:31`: `{ [id]: { [target]: { type, caption?,
 ...attrs } } }`. The pre-pass emits `::: <type>[-inline]:<id> key:"value" …`,
 then `:: <caption>` and `::` when there is a caption.
+
+### 2026-11-25: the decisions, checked against the GitLab projects
+
+**Method.** Shallow clones of all 290 non-empty repos in the canopycanopycanopy
+GitLab group, in `gitlab-projects/` beside the b-ber checkout. 262 of them are
+b-ber projects (a `config.yml` and a `_markdown` directory). A read-only
+survey (`gitlab-projects/_survey/survey.js`, results in `survey.json`) scans
+every Markdown file's directive lines, skipping fenced code, using the name
+lists from `b-ber-shapes-directives`. Three books were then built with the
+current CLI (`bber build reader`) to see what today's build does.
+
+| Check | Result |
+| ----- | ------ |
+| `key "value"` attributes | 0 |
+| single-line `epigraph` (no id) | 0 |
+| draft-only or deprecated-only names | 0 |
+| ids outside `[A-Za-z0-9_-]` | 0 |
+| missing ids | 0 |
+| duplicate block id within a file | 0 |
+| page figure id reused in the book | 1, in `the-devil-in-connecticut-p-o-c` (`figure:one` in chapters 1 and 3) |
+| inline figure id reused across files | 64 in 30 projects: harmless, no page |
+| inline figure id reused within a file | 1, in a test project |
+| unknown names | 5, in 2 test projects (`image`, `soundcloud`) |
+| crossed exits (an outer exit closing blocks still open inside it) | 19 in 17 projects, including 8 i26 title pages, `i29-jeremy-toussaint-baptiste` and `the-world-is-unknown` |
+| blocks still open at the end of the file | 3 in 3 projects, one published (`who-belongs-to-the-land`) |
+| unmatched exits | 11 in 10 projects |
+| `media.yml` entries | 136 in 38 projects: 108 define only `epub`, `mobi`, `reader`; 18 use `<<` merges. 61 `media.yml` files are empty |
+
+**Builds today** (`bber build reader`, current `main`):
+- `the-world-is-unknown` builds. Its unmatched `exit:affirmations-pullquotes`
+  (a typo for `affirmations-pullquote`) is consumed by `grammar-pullquote`,
+  which closes the open blockquote.
+- `listening` (i26) builds. Its unclosed `spread-contents` is closed by the
+  outer exit.
+- `international-art-english-e-book` **fails**: `Cannot destructure property
+  'id' of 'pullquoteIndices[(pullquoteIndices.length - 1)]'`, on the unmatched
+  `exit:iae-about`. This is bug 6 above, on a published book.
+
+So unmatched and crossed exits, and unclosed blocks, have to be warnings. The
+forms no project uses are dropped rather than specified.
