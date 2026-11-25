@@ -25,7 +25,35 @@ golden snapshot regenerated so the PR shows it:
 - crossed exits and unclosed pullquotes produce balanced output;
 - an unmatched `exit` is ignored, which fixes `international-art-english-e-book`'s
   crash and changes `the-world-is-unknown`, whose source typo should be
-  fixed.
+  fixed;
+- **a directive block inside a list item no longer drops the rest of the
+  document.** Added 2026-11-25, after TASK-174 found it (TASK-161's list is
+  closed, so this task extends it). Today a block opened in a list item
+  swallows the rest of that item's range, and markdown-it never parses what
+  follows: later items, the text after the list, and the rest of the file
+  vanish, with no warning, even when the `exit` is correctly inside the item.
+  Under the spec the block closes at its `exit`, or at the end of its list
+  item if it has none (`unclosed-block`), and everything after it renders. No
+  GitLab project puts a directive inside a list today, so no book's output
+  changes; the fix is pinned by a test, not the golden snapshot.
+
+  ```
+  ::: chapter:c1
+  - First item.
+
+    ::: pullquote:q1
+    A quote inside the list item.
+    ::: exit:q1
+
+  - Second item.
+
+  After the list.
+  ::: exit:c1
+  The last paragraph.
+  ```
+
+  Today's output ends after the pullquote. "Second item.", "After the
+  list." and "The last paragraph." are missing.
 
 ## Subtasks
 
@@ -38,6 +66,7 @@ golden snapshot regenerated so the PR shows it:
 - [ ] `media` as a node
 - [ ] Delete `state.cursor`
 - [ ] One commit per intended output difference, with the snapshot
+- [ ] A test that a block inside a list item loses nothing after it (the example above), with the `exit` inside the item and with none
 - [ ] The GitLab survey script: no project that builds today gains an error
 
 ## Notes
