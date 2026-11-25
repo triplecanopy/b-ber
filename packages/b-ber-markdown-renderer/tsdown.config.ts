@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/directives/index.ts'],
   format: ['cjs'],
   dts: true,
   clean: true,

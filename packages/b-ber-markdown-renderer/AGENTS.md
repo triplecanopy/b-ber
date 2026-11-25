@@ -9,6 +9,18 @@
 | File               | Purpose                                                                                                          |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `src/index.ts`     | Defines and exports the `markdownRenderer` singleton; configures `markdown-it` and registers all grammar plugins |
+| `src/directives/`  | TASK-161's directive grammar (TASK-174): the block rule (`rule.ts`), the structure pass that pairs blocks and reports diagnostics (`structure.ts`), the line grammar (`syntax.ts`), diagnostics and the reporter (`diagnostics.ts`), the tree (`tree.ts`). Built as a second entry, `dist/directives`, which imports no `State` |
+| `src/legacy-host.ts` | How the directive rule shares ids with the old plugins through `state.cursor`, and throws today's errors, until TASK-175 |
+| `scripts/parse-corpus.js` | Runs the parse over a directory of b-ber projects (TASK-161's test 9). By hand only: the projects are private |
+
+## The directive rule
+
+The structural blocks (`chapter`, `subchapter`, the frontmatter, bodymatter and backmatter sets, `epigraph`) are parsed by `src/directives`, not by b-ber-parser-section, and rendered by b-ber-grammar-section's `render` as before. The other directives still use their own plugins until TASK-175.
+
+- **Output is unchanged by construction.** The rule reproduces b-ber-parser-section's token shape (each claimed line opens a container that runs to the end of its range), because the parse decides tight lists and markdown-it's `maxNesting` from token levels. The structure pass then rewrites the tokens into real pairs, keeping render-only `directive_exit`/`directive_end` tokens where the old parser's tokens were.
+- **Diagnostics go to `env.diagnostics`**; `render(fileName, data, env)` takes the env. Nothing new is thrown or printed: `legacy-host.ts` throws the two errors the old parser threw (`Duplicate [id]`, `Missing [id]`), word for word.
+- **Silent mode records nothing.** That is the TASK-153 fix: a block straight after a paragraph line no longer reports its own id as a duplicate.
+- Diagnostic positions are offsets into the source markdown-it parsed. `render()` parses the output of `prepare()`, so a `media` line whose replacement adds caption lines shifts the lines after it.
 
 ## Dev Commands
 
