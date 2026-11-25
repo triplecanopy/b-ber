@@ -12,7 +12,7 @@ function that transforms extended Markdown source into EPUB-compatible XHTML.
 graph LR
     mdr["b-ber-markdown-renderer"]
 
-    subgraph GRAMMAR["grammar-* plugins (14)"]
+    subgraph GRAMMAR["grammar-* plugins (13)"]
         gr-av["grammar-audio-video"]
         gr-dial["grammar-dialogue"]
         gr-fn["grammar-footnotes"]
@@ -26,7 +26,6 @@ graph LR
         gr-sec["grammar-section"]
         gr-spr["grammar-spread"]
         gr-vim["grammar-vimeo"]
-        gr-epig["grammar-epigraph"]
     end
 
     subgraph PARSERS["parser-* plugins (2)"]

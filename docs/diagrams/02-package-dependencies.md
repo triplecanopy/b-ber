@@ -29,7 +29,6 @@ graph LR
         gr-pq["grammar-pullquote"]
         gr-fn["grammar-footnotes"]
         gr-fm["grammar-frontmatter"]
-        gr-epig["grammar-epigraph"]
         gr-media["grammar-media"]
     end
 
@@ -71,7 +70,7 @@ graph LR
     %% Rendering pipeline
     mdr --> gr-sec & gr-img & gr-gal & gr-spr & gr-dial
     mdr --> gr-av & gr-iframe & gr-logo & gr-vim & gr-pq
-    mdr --> gr-fn & gr-fm & gr-epig & gr-media
+    mdr --> gr-fn & gr-fm & gr-media
     mdr --> p-fn & p-gal
 
     %% Grammar primitives
@@ -91,7 +90,6 @@ graph LR
     gr-pq --> gr-attr & lib & log & p-sec & shapes-dir
     gr-fn --> lib
     gr-fm --> lib
-    gr-epig --> log & p-fig
     gr-media --> lib & log & shapes-dir
 
     %% Parsers

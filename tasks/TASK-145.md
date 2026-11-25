@@ -56,6 +56,12 @@ would be a better home if one is raised.
 
 ## Decision needed
 
+**Decided 2026-11-25: option 2, retire it.** TASK-161's directive syntax drops
+the `key "value"` attribute form, and the standalone epigraph is its only
+user. None of the 262 b-ber projects in the canopycanopycanopy GitLab group
+uses either form; only the kitchen-sink fixture did (TASK-161 Findings,
+2026-11-25).
+
 Two ways to resolve it. Pick one before starting:
 
 1. **Register and fix it.** Add the package to the renderer, use
@@ -76,16 +82,20 @@ authors might want.
 
 ## Subtasks
 
-- [ ] Decide between the two options above
-- [ ] Option 1: register the plugin; fix `escapeHtml`; fix the tests' mock
-      so it matches markdown-it's real shape; reconcile the attribute shapes;
-      route the image form through the figure path handling
-- [ ] Option 2: deprecate `b-ber-grammar-epigraph`; move the kitchen sink to
+- [x] Decide between the two options above: option 2
+- Option 1 (not taken): register the plugin; fix `escapeHtml`; fix the
+  tests' mock so it matches markdown-it's real shape; reconcile the attribute
+  shapes; route the image form through the figure path handling
+- [x] Option 2: deprecate `b-ber-grammar-epigraph`; move the kitchen sink to
       the block form; correct the three diagrams; warn on the standalone
-      form
-- [ ] Either way: add an epigraph to the output snapshot in
+      form. The package is removed from the workspace, so it is no longer
+      built or published; the npm deprecation is a maintainer step (Notes).
+      The warning is left to TASK-161 (Notes)
+- [x] Either way: add an epigraph to the output snapshot in
       `b-ber-markdown-renderer/__tests__` and to the e2e directive checks, so
-      a directive that renders as text fails a test
+      a directive that renders as text fails a test. An explicit test rather
+      than a snapshot change (it asserts `epub:type="frontmatter epigraph"`),
+      plus `epigraph` in `directives.spec.ts`, which fails on the old form
 
 ## Notes
 
@@ -93,3 +103,17 @@ authors might want.
   `OPS/text/kitchen-sink-chapter-01.xhtml`.
 - Related: TASK-144 (where this was found), TASK-146 (the other renderer bug
   found there).
+- **npm deprecation** needs the maintainer's npm credentials, so it is not
+  in the PR. After merging:
+  `npm deprecate @canopycanopycanopy/b-ber-grammar-epigraph "Never registered with the renderer. Use the block form: ::: epigraph:<id> … ::: exit:<id>"`
+- **No warning on the standalone form in the current renderer.** TASK-161's
+  parser reports `::: epigraph …` with no id as `missing-id`, and a
+  `key "value"` attribute as `attribute-form`. A warning added to today's
+  renderer would be deleted by that rewrite. Until then the line renders as
+  literal text, as it always has.
+- **Output change:** the kitchen-sink's chapter one gains its epigraph section
+  (`<section id="ch-01-epigraph" epub:type="frontmatter epigraph">`) in place
+  of the literal `<p>::: epigraph caption …</p>`. The golden snapshot is
+  regenerated with it. The only other differences are the source line
+  numbers in comments, which shift by the six lines the block form adds.
+

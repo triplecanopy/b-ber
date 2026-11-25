@@ -86,7 +86,6 @@ b-ber-extended Markdown into the HTML/XML structures required for EPUB output.
 | `b-ber-grammar-attributes`  | `grammar-attributes`  | Inline attribute blocks                    |
 | `b-ber-grammar-audio-video` | `grammar-audio-video` | Audio and video embeds                     |
 | `b-ber-grammar-dialogue`    | `grammar-dialogue`    | Dialogue markup                            |
-| `b-ber-grammar-epigraph`    | `grammar-epigraph`    | Epigraph blocks                            |
 | `b-ber-grammar-footnotes`   | `grammar-footnotes`   | Footnote definitions and references        |
 | `b-ber-grammar-frontmatter` | `grammar-frontmatter` | Front matter (title page, copyright, etc.) |
 | `b-ber-grammar-gallery`     | `grammar-gallery`     | Image gallery layouts                      |

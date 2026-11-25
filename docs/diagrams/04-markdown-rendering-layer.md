@@ -21,7 +21,6 @@ graph TD
             gr-logo["grammar-logo\n::: logo:id"]
             gr-vim["grammar-vimeo\n::: vimeo:id"]
             gr-pq["grammar-pullquote\n::: pullquote:id"]
-            gr-epig["grammar-epigraph\n::: epigraph:id"]
             gr-media["grammar-media\n::: media:id"]
         end
 
@@ -65,7 +64,6 @@ graph TD
     %% Grammar packages depend on parsers
     gr-sec & gr-pq --> p-sec
     gr-img & gr-av & gr-iframe & gr-logo & gr-vim --> p-fig
-    gr-epig --> p-fig
     gr-gal & gr-spr --> p-gal
     gr-dial --> p-dial
 
@@ -78,7 +76,6 @@ graph TD
     p-fn & p-gal --> lib & log & shapes-dir & tpl
     gr-fn & gr-fm --> lib
     gr-media --> lib & log & shapes-dir
-    gr-epig --> log
 ```
 
 ## Directive syntax → HTML transformation

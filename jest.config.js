@@ -84,8 +84,6 @@ module.exports = {
       '<rootDir>/packages/b-ber-grammar-audio-video/src/index.ts',
     '^@canopycanopycanopy/b-ber-grammar-dialogue$':
       '<rootDir>/packages/b-ber-grammar-dialogue/src/index.ts',
-    '^@canopycanopycanopy/b-ber-grammar-epigraph$':
-      '<rootDir>/packages/b-ber-grammar-epigraph/src/index.ts',
     '^@canopycanopycanopy/b-ber-grammar-footnotes$':
       '<rootDir>/packages/b-ber-grammar-footnotes/src/index.ts',
     '^@canopycanopycanopy/b-ber-grammar-frontmatter$':
