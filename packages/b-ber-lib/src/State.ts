@@ -26,6 +26,7 @@ import {
 } from './Project'
 import type Spine from './Spine'
 import type SpineItem from './SpineItem'
+import { getTarget, type Target } from './Target'
 import type Yaml from './Yaml'
 import type { MetadataEntry } from './Yaml'
 
@@ -102,7 +103,7 @@ const contextBuilds = new WeakMap<BuildContext, Record<string, BuildSettings>>()
 const buildsOf = (context: BuildContext): Record<string, BuildSettings> => {
   let builds = contextBuilds.get(context)
   if (!builds) {
-    builds = Object.defineProperty({}, context.target, {
+    builds = Object.defineProperty({}, context.target.name, {
       enumerable: true,
       get: () => context.settings,
       set: (settings: BuildSettings) => {
@@ -118,7 +119,7 @@ const buildsOf = (context: BuildContext): Record<string, BuildSettings> => {
 const readFromContext = (context: BuildContext, key: Routed): unknown => {
   switch (key) {
     case 'build':
-      return context.target
+      return context.target.name
     case 'config':
       return context.config
     case 'hash':
@@ -140,7 +141,7 @@ const writeToContext = (
 ): void => {
   switch (key) {
     case 'build':
-      context.target = value as string
+      context.target = getTarget(value as string)
       return
     case 'config':
       context.config = value as ConfigOptions
@@ -152,7 +153,9 @@ const writeToContext = (
       context.sequence = value as unknown[]
       return
     case 'builds': {
-      const settings = (value as Record<string, BuildSettings>)[context.target]
+      const settings = (value as Record<string, BuildSettings>)[
+        context.target.name
+      ]
       if (settings) context.settings = settings
       return
     }
@@ -344,6 +347,12 @@ class State {
     this.builds[this.build].loi = val
   }
 
+  // The target being built: what grammar, parser and template code branches
+  // on, through its `features`. Read-only; `build` names it
+  get target(): Target {
+    return currentBuildContext()?.target ?? getTarget(this.build)
+  }
+
   get srcDir(): string {
     return this.config.src as string
   }
@@ -479,7 +488,7 @@ class State {
       context.sequence = []
       context.config = resolveConfig(
         context.project.config,
-        context.target,
+        context.target.name,
         context.project.overrides
       )
       return

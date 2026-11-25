@@ -128,7 +128,7 @@ describe('createBuildContext', () => {
     const project = loadProject(root, { dist: 'out' })
     const context = createBuildContext(project, 'epub')
 
-    expect(context.target).toBe('epub')
+    expect(context.target.name).toBe('epub')
     expect(context.config.dist).toBe('out')
     expect(context.settings.dist).toBe('out-epub')
   })
@@ -181,6 +181,19 @@ describe('State inside a BuildContext', () => {
         path.join('project-epub', 'OPS', 'text', 'a.xhtml')
       )
     })
+  })
+
+  it('reads the target from the context, and from `build` outside one (TASK-164)', async () => {
+    const api = isolatedContext()
+    const context = api.createBuildContext(api.loadProject(root), 'reader')
+
+    await api.runInBuildContext(context, async () => {
+      expect(state.target.name).toBe('reader')
+      expect(state.target.features.figuresOn).toBe('titlepage')
+    })
+
+    state.update('build', 'mobi')
+    expect(state.target.name).toBe('mobi')
   })
 
   it("writes a build's collections to its context, not the instance", async () => {
@@ -259,10 +272,10 @@ describe('runBuild', () => {
     const order = []
 
     await runBuild(project, ['epub', 'web'], async (context) => {
-      order.push(`start ${context.target}`)
+      order.push(`start ${context.target.name}`)
       expect(currentBuildContext()).toBe(context)
       await nextTurn()
-      order.push(`end ${context.target}`)
+      order.push(`end ${context.target.name}`)
     })
 
     expect(order).toEqual(['start epub', 'end epub', 'start web', 'end web'])
@@ -275,7 +288,7 @@ describe('runBuild', () => {
 
     await expect(
       runBuild(project, ['epub', 'web'], async (context) => {
-        built.push(context.target)
+        built.push(context.target.name)
         throw new Error('boom')
       })
     ).rejects.toThrow('boom')
