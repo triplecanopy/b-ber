@@ -80,17 +80,21 @@ const ROUTED = [
 ] as const
 type Routed = (typeof ROUTED)[number]
 
-// Outside a build, these load the project on first use. `State` used to load
-// it in its constructor, when it was imported
-const LOADS_PROJECT = new Set<Routed>([
-  'config',
-  'builds',
-  'metadata',
-  'media',
-  'theme',
-  'video',
-  'audio',
-])
+// Outside a build, each of these loads its part of the project on first use,
+// and only that part (the config first, which the others read). `State` used
+// to load all of it in its constructor, when it was imported. Loading one part
+// at a time matters: a module that reads an option from `state.config` when it
+// is imported must not read the whole project from the working directory
+type Part = 'config' | 'metadata' | 'media' | 'audioVideo' | 'builds' | 'theme'
+const PART_OF: Partial<Record<Routed, Part>> = {
+  config: 'config',
+  metadata: 'metadata',
+  media: 'media',
+  video: 'audioVideo',
+  audio: 'audioVideo',
+  builds: 'builds',
+  theme: 'theme',
+}
 
 // `builds` keyed by the context's target. One object per context, because
 // callers mutate it (`state.builds[state.build].spine = …`)
@@ -252,9 +256,9 @@ class State {
 
   config!: ConfigOptions
 
-  private loaded = false
+  private loadedParts = new Set<Part>()
 
-  private loading = false
+  private loadingParts = new Set<Part>()
 
   private versionCache?: string
 
@@ -402,8 +406,9 @@ class State {
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
   }
 
-  // Reads nothing. The project is loaded on first use (`load`), or a build
-  // runs in a BuildContext and the routed fields read that instead
+  // Reads nothing. Each part of the project is loaded on first use
+  // (`loadPart`), or a build runs in a BuildContext and the routed fields
+  // read that instead
   constructor() {
     const self = this as unknown as Record<string, unknown>
     const local: Record<string, unknown> = {}
@@ -416,7 +421,8 @@ class State {
         get: () => {
           const context = currentBuildContext()
           if (context) return readFromContext(context, key)
-          if (LOADS_PROJECT.has(key)) this.load()
+          const part = PART_OF[key]
+          if (part) this.loadPart(part)
           return local[key]
         },
         set: (value: unknown) => {
@@ -427,32 +433,40 @@ class State {
           }
           // Load first, so that the value set is not then replaced by the
           // project's, the order it happened in when State loaded on import
-          if (LOADS_PROJECT.has(key)) this.load()
+          const part = PART_OF[key]
+          if (part) this.loadPart(part)
           local[key] = value
         },
       })
     }
   }
 
-  // Loads the project from the working directory, once: what the constructor
-  // did before TASK-163
-  load = (): void => {
-    if (this.loaded || this.loading) return
-    this.loading = true
+  // Loads one part of the project from the working directory, once. Together
+  // the parts are what the constructor loaded before TASK-163
+  private loadPart = (part: Part): void => {
+    if (this.loadedParts.has(part) || this.loadingParts.has(part)) return
+    this.loadingParts.add(part)
     try {
-      // Not `reset()`, as the constructor called: the fields' initialisers
-      // already hold its defaults, and loading now happens on first use, so
-      // resetting would discard what was set before it (a `sequence`)
-      set(this, 'config', new Config())
-      this.loadConfig()
-      this.loadMetadata()
-      this.loadAudioVideo()
-      this.loadMedia()
-      this.loadBuilds()
-      this.loadTheme()
+      if (part === 'config') {
+        // Not `reset()`, as the constructor called: the fields' initialisers
+        // already hold its defaults, and resetting on first use would discard
+        // what was set before it (a `sequence`)
+        set(this, 'config', new Config())
+        this.loadConfig()
+      } else {
+        this.loadPart('config')
+        const loaders: Record<Exclude<Part, 'config'>, () => void> = {
+          metadata: this.loadMetadata,
+          media: this.loadMedia,
+          audioVideo: this.loadAudioVideo,
+          builds: this.loadBuilds,
+          theme: this.loadTheme,
+        }
+        loaders[part]()
+      }
     } finally {
-      this.loading = false
-      this.loaded = true
+      this.loadingParts.delete(part)
+      this.loadedParts.add(part)
     }
   }
 

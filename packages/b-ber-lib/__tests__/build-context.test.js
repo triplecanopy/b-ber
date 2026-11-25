@@ -303,7 +303,13 @@ describe('importing State', () => {
     // that the project has been loaded
     expect(fs.existsSync(path.join(root, 'themes'))).toBe(false)
 
+    // Reading the config reads config.yml and nothing else. A module that
+    // reads an option on import must not load the whole project (TASK-163)
     expect(state.config.src).toBe('_project')
+    expect(fs.existsSync(path.join(root, 'themes'))).toBe(false)
+    expect(fs.existsSync(path.join(root, '_project', '_media'))).toBe(false)
+
+    expect(state.theme.name).toBe('b-ber-theme-serif')
     expect(fs.existsSync(path.join(root, 'themes'))).toBe(true)
   })
 })
