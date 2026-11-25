@@ -173,8 +173,15 @@ The other uses go away:
   internal under the output layout below.
 - **The `<target>.yml` navigation override** folds into the `<target>:` section
   of `config.yml`: the section names its navigation file, and the default is
-  `toc.yml`. That removes a lookup by filename convention. `bber new` only ever
-  scaffolded `toc.yml`. The key name is TASK-162's.
+  `toc.yml`. That removes a lookup by filename convention. The key is
+  `navigation` (TASK-162).
+
+  **This needs a migration.** Today's `bber new` scaffolds only `toc.yml`,
+  but older versions wrote one file per target. 128 of the GitLab projects
+  have `<target>.yml` files. Most are identical copies of `toc.yml`, but 62
+  `reader.yml`, 17 `mobi.yml` and 12 `epub.yml` really differ. So for one
+  major release an existing `<target>.yml` with no `navigation` key is still
+  read, with a warning that names the line to add.
 
 ### Running a build: plan, prepare, fan out
 
@@ -314,9 +321,9 @@ tree represents `media` as a node that is resolved per target at render time.
 
 `ResolvedConfig = defaults ← config.yml ← config.yml's <target>: section ←
 --config file ← CLI flags`, each layer overriding the previous one, as in
-Quarto. This restores per-build sections, broken since 2019. Note in the
-release notes that a project which has such a section will see it take
-effect.
+Quarto. This restores per-build sections, broken since 2019. No project in
+the GitLab group has such a section (TASK-162's survey), so turning them back
+on changes no existing output.
 
 The **shape** of the config (which keys, their names, camelCase) is TASK-162.
 This design depends only on the layering.
@@ -397,7 +404,7 @@ TASK-153 pinned the current defects (#798).
    - builds stop writing to the source tree, and `bber toc` replaces the
      automatic append to `toc.yml` (the command can land earlier, in a minor
      release, since adding it breaks nothing);
-   - `<target>.yml` folds into `config.yml`.
+   - `<target>.yml` folds into `config.yml`, with the migration above.
 7. **Delete `State`** when nothing imports it.
 
 Steps 1–4 can ship in minor releases behind the shim. Steps 6 and 7, together
@@ -651,3 +658,21 @@ Each target built on its own from kitchen-sink with `--log-level=3`, on a
 - **Both failures are tracked already.** xml is #766, fixed by plan step 2.
   epub fails EPUBCheck with RSC-005 on the iframe figure page: TASK-056,
   above.
+
+### 2026-11-25: checked against the GitLab projects
+
+TASK-161's and TASK-162's decisions were checked against all 262 b-ber
+projects in the canopycanopycanopy GitLab group (method and results in their
+Findings). Three results bear on this design:
+
+- **`<target>.yml` files** are in 128 projects. In 71 of them at least one
+  differs from `toc.yml` (99 files). The fold into `config.yml` keeps reading them for one major
+  release (see "What a target exposes to a project"). The earlier claim that
+  `bber new` only ever scaffolded `toc.yml` was wrong: older versions wrote one
+  file per target.
+- **No project has a `<target>:` section**, so restoring them changes nothing
+  that exists.
+- **`group_footnotes: false` is in 5 published books**, 4 with notes in several
+  documents, so the option stays (TASK-162). Moving the footnote `Counter`
+  onto the context, a prerequisite for Plan step 4, is required for real
+  books, not only for the fixture.
