@@ -419,6 +419,19 @@ a placeholder figure page in epub, is that fix. It is also what makes
 kitchen-sink's epub pass EPUBCheck, which it currently fails. It changes
 output, so it needs its own PR.
 
+**Filed (2026-11-25)**, each under #792:
+
+| Step | Task |
+| ---- | ---- |
+| 1 | TASK-163 (#826): `loadProject`, `BuildContext`, the shim |
+| 2 | TASK-164 (#827): targets with feature flags |
+| 3 | TASK-165 (#828): tasks as typed functions |
+| 4 | TASK-166 (#829): concurrent targets with staging; TASK-167 (#830): the logger |
+| 5 | TASK-168 (#831): parse once |
+| 6 | TASK-169 (#832): output under `<dist>/<target>/`; TASK-170 (#833): no writes to the source tree; TASK-172 (#835): `<target>.yml` into `config.yml` |
+| 7 | TASK-173 (#836): delete `State` |
+| — | TASK-171 (#834): `bber toc`, which can ship before 5.0 |
+
 ## Subtasks
 
 - [ ] Review this design; record decisions and changes below
@@ -433,8 +446,8 @@ output, so it needs its own PR.
 - [x] Confirm the `AsyncLocalStorage` shim against the call sites inside
       markdown-it render rules (synchronous, so the context propagates).
       Confirmed, with one exception: module-level state. See Findings
-- [ ] File the implementation tasks in the Plan under #792 and update its
-      sequencing
+- [x] File the implementation tasks in the Plan under #792 and update its
+      sequencing (2026-11-25; see "Filed" under Plan)
 
 ## Notes
 

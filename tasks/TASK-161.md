@@ -693,6 +693,20 @@ own commit, with the regenerated snapshot showing the diff.
    its tests move to the parse's diagnostics. #797 can then be closed as fixed.
 6. **Consolidate the packages** and deprecate the old ones (5.0).
 
+**Filed (2026-11-25)**, each under #792:
+
+| Step | Task |
+| ---- | ---- |
+| 1 | TASK-174 (#837): the directive rule and tree, starting with `section` |
+| 2 | TASK-175 (#838): port the remaining directives |
+| 3 | TASK-176 (#839): XHTML built as a tree |
+| 4 | TASK-177 (#840): per-document state in `env` |
+| 5 | TASK-178 (#841): `bber check` on the shared parse |
+| 6 | TASK-179 (#842): consolidate the packages (5.0) |
+
+The `key "value"` removal, decided in "Decisions", was done early in TASK-145
+(#720), which retired the standalone epigraph.
+
 ## Subtasks
 
 - [ ] Review this design; record decisions and changes below
@@ -705,8 +719,8 @@ own commit, with the regenerated snapshot showing the diff.
       them: "Intended output differences", decided 2026-11-25
 - [x] Decide the validator question: a separate, thin package over the
       shared parse (2026-11-24)
-- [ ] File the implementation tasks in the Plan under #792 and update its
-      sequencing
+- [x] File the implementation tasks in the Plan under #792 and update its
+      sequencing (2026-11-25; see "Filed" under Plan)
 
 ## Notes
 
