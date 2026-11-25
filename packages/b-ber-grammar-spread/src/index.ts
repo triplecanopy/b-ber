@@ -37,26 +37,22 @@ const render =
     const attrsObject = attributesObject(attrs, type, location)
     const attrsString = attributesString(attrsObject)
 
-    // Spread directive is handled differentenly based on build:
+    // Spread directive is handled differently based on the target:
     //
-    //  reader, web: Drop all assets (images, videos, etc) into a `fullscreen`
-    //    container so that they can be positioned using custom CSS
+    //  fullbleedContainers (reader, web): Drop all assets (images, videos,
+    //    etc) into a `fullscreen` container so that they can be positioned
+    //    using custom CSS
     //
-    //  epub, mobi: Drop all assets into a section.spread container that is
-    //    initialized as a slider via JS if available. defaults to a simple sequence
-    //    of images
-    //
-    //  pdf: Sequence of images
+    //  otherwise (epub, mobi, pdf): Drop all assets into a section.spread
+    //    container that is initialized as a slider via JS if available.
+    //    defaults to a simple sequence of images
 
-    switch (state.build) {
-      case 'web':
-      case 'reader':
-        return `
+    if (state.target.features.fullbleedContainers) {
+      return `
         <div ${attrsString}>
           <div id="${htmlId(id)}" class="spread__content">`
-      default:
-        return `<section id="${htmlId(id)}" ${attrsString}>`
     }
+    return `<section id="${htmlId(id)}" ${attrsString}>`
   }
 
 export default {
