@@ -30,9 +30,9 @@ class Spine {
       const { fileName } = curr
 
       if (curr.linear === false) {
-        if (state.build === 'mobi') {
+        if (!state.target.features.nonLinearSpine) {
           log.info(
-            `opf templates/spine omitting non-linear asset [${fileName}] for mobi build`
+            `opf templates/spine omitting non-linear asset [${fileName}] for ${state.build} build`
           )
           return acc
         }
