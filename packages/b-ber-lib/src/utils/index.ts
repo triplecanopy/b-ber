@@ -13,6 +13,7 @@ interface EnsureOptions {
   files?: Array<{ absolutePath: string; content: string }>
   dirs?: string[]
   prefix?: string
+  src?: string
 }
 
 interface UnsupportedInlineOptions {
@@ -104,17 +105,21 @@ export const fail = (
   process.exit(0)
 }
 
-const ensureDirs = (dirs: string[], prefix: string): Promise<unknown[]> => {
+const ensureDirs = (
+  dirs: string[],
+  prefix: string,
+  src: string
+): Promise<unknown[]> => {
   const cwd = process.cwd()
   const dirs_ = uniq(
     [
-      `${prefix}/_project`,
-      `${prefix}/_project/_fonts`,
-      `${prefix}/_project/_images`,
-      `${prefix}/_project/_javascripts`,
-      `${prefix}/_project/_markdown`,
-      `${prefix}/_project/_media`,
-      `${prefix}/_project/_stylesheets`,
+      `${prefix}/${src}`,
+      `${prefix}/${src}/_fonts`,
+      `${prefix}/${src}/_images`,
+      `${prefix}/${src}/_javascripts`,
+      `${prefix}/${src}/_markdown`,
+      `${prefix}/${src}/_media`,
+      `${prefix}/${src}/_stylesheets`,
       `${prefix}/themes`,
     ].concat(dirs)
   ).map((a) => fs.ensureDir(path.join(cwd, a)))
@@ -124,11 +129,12 @@ const ensureDirs = (dirs: string[], prefix: string): Promise<unknown[]> => {
 
 const ensureFiles = (
   files: Array<{ absolutePath: string; content: string }>,
-  prefix: string
+  prefix: string,
+  src: string
 ): Promise<unknown[]> => {
   const files_ = [
     {
-      absolutePath: path.resolve(prefix, '_project', 'toc.yml'),
+      absolutePath: path.resolve(prefix, src, 'toc.yml'),
       content: '',
     },
   ]
@@ -144,14 +150,17 @@ const ensureFiles = (
   return Promise.all(files_)
 }
 
-// make sure all necessary files and directories exist
+// make sure all necessary files and directories exist. `src` is the project's
+// source directory, relative to `prefix`; it was always `_project` before
+// TASK-163, whatever the project's `src` was
 export const ensure = ({
   files = [],
   dirs = [],
   prefix = '',
+  src = '_project',
 }: EnsureOptions = {}): Promise<unknown> =>
-  ensureDirs(dirs, prefix)
-    .then(() => ensureFiles(files, prefix))
+  ensureDirs(dirs, prefix, src)
+    .then(() => ensureFiles(files, prefix, src))
     .catch((err) => {
       throw log.error(err)
     })

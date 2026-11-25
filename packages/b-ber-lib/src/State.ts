@@ -1,6 +1,5 @@
 /* eslint-disable no-continue */
 
-import crypto from 'node:crypto'
 import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
@@ -11,12 +10,24 @@ import has from 'lodash/has'
 import merge from 'lodash/merge'
 import remove from 'lodash/remove'
 import set from 'lodash/set'
-import mime from 'mime-types'
+import { type BuildContext, currentBuildContext } from './BuildContext'
 import Config, { type ConfigOptions } from './Config'
 import type GuideItem from './GuideItem'
-import Spine from './Spine'
+import {
+  emptyMetadata,
+  randomHash,
+  readAudioVideo,
+  readBuildSettings,
+  readConfig,
+  readMedia,
+  readMetadata,
+  readTheme,
+  resolveConfig,
+} from './Project'
+import type Spine from './Spine'
 import type SpineItem from './SpineItem'
-import Yaml, { type MetadataEntry } from './Yaml'
+import type Yaml from './Yaml'
+import type { MetadataEntry } from './Yaml'
 
 // What a theme package exports, whether built in or a user's theme loaded with
 // `require`
@@ -52,14 +63,104 @@ export interface FootnotesEntry {
   notes: string
 }
 
-const themes: Record<string, ThemeModule> = {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  'b-ber-theme-serif': require('@canopycanopycanopy/b-ber-theme-serif'),
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  'b-ber-theme-sans': require('@canopycanopycanopy/b-ber-theme-sans'),
+// The fields that belong to one build, or to the project a build reads. While
+// a build runs in a BuildContext they read and write the context instead of
+// the instance (the TASK-160 shim; TASK-163)
+const ROUTED = [
+  'build',
+  'config',
+  'hash',
+  'sequence',
+  'builds',
+  'metadata',
+  'media',
+  'theme',
+  'video',
+  'audio',
+] as const
+type Routed = (typeof ROUTED)[number]
+
+// Outside a build, each of these loads its part of the project on first use,
+// and only that part (the config first, which the others read). `State` used
+// to load all of it in its constructor, when it was imported. Loading one part
+// at a time matters: a module that reads an option from `state.config` when it
+// is imported must not read the whole project from the working directory
+type Part = 'config' | 'metadata' | 'media' | 'audioVideo' | 'builds' | 'theme'
+const PART_OF: Partial<Record<Routed, Part>> = {
+  config: 'config',
+  metadata: 'metadata',
+  media: 'media',
+  video: 'audioVideo',
+  audio: 'audioVideo',
+  builds: 'builds',
+  theme: 'theme',
 }
 
-const randomHash = (): string => crypto.randomBytes(20).toString('hex')
+// `builds` keyed by the context's target. One object per context, because
+// callers mutate it (`state.builds[state.build].spine = …`)
+const contextBuilds = new WeakMap<BuildContext, Record<string, BuildSettings>>()
+const buildsOf = (context: BuildContext): Record<string, BuildSettings> => {
+  let builds = contextBuilds.get(context)
+  if (!builds) {
+    builds = Object.defineProperty({}, context.target, {
+      enumerable: true,
+      get: () => context.settings,
+      set: (settings: BuildSettings) => {
+        // eslint-disable-next-line no-param-reassign
+        context.settings = settings
+      },
+    }) as Record<string, BuildSettings>
+    contextBuilds.set(context, builds)
+  }
+  return builds
+}
+
+const readFromContext = (context: BuildContext, key: Routed): unknown => {
+  switch (key) {
+    case 'build':
+      return context.target
+    case 'config':
+      return context.config
+    case 'hash':
+      return context.hash
+    case 'sequence':
+      return context.sequence
+    case 'builds':
+      return buildsOf(context)
+    default:
+      return context.project[key]
+  }
+}
+
+/* eslint-disable no-param-reassign */
+const writeToContext = (
+  context: BuildContext,
+  key: Routed,
+  value: unknown
+): void => {
+  switch (key) {
+    case 'build':
+      context.target = value as string
+      return
+    case 'config':
+      context.config = value as ConfigOptions
+      return
+    case 'hash':
+      context.hash = value as string
+      return
+    case 'sequence':
+      context.sequence = value as unknown[]
+      return
+    case 'builds': {
+      const settings = (value as Record<string, BuildSettings>)[context.target]
+      if (settings) context.settings = settings
+      return
+    }
+    default:
+      ;(context.project as unknown as Record<string, unknown>)[key] = value
+  }
+}
+/* eslint-enable no-param-reassign */
 
 const skipInitialization = (): boolean => {
   const { argv } = process
@@ -121,9 +222,7 @@ class State {
     }
   }
 
-  metadata: Yaml<MetadataEntry[]> = { json: () => [{}] } as unknown as Yaml<
-    MetadataEntry[]
-  > // mocks the YAML api
+  metadata: Yaml<MetadataEntry[]> = emptyMetadata() // mocks the YAML api
 
   // Empty until `loadTheme` runs, which it does not for `new`, `--help` and
   // `--version`
@@ -157,7 +256,28 @@ class State {
 
   config!: ConfigOptions
 
-  version!: string
+  private loadedParts = new Set<Part>()
+
+  private loadingParts = new Set<Part>()
+
+  private versionCache?: string
+
+  // b-ber-lib's own version, read when first asked for
+  get version(): string {
+    if (this.versionCache) return this.versionCache
+
+    // for testing, since our directory structure is different in dist
+    try {
+      ;({ version: this.versionCache } = fs.readJSONSync(
+        require.resolve('./package.json')
+      ))
+    } catch (err) {
+      ;({ version: this.versionCache } = fs.readJSONSync(
+        require.resolve('../package.json')
+      ))
+    }
+    return this.versionCache as string
+  }
 
   get spine(): Spine {
     return this.builds[this.build].spine
@@ -286,28 +406,85 @@ class State {
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
   }
 
+  // Reads nothing. Each part of the project is loaded on first use
+  // (`loadPart`), or a build runs in a BuildContext and the routed fields
+  // read that instead
   constructor() {
-    let version: string
+    const self = this as unknown as Record<string, unknown>
+    const local: Record<string, unknown> = {}
 
-    // for testing, since our directory structure is different in dist
-    try {
-      ;({ version } = fs.readJSONSync(require.resolve('./package.json')))
-    } catch (err) {
-      ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
+    for (const key of ROUTED) {
+      local[key] = self[key]
+      Object.defineProperty(this, key, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+          const context = currentBuildContext()
+          if (context) return readFromContext(context, key)
+          const part = PART_OF[key]
+          if (part) this.loadPart(part)
+          return local[key]
+        },
+        set: (value: unknown) => {
+          const context = currentBuildContext()
+          if (context) {
+            writeToContext(context, key, value)
+            return
+          }
+          // Load first, so that the value set is not then replaced by the
+          // project's, the order it happened in when State loaded on import
+          const part = PART_OF[key]
+          if (part) this.loadPart(part)
+          local[key] = value
+        },
+      })
     }
-
-    set(this, 'version', version!)
-    set(this, 'config', new Config())
-
-    this.reset()
-    this.loadMetadata()
-    this.loadAudioVideo()
-    this.loadMedia()
-    this.loadBuilds()
-    this.loadTheme()
   }
 
+  // Loads one part of the project from the working directory, once. Together
+  // the parts are what the constructor loaded before TASK-163
+  private loadPart = (part: Part): void => {
+    if (this.loadedParts.has(part) || this.loadingParts.has(part)) return
+    this.loadingParts.add(part)
+    try {
+      if (part === 'config') {
+        // Not `reset()`, as the constructor called: the fields' initialisers
+        // already hold its defaults, and resetting on first use would discard
+        // what was set before it (a `sequence`)
+        set(this, 'config', new Config())
+        this.loadConfig()
+      } else {
+        this.loadPart('config')
+        const loaders: Record<Exclude<Part, 'config'>, () => void> = {
+          metadata: this.loadMetadata,
+          media: this.loadMedia,
+          audioVideo: this.loadAudioVideo,
+          builds: this.loadBuilds,
+          theme: this.loadTheme,
+        }
+        loaders[part]()
+      }
+    } finally {
+      this.loadingParts.delete(part)
+      this.loadedParts.add(part)
+    }
+  }
+
+  // In a build, gives the build a new hash and re-resolves its config from
+  // the project. It never changes which target is building
   reset = (): void => {
+    const context = currentBuildContext()
+    if (context) {
+      context.hash = randomHash()
+      context.sequence = []
+      context.config = resolveConfig(
+        context.project.config,
+        context.target,
+        context.project.overrides
+      )
+      return
+    }
+
     Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
     this.loadConfig()
   }
@@ -377,140 +554,42 @@ class State {
     return findIndex(collection, pred)
   }
 
+  // Each loader keeps its old guard: a missing file leaves the field as it
+  // is. The reading itself is in Project.ts, shared with `loadProject`
   loadConfig = (): void => {
     if (!fs.existsSync(path.resolve('config.yml'))) return
-
-    const config = new Yaml<Partial<ConfigOptions>>('config')
-    config.load(path.resolve('config.yml'))
-
-    // not necessary right now to pass around a YAWN instance since we'er
-    // not writing back to config.yml, but may be necessary at some point
-    set(this, 'config', new Config(config.json()))
+    set(this, 'config', readConfig())
   }
 
   loadMetadata = (): void => {
     const fpath = path.resolve(this.config.src as string, 'metadata.yml')
     if (!fs.existsSync(fpath)) return
-
-    set(this, 'metadata', new Yaml<MetadataEntry[]>('metadata'))
-    this.metadata.load(fpath)
+    set(this, 'metadata', readMetadata(this.config.src as string))
   }
 
   loadMedia = (): void => {
     const fpath = path.resolve(this.config.src as string, 'media.yml')
     if (!fs.existsSync(fpath)) return
-
-    const mediaYaml = new Yaml<State['media']>('media')
-    mediaYaml.load(fpath)
-    const media = mediaYaml.json()
-
-    set(this, 'media', media)
+    set(this, 'media', readMedia(this.config.src as string))
   }
 
   loadTheme = (): void => {
     // Ensure themes dir exists unless running `new` command, as it's the
     // only command that's run outside of a project directory
     if (skipInitialization()) return
-
-    const userThemesPath = path.resolve(this.config.themes_directory as string)
-
-    fs.ensureDirSync(userThemesPath)
-
-    // Add modules path that references the current b-ber project's theme dir
-    module.paths.push(userThemesPath)
-
-    const cwd = process.cwd()
-    const cwdArr = cwd.split('/')
-    const modulePaths = new Set([...module.paths])
-
-    let cwdPath: string
-
-    // Add modules paths that reference the current b-ber project
-    do {
-      cwdPath = `${cwdArr.join('/')}/node_modules`
-      if (modulePaths.has(cwdPath)) continue
-
-      module.paths.push(cwdPath)
-    } while (cwdArr.pop())
-
-    const themeName = this.config.theme as string
-
-    // Theme is set, using a built-in theme
-    if (themes[themeName]) {
-      set(this, 'theme', themes[themeName])
-      log.info(`Loaded theme [${themeName}]`)
-
-      return
-    }
-
-    // Possibly a user defined theme, or one installed with npm
-    try {
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      set(this, 'theme', require(themeName))
-      log.info(`Loaded theme [${themeName}]`)
-    } catch (err) {
-      log.warn(`There was an error during require [${themeName}]`)
-      log.warn('Using default theme [b-ber-theme-serif]')
-      log.warn((err as Error).message)
-
-      // Error loading theme, set to default
-      set(this, 'theme', themes['b-ber-theme-serif'])
-    }
+    set(this, 'theme', readTheme(this.config))
   }
 
   loadAudioVideo = (): void => {
     if (skipInitialization()) return
-
-    const mediaPath = path.resolve(this.config.src as string, '_media')
-    fs.ensureDirSync(mediaPath)
-
-    const media = fs.readdirSync(mediaPath)
-    const video = media.filter((a) => /^video/.test(mime.lookup(a) as string))
-    const audio = media.filter((a) => /^audio/.test(mime.lookup(a) as string))
-
+    const { audio, video } = readAudioVideo(this.config.src as string)
     set(this, 'video', video)
     set(this, 'audio', audio)
   }
 
   loadBuildSettings = (type: string): BuildSettings | undefined => {
     if (skipInitialization()) return undefined
-
-    const src = this.config.src as string
-    const dist = this.config.dist as string
-    const projectDir = path.resolve(src)
-
-    if (!fs.existsSync(projectDir))
-      throw log.error(`Project directory [${projectDir}] does not exist`)
-
-    // One TOC to rule them all (toc.yml). A user can override the TOC for a
-    // specific build by including a <type>.yml file, which will be loaded
-    // instead of toc.yml below.
-    const navigationConfigFileDefaultPath = path.resolve(src, 'toc.yml')
-    const navigationConfigFilePath = path.resolve(src, `${type}.yml`)
-    const navigationConfigFile = fs.existsSync(navigationConfigFilePath)
-      ? navigationConfigFilePath
-      : navigationConfigFileDefaultPath
-
-    const spine = new Spine({ src, buildType: type, navigationConfigFile })
-
-    // Build-specific config. gets merged into base config during build step
-    const config = this.config[type]
-      ? { ...(this.config[type] as Record<string, unknown>) }
-      : {}
-
-    return {
-      src,
-      dist: `${dist}-${type}`,
-      config,
-      guide: [],
-      spine,
-      toc: spine.nested,
-      cursor: [],
-      figures: [],
-      footnotes: [],
-      remoteAssets: [],
-      loi: [],
-    }
+    return readBuildSettings(this.config, type)
   }
 
   loadBuilds = (): void => {

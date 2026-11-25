@@ -101,7 +101,8 @@ failure in code. A new command registers `noExtraArguments` in its builder;
 `index.ts` reads `--quiet`, `--verbose`, `--debug`, `--log-level=N` (or
 `--log-level N`), `--no-color` and `--summary` with `loggerOptions` and calls
 `log.configure` **before** it imports `app.ts`. The import is dynamic for that
-reason: the commands import b-ber-lib's `State`, which reads the project, and
+reason: the commands import b-ber-lib's `State`, which reads `config.yml` as
+soon as a task module asks it for an option (since TASK-163, nothing more), and
 can log or fail, while it loads.
 
 `loggerOptions` also chooses the reporter (b-ber-logger's AGENTS.md describes
@@ -133,6 +134,12 @@ npm run typecheck  # tsc --noEmit type check without building
 This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
+- **`bber build` reads the project with `loadProject` and runs each target in
+  its own `BuildContext` (`runBuild`)** (TASK-163). The `--config` file and the
+  flags are validated against `config.yml` (`readConfig`), each warned about or
+  announced once, and passed to `loadProject` as overrides, so they apply
+  before anything reads the project. The handler no longer resets `State` or
+  sets `state.build`.
 - All command handlers must remain thin: validate input, update `State`, call
   into `b-ber-tasks`. Avoid adding build logic directly in a command file.
 - Wrap every handler in `exitOnFailure`, and register `fail` from
@@ -141,7 +148,7 @@ Additional standards for this package:
   finds itself (`parseConfigFile`) is `throw log.error(...)`, as everywhere
   else.
 - Config overrides passed via `--config` or CLI flags are validated against
-  `state.config` keys before being applied; unknown or blacklisted keys are
+  the keys of `config.yml` over the defaults before being applied; unknown or blacklisted keys are
   warned and discarded — preserve this pattern in new commands.
 - The `blacklistedConfigOptions` set in `src/lib/config-options.ts` must be
   kept in sync with any config keys that cannot be safely overridden at

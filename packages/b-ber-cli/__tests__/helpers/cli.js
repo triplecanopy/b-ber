@@ -33,6 +33,29 @@ const createMockState = () => {
   return state
 }
 
+// b-ber-lib's build API, for tests that mock State. The project is
+// config.yml's defaults, and runBuild runs each target in turn, stopping at a
+// failure, as the real one does. b-ber-lib's own tests cover the contexts.
+const createMockBuildApi = () => {
+  const { default: Config } = require('../../../b-ber-lib/src/Config')
+  const { mergeConfig } = jest.requireActual('../../../b-ber-lib/src/Project')
+  return {
+    mergeConfig,
+    readConfig: jest.fn(() => new Config()),
+    loadProject: jest.fn((root, overrides) => ({
+      root,
+      config: new Config(),
+      overrides,
+    })),
+    runBuild: jest.fn((project, targets, build) =>
+      targets.reduce(
+        (previous, target) => previous.then(() => build({ project, target })),
+        Promise.resolve()
+      )
+    ),
+  }
+}
+
 // Replaces process.exit with a no-op, so that a test can assert on the exit
 // and carry on.
 const mockProcessExit = () => {
@@ -88,6 +111,7 @@ const runCli = (args, setup = () => {}) => {
     jest.isolateModules(() => {
       modules.tasks = require('@canopycanopycanopy/b-ber-tasks')
       modules.state = require('@canopycanopycanopy/b-ber-lib/State')
+      modules.lib = require('@canopycanopycanopy/b-ber-lib')
       modules.utils = require('@canopycanopycanopy/b-ber-lib/utils')
       modules.Theme = require('@canopycanopycanopy/b-ber-lib/Theme')
       modules.log = interopDefault(require('@canopycanopycanopy/b-ber-logger'))
@@ -114,6 +138,7 @@ const runCli = (args, setup = () => {}) => {
 }
 
 module.exports = {
+  createMockBuildApi,
   createMockState,
   flushPromises,
   mockProcessExit,

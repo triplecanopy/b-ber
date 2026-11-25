@@ -9,6 +9,8 @@
 | File                            | Purpose                                                                                        |
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `src/State.ts`                  | Central build state singleton; holds config, spine, metadata, figures, footnotes, path helpers |
+| `src/Project.ts`                | Reads a project explicitly: `loadProject`, the loaders `State` shares, config layering (`resolveConfig`, `mergeConfig`) |
+| `src/BuildContext.ts`           | One build of one target (`createBuildContext`, `runBuild`), held in an `AsyncLocalStorage` while it runs |
 | `src/Config.ts`                 | Constructs project config by deep-merging `config.yml` over defaults                           |
 | `src/Spine.ts`                  | Reads `toc.yml`; builds nested + flattened page-flow for each build type                       |
 | `src/SpineItem.ts`              | Data model for a single spine entry                                                            |
@@ -38,6 +40,25 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - `State` is a singleton exported as `export default new State()`. Do not instantiate it elsewhere; import the instance.
+- **`State` reads nothing when it is imported** (TASK-163). Each part of the
+  project (config, metadata, media, audio/video, builds, theme) loads from the
+  working directory the first time one of its fields is read, and only that
+  part, after the config. Code that reads `state.config` at import therefore
+  loads only `config.yml`.
+- **During `bber build`, `State` is a shim over a `BuildContext`.** The CLI
+  reads the project once with `loadProject` (flags applied first) and runs
+  each target in its own context. While one runs, `State`'s per-build fields
+  (`build`, `config`, `hash`, `sequence`, `builds`, and `metadata`, `media`,
+  `theme`, `video`, `audio`) read and write the context instead of the
+  instance, so targets stay apart. `reset()` in a context re-resolves the
+  target's config and never changes the target. Outside a context `State`
+  behaves as it always has. New code should take the context
+  (`currentBuildContext()`, or passed in) rather than read `State`; the shim
+  goes when nothing imports `State` (TASK-173).
+- **Config resolves in layers:** defaults ← `config.yml` ← its `<target>:`
+  section ← `--config` ← CLI flags (`resolveConfig`). `mergeConfig` merges
+  objects key by key and replaces arrays; do not use lodash `merge` or
+  `defaultsDeep` for config, which merge arrays by index.
 - `Config` constructor returns a plain object (via `defaultsDeep`) rather than a class instance; treat the result as a POJO.
 - All file system operations use `fs-extra` rather than the native `fs` module.
 - Read and write YAML through `YamlAdaptor`, never `js-yaml` directly. Its

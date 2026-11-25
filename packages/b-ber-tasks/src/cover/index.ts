@@ -86,6 +86,12 @@ class Cover {
 
   // Necessary to flush the state if running in sequence with other builds
   loadInitialState = async () => {
+    // Where metadata.yml is, for the build that is running. Worked out when
+    // the module was imported until TASK-163, from the source directory of
+    // that moment, so `--src` read `_project/metadata.yml`. The metadata the
+    // generated cover draws (`this.metadata`) is still read at import:
+    // TASK-165 makes this task a function of the build context
+    this.metadataYAML = state.src.root('metadata.yml')
     this.posY = 0
     this.coverXHTMLContent = ''
     this.coverEntry = ''
