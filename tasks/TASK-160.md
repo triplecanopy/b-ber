@@ -434,7 +434,8 @@ output, so it needs its own PR.
 
 ## Subtasks
 
-- [ ] Review this design; record decisions and changes below
+- [x] Review this design; record decisions and changes below. Agreed
+      2026-11-25; the decisions are in "Findings", dated 2026-11-24 and 2026-11-25
 - [x] Decide `TargetFeatures`: list every `state.build` branch (~30) and
       group them into named features. 37 branches, six flags plus a figure
       template table per target. See Design and Findings

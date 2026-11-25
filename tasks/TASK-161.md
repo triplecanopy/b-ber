@@ -709,7 +709,8 @@ The `key "value"` removal, decided in "Decisions", was done early in TASK-145
 
 ## Subtasks
 
-- [ ] Review this design; record decisions and changes below
+- [x] Review this design; record decisions and changes below. Agreed
+      2026-11-25; the decisions are in "Decisions (2026-11-25)" and Findings
 - [x] Specify the directive syntax precisely (names, id rules, both attribute
       forms, nesting, what `exit` may close), from the shapes, the
       validator's combinators and the current parsers. Today it exists only
