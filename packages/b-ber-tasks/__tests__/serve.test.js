@@ -41,8 +41,8 @@ let builds
 let project
 
 // A project for the build the test serves. Its cleanup puts State back
-const setup = async (build) => {
-  project = await createProject({ build })
+const setup = async (build, options = {}) => {
+  project = await createProject({ build, ...options })
 }
 
 beforeEach(() => {
@@ -79,7 +79,7 @@ describe('task: serve', () => {
     expect(initOptions()).toMatchObject({
       port: 4000,
       open: false,
-      server: { baseDir: path.resolve('project-reader') },
+      server: { baseDir: project.dist },
     })
     expect(builds).toHaveLength(1)
     expect(builds[0].sequence).toBe(sequences.reader)
@@ -89,7 +89,7 @@ describe('task: serve', () => {
     await setup('web')
     await serve({ build: 'web' })
 
-    expect(initOptions().server.baseDir).toBe(path.resolve('project-web'))
+    expect(initOptions().server.baseDir).toBe(project.dist)
     expect(builds[0]).toEqual({
       sequence: sequences.web,
       build: 'web',
@@ -163,23 +163,24 @@ describe('task: serve', () => {
     expect(mockBrowserSync.reload).toHaveBeenCalledTimes(1)
   })
 
-  // Defect: the server root and the watched files are fixed paths
-  // (src/serve/index.ts:38, 71): `project-<build>` and `_project/`, resolved
-  // against the working directory. The watched paths are worked out when the
-  // module is imported. A project whose config.yml sets `src` or `dist` is
-  // served from, and watched in, directories that do not exist.
-  test('serves and watches the default directories, ignoring src and dist (defect)', async () => {
-    await setup('web')
-    state.config.src = 'book'
-    state.config.dist = 'out'
+  // The server root and the watched files used to be fixed paths,
+  // `project-<build>` and `_project/`, worked out when the module was
+  // imported. A project whose config.yml set `src` or `dist` was served
+  // from, and watched in, directories that did not exist
+  test('serves the build directory and watches the source directory config.yml names', async () => {
+    await setup('web', { dist: 'out' })
+    const src = path.join(project.root, 'book')
+    state.config.src = src
 
     await serve({ build: 'web' })
 
-    expect(initOptions().server.baseDir).toBe(path.resolve('project-web'))
+    expect(initOptions().server.baseDir).toBe(
+      path.join(project.root, 'out-web')
+    )
     expect(initOptions().files[0].match).toEqual([
-      path.resolve('_project', '**', '*.scss'),
-      path.resolve('_project', '**', '*.js'),
-      path.resolve('_project', '**', '*.md'),
+      path.join(src, '**', '*.scss'),
+      path.join(src, '**', '*.js'),
+      path.join(src, '**', '*.md'),
     ])
   })
 })

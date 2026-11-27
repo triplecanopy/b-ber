@@ -32,12 +32,15 @@ const reload = () => update().then(() => browserSync.reload())
 // actual job, diffing and injecting HTML, was redundant against the full reload
 // `fn` already performs. Removing it drops the abandoned `request` and `xmldom`
 // packages, whose advisories can never be patched.
-const watchFiles = [
+//
+// Worked out once the build is set, from the project's source directory: they
+// used to be fixed at `_project/` when the module was imported
+const watchFiles = () => [
   {
     match: [
-      path.resolve('_project', '**', '*.scss'),
-      path.resolve('_project', '**', '*.js'),
-      path.resolve('_project', '**', '*.md'),
+      path.resolve(state.srcDir, '**', '*.scss'),
+      path.resolve(state.srcDir, '**', '*.js'),
+      path.resolve(state.srcDir, '**', '*.md'),
     ],
     fn: debounce(() => reload(), debounceSpeed, {
       leading: false,
@@ -59,7 +62,9 @@ const browserSyncMiddleware = (
   next()
 }
 
-const init = (build: string) =>
+// Serves the build's own directory, which config.yml's `dist` names. It used to
+// be `project-<build>` whatever `dist` said
+const init = () =>
   new Promise<void>((resolve) => {
     const options = {
       port,
@@ -68,10 +73,10 @@ const init = (build: string) =>
       // reloadDebounce: 2000
       // reloadThrottle: 2000
       server: {
-        baseDir: path.resolve(`project-${build}`),
+        baseDir: path.resolve(state.distDir),
         middleware: [browserSyncMiddleware],
       },
-      files: watchFiles,
+      files: watchFiles(),
     }
 
     browserSync.init(options, () => resolve())
@@ -99,7 +104,8 @@ const serve = async ({
   const location = external ? 'external' : 'local'
   const build = buildOption || 'reader'
 
-  await init(build)
+  state.update('build', build)
+  await init()
 
   const url = browserSync.getOption('urls').get(location)
 
