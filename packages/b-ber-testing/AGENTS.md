@@ -82,8 +82,9 @@ would say nothing about the branch (TASK-130). Requires `npm run build` first;
 `globalSetup` fails fast without it. Override with `BBER_BIN=<entry script>`.
 
 **Golden output** (TASK-152) — `golden.spec.ts` builds the kitchen-sink
-fixture as epub, web, reader and sample, normalizes the output, and compares
-every file with `tests/cli/__golden__/<format>/`. `FILES.txt` in each lists
+fixture as epub, web, reader, sample and xml, normalizes the output, and
+compares every file with `tests/cli/__golden__/<format>/`. xml's document,
+which it writes to the project root, is compared under `xml/_root/`. `FILES.txt` in each lists
 every output file, with a hash for binaries, so an added or removed file fails
 too. When a change is *meant* to alter output, regenerate and commit the
 snapshot, and review its diff like code:
@@ -96,7 +97,7 @@ Playwright does not delete the snapshot of a file a build stops writing;
 delete `tests/cli/__golden__/<format>/` first to drop stale copies. Every rule
 in `golden/normalize.ts` hides something from the comparison, so each is
 pinned by `normalize.spec.ts` and listed in `tasks/TASK-152.md`. mobi and pdf
-are left out (Calibre and wkhtmltopdf are not on CI), and xml until #766.
+are left out (Calibre and wkhtmltopdf are not on CI).
 
 **Skipped reader tests** — six navigation/edge-case tests are `test.skip`ped
 because they fail on `main`, mostly by timing out at 120s. Reworking them is

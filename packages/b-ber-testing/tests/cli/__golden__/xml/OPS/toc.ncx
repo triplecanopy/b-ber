@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+          
+      <head>
+        <meta name="dtb:uid" content="kitchen-sink-b-ber-fixture-001"/>
+        <meta name="dtb:depth" content="1"/>
+        <meta name="dtb:totalPageCount" content="1"/>
+        <meta name="dtb:maxPageNumber" content="1"/>
+      </head>
+    
+          
+      <docTitle>
+        <text>Kitchen Sink</text>
+      </docTitle>
+    
+          
+      <docAuthor>
+        <text>Triple Canopy</text>
+      </docAuthor>
+    
+          <navMap>
+            
+          <navPoint id="navPoint-1" playOrder="1">
+            
+      <navLabel>
+        <text>Kitchen Sink</text>
+      </navLabel>
+      <content src="text/kitchen-sink-title-page.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-2" playOrder="2">
+            
+      <navLabel>
+        <text>Copyright</text>
+      </navLabel>
+      <content src="text/kitchen-sink-copyright.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-3" playOrder="3">
+            
+      <navLabel>
+        <text>Chapter One</text>
+      </navLabel>
+      <content src="text/kitchen-sink-chapter-01.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-4" playOrder="4">
+            
+      <navLabel>
+        <text>Chapter Two</text>
+      </navLabel>
+      <content src="text/kitchen-sink-chapter-02.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-5" playOrder="5">
+            
+      <navLabel>
+        <text>Chapter Three</text>
+      </navLabel>
+      <content src="text/kitchen-sink-chapter-03.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-6" playOrder="6">
+            
+      <navLabel>
+        <text>Spread — Single</text>
+      </navLabel>
+      <content src="text/kitchen-sink-spread-single.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-7" playOrder="7">
+            
+      <navLabel>
+        <text>Spread — Consecutive</text>
+      </navLabel>
+      <content src="text/kitchen-sink-spread-consecutive.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-8" playOrder="8">
+            
+      <navLabel>
+        <text>Spread — Edges</text>
+      </navLabel>
+      <content src="text/kitchen-sink-spread-edges.xhtml" />
+    
+            
+          </navPoint>
+        
+          <navPoint id="navPoint-9" playOrder="9">
+            
+      <navLabel>
+        <text>Colophon</text>
+      </navLabel>
+      <content src="text/kitchen-sink-colophon.xhtml" />
+    
+            
+          </navPoint>
+        
+          </navMap>
+        </ncx>
+      
