@@ -23,4 +23,4 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - All transforms are synchronous
-- Build-target branching is in the `render` function switch statement; closing HTML for reader/web builds is emitted by `b-ber-grammar-section`'s exit handler
+- The full-bleed container opens in `render` where `state.target.features.fullbleedContainers` is set (web, reader); its closing HTML is emitted by `b-ber-grammar-section`'s exit handler

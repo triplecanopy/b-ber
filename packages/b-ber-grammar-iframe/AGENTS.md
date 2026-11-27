@@ -24,5 +24,5 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - All transforms are synchronous
-- `supported(build)` determines whether inline rendering is available; unsupported builds receive a placeholder from `b-ber-lib/utils`
+- The target's `liveEmbeds` feature determines whether inline rendering is available; other targets receive a placeholder from `b-ber-lib/utils`
 - Standard iframe HTML attributes are filtered through `htmlIframeAttributes` from `b-ber-shapes-directives`

@@ -20,7 +20,7 @@ Provides JavaScript template classes used by the b-ber build pipeline to generat
 | `src/Xhtml/`          | XHTML page template: head, body, stylesheet/script link tags, cover SVG, LOI section                                                      |
 | `src/Xml/`            | `META-INF/container.xml` template and mimetype string                                                                                     |
 | `src/Project/`        | Scaffolding templates for new projects: directories, `toc.yml`, `metadata.yml`, starter Markdown, `config.yml`, `.gitignore`, `README.md` |
-| `src/figures/`        | Figure markup dispatcher; delegates to `epub.ts`, `mobi.ts`, `reader.ts`, `web.ts` by media type and build target                         |
+| `src/figures/`        | Figure markup dispatcher; delegates to `epub.ts`, `mobi.ts`, `reader.ts`, `web.ts` by media type and the target's `figureTemplates`                 |
 | `__tests__/`          | Jest snapshot tests for Toc, Xhtml, Xml, Project, and all figure variants                                                                 |
 | `dist/`               | Compiled output (single bundle via tsdown; do not edit by hand)                                                                           |
 
