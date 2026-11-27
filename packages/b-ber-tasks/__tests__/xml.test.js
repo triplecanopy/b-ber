@@ -130,17 +130,16 @@ describe('task: xml', () => {
     })
   })
 
-  // Defect: SpineItem's `absolutePath` is `project-<build>/OPS/...`, resolved
-  // against the working directory (b-ber-lib/src/SpineItem.ts:68), whatever
-  // `dist` config.yml sets. With `dist: _builds`, as the kitchen-sink fixture
-  // has, render writes to `_builds-xml/` and xml reads from `project-xml/`.
-  test('reads the pages from project-<build>, ignoring `dist` (defect)', async () => {
+  // SpineItem's `absolutePath` used to be `project-<build>/OPS/...` whatever
+  // `dist` config.yml set (#766). With `dist: _builds`, as the kitchen-sink
+  // fixture has, render wrote to `_builds-xml/` and xml read from
+  // `project-xml/`, so `bber build xml` failed
+  test('reads the pages from the build directory `dist` names (#766)', async () => {
     await build({ dist: '_builds', toc: ['one'], markdown: { one: 'One' } })
     expect(fs.existsSync(path.join('_builds-xml', 'OPS', 'text'))).toBe(true)
 
-    await expect(xml()).rejects.toMatchObject({
-      code: 'ENOENT',
-      path: path.join(project.root, 'project-xml', 'OPS', 'text', 'one.xhtml'),
-    })
+    await xml()
+
+    expect(await readXml()).toContain('<p>One</p>')
   })
 })

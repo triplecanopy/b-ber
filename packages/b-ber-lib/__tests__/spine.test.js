@@ -11,7 +11,7 @@ jest.mock('glob', () => ({
 
 const OPTIONS = {
   src: '/fake',
-  buildType: 'epub',
+  dist: 'project-epub',
   navigationConfigFile: '/fake/toc.yml',
 }
 

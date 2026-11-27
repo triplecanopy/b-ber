@@ -70,7 +70,7 @@ export async function createProject({
 
   const spine = new Spine({
     src,
-    buildType: build,
+    dist,
     navigationConfigFile: path.join(src, 'toc.yml'),
   })
 

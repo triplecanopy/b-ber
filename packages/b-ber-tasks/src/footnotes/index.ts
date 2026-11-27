@@ -34,7 +34,7 @@ class Footnotes {
       in_toc: false,
       linear: false,
       generated: true,
-      buildType: state.build,
+      dist: state.distDir,
     })
 
     state.add('spine.flattened', fileData)

@@ -43,12 +43,7 @@ const createLOILeader = () => {
     }
 
     state.add('spine.entries', baseName)
-    // Defect, see #757: no `buildType`, so this item's `absolutePath` reads
-    // `project-undefined`. The cast keeps it as it is until then
-    state.add(
-      'spine.nested',
-      new SpineItem(item as ConstructorParameters<typeof SpineItem>[0])
-    )
+    state.add('spine.nested', new SpineItem({ ...item, dist: state.distDir }))
     state.add('spine.flattened', item)
   }
 
@@ -84,13 +79,12 @@ const createLOIAsSeparateHTMLFiles = () => {
     const markup = Template.render(figures, Xhtml.body())
     const { page: fileName, ref, pageOrder } = data
     const in_toc = false //eslint-disable-line camelcase
-    const buildType = state.build
     const spineItem = new SpineItem({
       fileName,
       in_toc,
       ref,
       pageOrder,
-      buildType,
+      dist: state.distDir,
     })
 
     state.add('loi', spineItem)

@@ -167,7 +167,8 @@ export function readBuildSettings(
     ? navigationConfigFilePath
     : navigationConfigFileDefaultPath
 
-  const spine = new Spine({ src, buildType: type, navigationConfigFile })
+  const buildDist = `${dist}-${type}`
+  const spine = new Spine({ src, dist: buildDist, navigationConfigFile })
 
   // The build's own section of config.yml. `resolveConfig` merges it; it is
   // kept here as well, as it always has been
@@ -177,7 +178,7 @@ export function readBuildSettings(
 
   return {
     src,
-    dist: `${dist}-${type}`,
+    dist: buildDist,
     config: section,
     guide: [],
     spine,
