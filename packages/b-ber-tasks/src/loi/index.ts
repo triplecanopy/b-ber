@@ -31,20 +31,26 @@ const createLOILeader = () => {
     (item: { fileName: string }) => item.fileName === baseName
   )
 
-  // If not, add it to state.spine so that it can be referenced
-  // in the content.opf
+  // If not, add it to state.spine so that it can be referenced in the
+  // content.opf, as the same item a TOC that lists it would give. The flat
+  // list used to get a plain object with no `linear` or `absolutePath`: the
+  // OPF marked the page non-linear, the web build left it out of the reading
+  // order, and the xml build failed on it (#757)
   if (index < 0) {
-    const item = {
+    const item = new SpineItem({
       fileName: baseName,
       in_toc: true,
       ref: null,
       pageOrder: -1,
       generated: true,
-    }
+      dist: state.distDir,
+    })
+    // The flat list holds items without their children, as Spine makes it
+    const { nodes, ...flattened } = item
 
     state.add('spine.entries', baseName)
-    state.add('spine.nested', new SpineItem({ ...item, dist: state.distDir }))
-    state.add('spine.flattened', item)
+    state.add('spine.nested', item)
+    state.add('spine.flattened', flattened)
   }
 
   log.info(`loi emit default figures titlepage [${fileName}]`)

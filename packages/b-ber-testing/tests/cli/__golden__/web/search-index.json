@@ -49,6 +49,12 @@
   },
   {
     "id": "{id}",
+    "title": "Figures",
+    "body": "\n      \n      \n        \n          Figures\n        \n      \n    window.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figures-titlepage.xhtml"
+  },
+  {
+    "id": "{id}",
     "title": "",
     "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
     "url": "/text/figurespread-consec-f1.xhtml"

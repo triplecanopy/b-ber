@@ -1,4 +1,5 @@
 import path from 'node:path'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import loi from '../src/loi'
@@ -81,6 +82,28 @@ describe('task: loi', () => {
       const page = await read('figures-titlepage.xhtml')
       expect(page).toContain('Figures')
       expect(page).not.toContain('a.png')
+    })
+
+    // The TOC here does not list the title page, so loi adds it. It used to add
+    // a plain object to the flat list, with no `linear` or `absolutePath`
+    test('adds the title page to the spine as a TOC that lists it would (#757)', async () => {
+      await build({ images: { 'a.png': [400, 300] } })
+
+      const entry = state.spine.flattened.find(
+        (e) => e.fileName === 'figures-titlepage'
+      )
+      expect(entry).toMatchObject({
+        linear: true,
+        in_toc: true,
+        generated: true,
+        absolutePath: path.join(
+          project.dist,
+          'OPS',
+          'text',
+          'figures-titlepage'
+        ),
+      })
+      expect(entry).not.toHaveProperty('nodes')
     })
 
     test("each figure's page shows its image, linked back to the text", async () => {
