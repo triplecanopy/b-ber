@@ -27,10 +27,6 @@ describe('b-ber-markdown-renderer', () => {
     expect(typeof markdownRenderer.render).toBe('function')
   })
 
-  it('exposes a prepare() method', () => {
-    expect(typeof markdownRenderer.prepare).toBe('function')
-  })
-
   it('exposes a template() method', () => {
     expect(typeof markdownRenderer.template).toBe('function')
   })
@@ -51,11 +47,6 @@ describe('b-ber-markdown-renderer', () => {
     markdownRenderer.fileName = 'chapter-01'
     const result = markdownRenderer.template('title: Test')
     expect(result).toContain('fileName: chapter-01')
-  })
-
-  it('prepare() returns a string', () => {
-    const result = markdownRenderer.prepare('# Hello\n\nParagraph text.\n')
-    expect(typeof result).toBe('string')
   })
 
   it('render() converts a plain paragraph to HTML', () => {
@@ -286,6 +277,107 @@ describe('b-ber-markdown-renderer: blocks', () => {
       // item's end
       expect(html.indexOf('END: section:pullquote#q1')).toBeLessThan(
         html.indexOf('Second item.')
+      )
+    })
+  })
+
+  // A `media` line is resolved for the target when it renders. A pre-pass
+  // used to splice the replacement into the Markdown before the parse, per
+  // target, and rewrote it inside fenced code too (TASK-175)
+  describe('media', () => {
+    let state
+    let saved
+
+    beforeEach(() => {
+      state = require('@canopycanopycanopy/b-ber-lib').State
+      saved = { build: state.build, media: state.media }
+      // What the media resolves to adds to the build's figures
+      for (const build of ['epub', 'web']) {
+        state.update(`builds.${build}`, {
+          guide: [],
+          spine: { frontMatter: new Map(), flattened: [] },
+          figures: [],
+          footnotes: [],
+        })
+      }
+      state.update('media', {
+        m: {
+          epub: {
+            type: 'iframe',
+            source: 'https://example.com/e',
+            caption: 'Cap',
+          },
+          web: { type: 'iframe', source: 'https://example.com/w' },
+        },
+        s: { epub: { type: 'soundcloud', source: 'x' } },
+      })
+    })
+
+    afterEach(() => {
+      state.update('build', saved.build)
+      state.update('media', saved.media)
+    })
+
+    it.each([
+      [
+        'epub',
+        '::: iframe-inline:m source:"https://example.com/e"\n:: Cap\n::\n',
+      ],
+      ['web', '::: iframe-inline:m source:"https://example.com/w"\n'],
+    ])('renders as the directive media.yml names for %s', (build, written) => {
+      state.update('build', build)
+      expect(markdownRenderer.render('test', '::: media-inline:m\n')).toBe(
+        markdownRenderer.render('test', written)
+      )
+    })
+
+    // Books write the caption under the line for the targets whose media.yml
+    // entry has none
+    it('takes the caption written under the line when media.yml has none', () => {
+      state.update('build', 'web')
+      expect(
+        markdownRenderer.render('test', '::: media-inline:m\n:: Written\n::\n')
+      ).toBe(
+        markdownRenderer.render(
+          'test',
+          '::: iframe-inline:m source:"https://example.com/w"\n:: Written\n::\n'
+        )
+      )
+    })
+
+    // The pre-pass wrote media.yml's caption into the Markdown, which left the
+    // written one as text after the directive
+    it('uses media.yml’s caption when it has one, leaving the written one as text', () => {
+      state.update('build', 'epub')
+      const html = markdownRenderer.render(
+        'test',
+        '::: media-inline:m\n:: Written\n::\n'
+      )
+      expect(html).toBe(
+        markdownRenderer.render(
+          'test',
+          '::: iframe-inline:m source:"https://example.com/e"\n:: Cap\n::\n\n:: Written\n::\n'
+        )
+      )
+      expect(html).toContain('<p>:: Written\n::</p>')
+    })
+
+    it('is code inside fenced code', () => {
+      expect(
+        markdownRenderer.render('test', '```\n::: media-inline:m\n```\n')
+      ).toBe('<pre><code>::: media-inline:m\n</code></pre>\n')
+    })
+
+    it('renders a type no grammar claims as text, as it did', () => {
+      state.update('build', 'epub')
+      expect(markdownRenderer.render('test', '::: media:s\n')).toBe(
+        '<p>::: soundcloud:s source:&quot;x&quot;</p>\n'
+      )
+    })
+
+    it('throws for an id media.yml lacks', () => {
+      expect(() => markdownRenderer.render('test', '::: media:zzz\n')).toThrow(
+        'Missing ID [zzz] in media.yml.'
       )
     })
   })

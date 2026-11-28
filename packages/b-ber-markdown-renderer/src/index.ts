@@ -6,11 +6,12 @@ import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
 import markdownItIframe from '@canopycanopycanopy/b-ber-grammar-iframe'
 import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
 import markdownItLogo from '@canopycanopycanopy/b-ber-grammar-logo'
-import mediaDirectivePreProcessor from '@canopycanopycanopy/b-ber-grammar-media'
+import { resolve as resolveMedia } from '@canopycanopycanopy/b-ber-grammar-media'
 import markdownItPullquote from '@canopycanopycanopy/b-ber-grammar-pullquote'
 import markdownItSection from '@canopycanopycanopy/b-ber-grammar-section'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
 import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
+import { State as state } from '@canopycanopycanopy/b-ber-lib'
 import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
 import { markGalleryItems } from '@canopycanopycanopy/b-ber-parser-gallery'
 import hljs from 'highlight.js'
@@ -90,6 +91,10 @@ class MarkdownRenderer {
           spread: markdownItSpread.renderer(reference).render,
         },
         close: { section: section.close, pullquote: pullquote.close },
+        // A `media` line is resolved for the target being built when it
+        // renders. It used to be spliced into the Markdown before the parse
+        media: (type, id) =>
+          resolveMedia({ type, id, build: state.build, media: state.media }),
         afterBlock: { gallery: galleryItems, spread: galleryItems },
         inline,
       })
@@ -108,11 +113,6 @@ class MarkdownRenderer {
     }${LINE_BREAK}${str}${LINE_BREAK}`
   }
 
-  // Runs transformations on the Markdown to prepare it for rendering
-  prepare(data: string): string {
-    return mediaDirectivePreProcessor.render(data)
-  }
-
   // Transforms a markdown file to XHTML. Problems with the directives are
   // added to `env.diagnostics`; what the build throws and prints is unchanged
   render(
@@ -122,8 +122,7 @@ class MarkdownRenderer {
   ): string {
     this.fileName = fileName
     env.file ??= `_markdown/${fileName}.md`
-    const transformedData = this.prepare(data)
-    return this.markdownIt.render(transformedData, env)
+    return this.markdownIt.render(data, env)
   }
 }
 

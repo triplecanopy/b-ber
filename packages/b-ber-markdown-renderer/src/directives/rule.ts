@@ -138,6 +138,9 @@ export function blockSpan(family: Family): {
   }
 }
 
+// `media` lines, as grammar-media's pre-pass matched them
+const MEDIA_RE = /^media(?:-inline)?$/
+
 const CAPTION_MARKER_LENGTH = 2
 
 // b-ber-parser-figure's caption scan. A caption is the lines from the next
@@ -214,6 +217,39 @@ export const createRule =
     const params = src.slice(pos, max)
     const env = state.env as DirectiveEnv
     const claimed = claim(params)
+
+    // What `media` and `media-inline` become, and its caption, depend on the
+    // target, and are resolved when they render. A caption written under the
+    // line is taken here, as for any single-line directive, with its source:
+    // books write one for the targets whose media.yml entry has none
+    const [mediaType, mediaId] = params.trim().split(':')
+    if (!claimed && MEDIA_RE.test(mediaType)) {
+      if (silent) return true
+      const { caption, mapEnd, next } = scanCaption(state, startLine, endLine)
+      const token = state.push(INLINE_TOKEN, 'div', 0)
+      token.meta = {
+        family: 'media',
+        mediaType,
+        mediaId,
+        caption,
+        // The caption's lines as written, from its `::` to the closing one
+        ...(caption === undefined
+          ? {}
+          : {
+              captionSource: src.slice(
+                state.bMarks[startLine + 1],
+                state.eMarks[mapEnd]
+              ),
+            }),
+      }
+      token.markup = markup
+      token.info = params
+      token.block = true
+      token.map = [startLine, mapEnd]
+      state.line = next
+      return true
+    }
+
     if (!claimed) {
       const single = inline.find((c) => c.validate(params, state.line + 1))
       if (!single) return false
