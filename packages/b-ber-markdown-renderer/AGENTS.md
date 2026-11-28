@@ -10,6 +10,7 @@
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `src/index.ts`     | Defines and exports the `markdownRenderer` singleton; configures `markdown-it` and registers all grammar plugins |
 | `src/directives/`  | TASK-161's directive grammar (TASK-174): the block rule (`rule.ts`), the structure pass that pairs blocks and reports diagnostics (`structure.ts`), the line grammar (`syntax.ts`), diagnostics and the reporter (`diagnostics.ts`), the tree (`tree.ts`). Built as a second entry, `dist/directives`, which imports no `State` |
+| `src/parse.ts`     | The parse without the render, published as the `/parse` subpath (`parse.js`, a root shim): the build's own parse with `pureHost`, so the build's two throws stay diagnostics. `parse(source, file)` returns the diagnostics and the tree. b-ber-validator (`bber check`) imports only this entry, so TASK-179's consolidation renames one import. It still loads the grammar packages, whose single-line claims and gallery and footnote rules are parse code |
 | `src/legacy-host.ts` | The two errors the build throws on a directive (`Duplicate [id]`, `Missing [id]`), word for word; block ids are checked per file |
 | `scripts/parse-corpus.js` | Runs the parse over a directory of b-ber projects (TASK-161's test 9). By hand only: the projects are private |
 

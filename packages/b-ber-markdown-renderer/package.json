@@ -46,7 +46,7 @@
     "markdown-it": "^15.0.3",
     "markdown-it-front-matter": "^0.1.2"
   },
-  "files": ["dist"],
+  "files": ["dist", "parse.js", "parse.d.ts"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
