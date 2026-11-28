@@ -24,3 +24,4 @@ Additional standards for this package:
 
 - This is a MarkdownIt front matter callback, not a container directive — receives the raw YAML string, not a token stream
 - Everything goes to `env.result`; no HTML is produced
+- **Front matter with a `type` declares a guide item, which needs a `title`.** One without a title throws, naming the file (#735); it used to give the OPF's guide `title="undefined"`. Front matter with no `type` is metadata only and makes no guide item (the guide never listed one). Front matter that is not a mapping holds nothing
