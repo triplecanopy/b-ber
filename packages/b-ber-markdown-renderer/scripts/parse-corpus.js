@@ -35,13 +35,8 @@ fs.writeFileSync(path.join(work, '_project', 'toc.yml'), '[]\n')
 process.chdir(work)
 
 const pkg = path.resolve(__dirname, '..')
-const { State } = require(
-  require.resolve('@canopycanopycanopy/b-ber-lib', { paths: [pkg] })
-)
-const renderer = require(path.join(pkg, 'dist', 'index.js'))
-const { formatDiagnostic } = require(
-  path.join(pkg, 'dist', 'directives', 'index.js')
-)
+// The parse `bber check` runs: the build's, reporting every problem
+const { parse, locate } = require(path.join(pkg, 'dist', 'parse.js'))
 
 // Repos sit at <root>/<name> or <root>/<subgroup>/<name>
 function repos(dir) {
@@ -91,30 +86,25 @@ for (const repo of repos(corpus)) {
       files++
       const file = path.relative(corpus, path.join(markdown, name))
       const src = fs.readFileSync(path.join(markdown, name), 'utf8')
-      // A fresh build for each file, as the render task's state would be
-      // for a project's first file
-      State.update('builds.epub', {
-        guide: [],
-        spine: { frontMatter: new Map(), flattened: [] },
-        cursor: [],
-        figures: [],
-        footnotes: [],
-      })
-      renderer.fileName = path.basename(name, '.md')
-      const env = { file, diagnostics: [] }
+      let diagnostics
       try {
-        renderer.markdownIt.parse(src, env)
+        ;({ diagnostics } = parse(src, file))
       } catch (err) {
         failures.push(`${file}: ${err.message}`)
         continue
       }
       const text = src.replace(/\r\n?/g, '\n')
-      for (const d of env.diagnostics) {
+      for (const d of diagnostics) {
         const entry = byCode.get(d.code) ?? { count: 0, projects: new Set() }
         entry.count++
         entry.projects.add(project)
         byCode.set(d.code, entry)
-        if (verbose) process.stdout.write(`${formatDiagnostic(text, d)}\n\n`)
+        if (verbose) {
+          const { line, column } = locate(text, d.span.start)
+          process.stdout.write(
+            `${d.file}:${line}:${column} - ${d.severity} ${d.code}: ${d.message}\n`
+          )
+        }
       }
     }
   }

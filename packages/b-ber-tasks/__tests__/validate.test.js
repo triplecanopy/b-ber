@@ -7,13 +7,12 @@ import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
-// The task's only output is what it logs. b-ber-validator's `report` prints a
-// failure with console.log, which is silenced and read here.
+// The task prints its report to stdout, which is silenced and read here
 let project
 
 beforeEach(() => {
   returnReportedErrors(log)
-  jest.spyOn(console, 'log').mockImplementation(() => {})
+  jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
 })
 
 afterEach(async () => {
@@ -23,79 +22,137 @@ afterEach(async () => {
   project = undefined
 })
 
-// Neither starts with a directive: see the defect test at the end
 const VALID = 'Text\n\n::: chapter:a\n\nMore\n\n::: exit:a\n'
-// `exit:b` closes a directive that is not open
-const INVALID = 'Text\n\n::: chapter:a\n::: exit:b\n'
+// `exit:b` closes a directive that is not open, and `chapter:a` is never
+// closed: two warnings
+const WARNINGS = 'Text\n\n::: chapter:a\n::: exit:b\n'
+// The id is used twice: an error
+const ERRORS = '::: chapter:a\n::: exit:a\n\n::: chapter:a\n::: exit:a\n'
 
-const printed = () => console.log.mock.calls.map((args) => args.join(' '))
+const printed = () =>
+  process.stdout.write.mock.calls.map(([text]) => text).join('')
 
 describe('task: validate', () => {
   test('reports each valid file, then that the directives are valid', async () => {
     project = await createProject({ markdown: { one: VALID, two: 'Plain' } })
 
-    await validate({ project: project.root })
+    await expect(validate({ project: project.root })).resolves.toEqual({
+      files: 2,
+      errors: 0,
+      warnings: 0,
+    })
 
-    expect(log.info).toHaveBeenCalledWith('Syntax valid %s', 'one.md')
-    expect(log.info).toHaveBeenCalledWith('Syntax valid %s', 'two.md')
-    expect(log.info).toHaveBeenCalledWith('Directives valid')
-    expect(printed()).toEqual([])
+    expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'one.md')
+    expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'two.md')
+    expect(log.notice).toHaveBeenCalledWith('Directives valid in %s', '2 files')
+    expect(printed()).toBe('')
   })
 
-  test('prints where an invalid file goes wrong', async () => {
-    project = await createProject({ markdown: { one: VALID, bad: INVALID } })
+  test('prints each diagnostic where it is, and counts them', async () => {
+    project = await createProject({ markdown: { one: VALID, bad: WARNINGS } })
 
-    await validate({ project: project.root })
+    await expect(validate({ project: project.root })).resolves.toEqual({
+      files: 2,
+      errors: 0,
+      warnings: 2,
+    })
 
-    expect(printed()).toContainEqual(expect.stringContaining('Error in bad.md'))
-    expect(printed()).toContainEqual(
-      'Expected Closing identifier to match opening identifier a'
+    expect(printed()).toBe(
+      [
+        '_markdown/bad.md:3:1 - warning unclosed-block: `chapter:a` is never closed; it ends at the end of the file',
+        '  3 | ::: chapter:a',
+        '    | ^^^^^^^^^^^^^',
+        '  note: Add `::: exit:a`',
+        '',
+        '_markdown/bad.md:4:1 - warning unmatched-exit: `exit:b` matches no open block',
+        '  4 | ::: exit:b',
+        '    | ^^^^^^^^^^',
+        '  note: _markdown/bad.md:3:1: `chapter:a` is open here',
+        '  3 | ::: chapter:a',
+        '    | ^^^^^^^^^^^^^',
+        '',
+        '',
+      ].join('\n')
     )
-    expect(printed()).toContainEqual('On line 4')
-    expect(log.info).toHaveBeenCalledWith('Syntax valid %s', 'one.md')
-    expect(log.info).not.toHaveBeenCalledWith('Directives valid')
+    expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'one.md')
+    expect(log.notice).toHaveBeenCalledWith(
+      '0 errors and 2 warnings in 2 files'
+    )
+    expect(log.error).not.toHaveBeenCalled()
   })
 
   test('reads only Markdown files', async () => {
     project = await createProject({ markdown: { one: VALID } })
     await fs.writeFile(
       path.join(project.src, '_markdown', 'notes.txt'),
-      INVALID
+      WARNINGS
     )
 
     await validate({ project: project.root })
 
-    expect(log.info).toHaveBeenCalledWith('Directives valid')
+    expect(log.notice).toHaveBeenCalledWith('Directives valid in %s', '1 file')
   })
 
-  // Defect: invalid directives are printed, and the task still resolves,
-  // with nothing (src/validate/index.ts:41). `bber check` exits 0 on a
-  // project with errors, so it cannot fail a CI run.
-  test('resolves when files are invalid (defect)', async () => {
-    project = await createProject({ markdown: { bad: INVALID } })
+  // #796: it resolved whatever it found, so `bber check` exited 0 on a
+  // project with errors and could not fail a CI run
+  test('rejects when a file has an error, after reporting every file', async () => {
+    project = await createProject({
+      markdown: { bad: ERRORS, worse: WARNINGS },
+    })
 
-    await expect(validate({ project: project.root })).resolves.toBeUndefined()
+    await expect(validate({ project: project.root })).rejects.toThrow(
+      'Check failed: %s'
+    )
+    expect(log.error).toHaveBeenCalledWith(
+      'Check failed: %s',
+      '1 error and 2 warnings in 2 files'
+    )
+    expect(printed()).toContain(
+      '_markdown/bad.md:4:13 - error duplicate-id: The id `a` is already used'
+    )
+    expect(printed()).toContain('_markdown/worse.md:4:1 - warning')
   })
 
-  // Defect (#736): the missing-project check tests `fs.pathExists`'s promise,
-  // which is always truthy, so it never fires: the task rejects from readdir
-  // instead of reporting "Project path does not exist".
-  test('rejects from readdir for a missing project (defect)', async () => {
+  describe('strict', () => {
+    test('rejects on a warning', async () => {
+      project = await createProject({ markdown: { bad: WARNINGS } })
+
+      await expect(
+        validate({ project: project.root, strict: true })
+      ).rejects.toThrow()
+      expect(log.error).toHaveBeenCalledWith(
+        'Check failed (--strict): %s',
+        '0 errors and 2 warnings in 1 file'
+      )
+    })
+
+    test('resolves when there is nothing to report', async () => {
+      project = await createProject({ markdown: { one: VALID } })
+
+      await expect(
+        validate({ project: project.root, strict: true })
+      ).resolves.toMatchObject({ errors: 0, warnings: 0 })
+    })
+  })
+
+  // #736: the check tested `fs.pathExists`'s promise, which is always
+  // truthy, so the task rejected from readdir instead
+  test('reports a missing project', async () => {
     project = await createProject()
     await fs.remove(path.join(project.src, '_markdown'))
 
-    await expect(validate({ project: project.root })).rejects.toMatchObject({
-      code: 'ENOENT',
-    })
-    expect(log.error).not.toHaveBeenCalled()
+    await expect(validate({ project: project.root })).rejects.toThrow(
+      'Project path does not exist, aborting'
+    )
+    expect(log.error).toHaveBeenCalledWith(
+      'Project path does not exist, aborting'
+    )
   })
 
-  // Defect, in b-ber-validator: a directive on a file's first line is not
-  // parsed as one, since the parser looks for a directive after a newline. A
-  // file that opens with a correctly closed directive fails, and one that
-  // opens a directive and never closes it passes. Files that begin with front
-  // matter, as `bber generate` writes them, are not affected.
-  test('misreads a directive on the first line of a file (defect)', async () => {
+  // #797: b-ber-validator's own grammar read a directive only after a
+  // newline, so a file opening with a closed block failed and one opening an
+  // unclosed block passed. The check is the build's parse now
+  test('reads a directive on the first line of a file', async () => {
     project = await createProject({
       markdown: {
         closed: '::: chapter:a\n\n::: exit:a\n',
@@ -105,9 +162,16 @@ describe('task: validate', () => {
 
     await validate({ project: project.root })
 
-    expect(printed()).toContainEqual(
-      expect.stringContaining('Error in closed.md')
+    expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'closed.md')
+    expect(printed()).toBe(
+      [
+        '_markdown/unclosed.md:1:1 - warning unclosed-block: `chapter:a` is never closed; it ends at the end of the file',
+        '  1 | ::: chapter:a',
+        '    | ^^^^^^^^^^^^^',
+        '  note: Add `::: exit:a`',
+        '',
+        '',
+      ].join('\n')
     )
-    expect(log.info).toHaveBeenCalledWith('Syntax valid %s', 'unclosed.md')
   })
 })

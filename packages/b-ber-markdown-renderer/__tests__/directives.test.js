@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
-import { directives, formatDiagnostic, locate } from '../src/directives'
+import { directives, locate } from '../src/directives'
 
 // The rule on its own (no old plugins, no b-ber-lib State): the spec's
 // behaviour, which TASK-161's tests 1–6 are written against
@@ -587,21 +587,6 @@ describe('directive structure', () => {
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'
-    )
-  })
-})
-
-describe('formatDiagnostic', () => {
-  it('prints the location, the line and a caret under the span', () => {
-    const src = '# T\n\n::: chaptr:ch-01\n'
-    const { env, text } = parse(src)
-    expect(formatDiagnostic(text, env.diagnostics[0])).toBe(
-      [
-        'x.md:3:5 - warning unknown-name: Unknown directive `chaptr`. Did you mean `chapter`?',
-        '  3 | ::: chaptr:ch-01',
-        '    |     ^^^^^^',
-        '  note: The line is rendered as text',
-      ].join('\n')
     )
   })
 })

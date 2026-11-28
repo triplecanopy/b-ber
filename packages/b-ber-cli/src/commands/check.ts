@@ -13,14 +13,24 @@ const builder = (yargs: Argv) =>
       describe: 'Path to the b-ber project',
       type: 'string',
     })
+    .option('strict', {
+      describe: 'Fail on warnings as well as errors, for CI',
+      type: 'boolean',
+      default: false,
+    })
     .help('h')
     .alias('h', 'help')
     .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
-    .usage(`\nUsage: $0 check\n\n${describe}`)
+    .usage(`\nUsage: $0 check [project] [--strict]\n\n${describe}`)
 
-const handler = exitOnFailure((argv: Arguments<{ project?: string }>) =>
-  validate({ project: argv.project || process.cwd() })
+// Exits 1 when a file has an error, or with `--strict` a warning
+const handler = exitOnFailure(
+  (argv: Arguments<{ project?: string; strict?: boolean }>) =>
+    validate({
+      project: argv.project || process.cwd(),
+      strict: Boolean(argv.strict),
+    })
 )
 
 export default {

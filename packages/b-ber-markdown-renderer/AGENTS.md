@@ -9,9 +9,10 @@
 | File               | Purpose                                                                                                          |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `src/index.ts`     | Defines and exports the `markdownRenderer` singleton; configures `markdown-it` and registers all grammar plugins |
-| `src/directives/`  | TASK-161's directive grammar (TASK-174): the block rule (`rule.ts`), the structure pass that pairs blocks and reports diagnostics (`structure.ts`), the line grammar (`syntax.ts`), diagnostics and the reporter (`diagnostics.ts`), the tree (`tree.ts`). Built as a second entry, `dist/directives`, which imports no `State` |
+| `src/directives/`  | TASK-161's directive grammar (TASK-174): the block rule (`rule.ts`), the structure pass that pairs blocks and reports diagnostics (`structure.ts`), the line grammar (`syntax.ts`), the diagnostics and `locate` (`diagnostics.ts`; the reporter is b-ber-validator's `report`), the tree (`tree.ts`). Built as a second entry, `dist/directives`, which imports no `State` |
+| `src/parse.ts`     | The parse without the render, published as the `/parse` subpath (`parse.js`, a root shim): the build's own parse with `pureHost`, so the build's two throws stay diagnostics. `parse(source, file)` returns the diagnostics and the tree. b-ber-validator (`bber check`) imports only this entry, so TASK-179's consolidation renames one import. It still loads the grammar packages, whose single-line claims and gallery and footnote rules are parse code |
 | `src/legacy-host.ts` | The two errors the build throws on a directive (`Duplicate [id]`, `Missing [id]`), word for word; block ids are checked per file |
-| `scripts/parse-corpus.js` | Runs the parse over a directory of b-ber projects (TASK-161's test 9). By hand only: the projects are private |
+| `scripts/parse-corpus.js` | Runs the `/parse` entry over a directory of b-ber projects (TASK-161's test 9). By hand only: the projects are private |
 
 ## The directive rule
 
@@ -47,7 +48,7 @@ npm run build # compile src/ → dist/ with tsdown (CJS)
 This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
-- The `MarkdownRenderer` class is a singleton (`export default markdownRenderer`). Do not instantiate it directly in other packages.
+- The `MarkdownRenderer` class is a singleton (`export default markdownRenderer`). Do not instantiate it directly in other packages. The one other instance is `src/parse.ts`'s, with `pureHost`; the class is exported for it.
 - Grammar plugins are registered in the constructor and cannot be reconfigured at runtime. To add a new directive type, add the grammar package as a dependency and register it in `src/index.ts`.
 - `markdownIt` is configured with `xhtmlOut: true` to produce valid XHTML. Do not change this — EPUB requires XHTML.
 - Nothing rewrites the Markdown before it is parsed. A directive that depends on the target is resolved when it renders, as `media` is, so that a document parses the same for every target (TASK-160's parse once).

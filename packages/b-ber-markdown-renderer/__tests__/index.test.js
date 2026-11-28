@@ -463,3 +463,53 @@ describe('b-ber-markdown-renderer: changes from markdown-it 8', () => {
     expect(render('x &#98765432; y')).toBe('<p>x &amp;#98765432; y</p>\n')
   })
 })
+
+// The `/parse` entry (src/parse.ts): the build's parse, with the host that
+// leaves the build's two throws as diagnostics. What `bber check` runs
+describe('b-ber-markdown-renderer/parse', () => {
+  let parse
+
+  beforeAll(() => {
+    ;({ parse } = require('../src/parse'))
+  })
+
+  const codes = (src) =>
+    parse(src, '_markdown/x.md').diagnostics.map((d) => [d.code, d.severity])
+
+  it('gives the diagnostics the build’s render gives', () => {
+    const src = '::: chapter:a\n\n::: section:b\n\n::: exit:a\n\n::: exit:zzz\n'
+    expect(parse(src, '_markdown/x.md').diagnostics).toEqual(
+      markdownRenderer.renderDocument(documentFor('x'), src).diagnostics
+    )
+    expect(codes(src)).toEqual([
+      ['crossed-exit', 'warning'],
+      ['unmatched-exit', 'warning'],
+    ])
+  })
+
+  it('names the diagnostics by `file`', () => {
+    const [d] = parse('::: chaptr:a\n', '_markdown/ch-01.md').diagnostics
+    expect(d.file).toBe('_markdown/ch-01.md')
+  })
+
+  it('reports what the build throws on, and carries on', () => {
+    const src = '::: chapter:a\n\n::: chapter:a\n\n::: chapter\n'
+    expect(() => markdownRenderer.render('x', src)).toThrow('Duplicate [id]')
+    expect(codes(src)).toEqual([
+      ['unclosed-block', 'warning'],
+      ['unclosed-block', 'warning'],
+      ['duplicate-id', 'error'],
+      ['missing-id', 'error'],
+    ])
+  })
+
+  it('parses a directive on the first line (#797)', () => {
+    expect(codes('::: chapter:a\n\n::: exit:a\n')).toEqual([])
+    expect(codes('::: chapter:a\n')).toEqual([['unclosed-block', 'warning']])
+  })
+
+  it('returns the tree', () => {
+    const { tree } = parse('::: chapter:a\n\nText\n\n::: exit:a\n', 'x.md')
+    expect(tree.children[0]).toMatchObject({ name: 'chapter', id: 'a' })
+  })
+})

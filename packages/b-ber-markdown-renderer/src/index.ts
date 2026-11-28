@@ -31,6 +31,7 @@ import {
   blockSpan,
   type Diagnostic,
   type DirectiveEnv,
+  type DirectiveHost,
   directives,
 } from './directives'
 import { legacyHost } from './legacy-host'
@@ -76,10 +77,27 @@ const defaultDocument = (fileName: string): DocumentInput => ({
   footnotes: createFootnoteNumbering(),
 })
 
-class MarkdownRenderer {
+// The env of a render or a parse, with what it does not give taken from
+// `defaultDocument`
+const withDefaults = (
+  fileName: string,
+  env: Partial<RenderEnv> & { document?: Partial<DocumentInput> }
+): RenderEnv => {
+  env.document = { ...defaultDocument(fileName), ...env.document }
+  env.result ??= emptyResult()
+  env.diagnostics ??= []
+  env.file ??= `_markdown/${fileName}.md`
+  return env as RenderEnv
+}
+
+export class MarkdownRenderer {
   markdownIt: MarkdownIt.MarkdownIt
 
-  constructor() {
+  // What the parse does with the problems the build stops at. The build's
+  // host (`legacyHost`) throws them, as the build always has; the parse
+  // entry (`src/parse.ts`) passes `pureHost`, which leaves them as
+  // diagnostics
+  constructor(host: DirectiveHost = legacyHost()) {
     // Instance of MarkdownIt class
     this.markdownIt = new MarkdownIt({
       html: true,
@@ -144,7 +162,7 @@ class MarkdownRenderer {
     // (TASK-174 and TASK-175), at the place in the rule order the first of
     // them had, and renders each with its grammar as before
     this.markdownIt.use(directives, {
-      host: legacyHost(),
+      host,
       legacy: {
         section: section.render,
         pullquote: pullquote.render,
@@ -218,11 +236,19 @@ class MarkdownRenderer {
     data: string,
     env: Partial<RenderEnv> & { document?: Partial<DocumentInput> } = {}
   ): string {
-    env.document = { ...defaultDocument(fileName), ...env.document }
-    env.result ??= emptyResult()
-    env.diagnostics ??= []
-    env.file ??= `_markdown/${fileName}.md`
-    return this.markdownIt.render(data, env)
+    return this.markdownIt.render(data, withDefaults(fileName, env))
+  }
+
+  // Parses a markdown file as `render` does, without rendering it, and
+  // returns the env: the diagnostics, the tree, and what the parse collected
+  parse(
+    fileName: string,
+    data: string,
+    env: Partial<RenderEnv> & { document?: Partial<DocumentInput> } = {}
+  ): RenderEnv {
+    const parsed = withDefaults(fileName, env)
+    this.markdownIt.parse(data, parsed)
+    return parsed
   }
 
   // Renders one document of a build, and returns its XHTML with what it
