@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus, no-continue*/
 
 import path from 'node:path'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   ALL_DIRECTIVES,
@@ -74,16 +74,18 @@ export interface AttributesContext {
   lineNumber?: number | null
 }
 
+// Values are text, so they are escaped: they used to be written as they were,
+// and `title:"<b>&"` gave malformed XHTML (TASK-161)
 const _applyTransforms = (k: string, v: AttributeValue): string => {
   switch (k) {
     case 'classes':
-      return ` class="${v}"`
+      return ` class="${Html.escape(v)}"`
     case 'epubTypes':
-      return ` epub:type="${v}"`
+      return ` epub:type="${Html.escape(v)}"`
     case 'attrs':
       return ''
     case 'source':
-      return ` src="${v}"`
+      return ` src="${Html.escape(v)}"`
 
     // Boolean attrs for audio/video elements
     case 'controls':
@@ -94,7 +96,7 @@ const _applyTransforms = (k: string, v: AttributeValue): string => {
       return v === 'yes' ? ` ${k}="${k}"` : ''
 
     default:
-      return ` ${k}="${v}"`
+      return ` ${k}="${Html.escape(v)}"`
   }
 }
 

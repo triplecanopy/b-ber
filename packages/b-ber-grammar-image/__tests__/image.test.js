@@ -19,7 +19,10 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn((s) => s) },
+  Html: {
+    comment: jest.fn((s) => s),
+    escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
+  },
   utils: {
     getImageOrientation: jest.fn(() => 'landscape'),
   },
@@ -130,6 +133,20 @@ describe('b-ber-grammar-image / image', () => {
 
       expect(result).toContain('alt="an image"')
       expect(result).toContain('<!-- comment -->')
+    })
+
+    it('escapes the alt text and the classes (TASK-161)', () => {
+      const result = createFigure({
+        ...baseArgs,
+        attrsObject: {
+          ...baseArgs.attrsObject,
+          alt: 'Tom & "Jerry" <3',
+          classes: 'a"b',
+        },
+      })
+
+      expect(result).toContain('alt="Tom &amp; &quot;Jerry&quot; &lt;3"')
+      expect(result).toContain('class="a&quot;b')
     })
   })
 
