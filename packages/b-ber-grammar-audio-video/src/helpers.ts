@@ -1,12 +1,13 @@
 import path from 'node:path'
 import { toAlias } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { State as state, Url } from '@canopycanopycanopy/b-ber-lib'
+import { type DocumentEnv, Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 // import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
 
-// The media collections on `State`, which DIRECTIVE_RE limits `mediaType` to
+// The project's media files the document input lists, which DIRECTIVE_RE
+// limits `mediaType` to
 export type MediaType = 'audio' | 'video'
 
 export const getMediaType = (type: string): string => {
@@ -20,8 +21,12 @@ export const isHostedBySupportedThirdParty = (
   asset: string
 ): RegExpMatchArray | null => asset.match(/(vimeo|youtube)\.com/)
 
-export const validatePosterImage = (_asset: string, type: string): string => {
-  const asset = state.src.images(_asset)
+export const validatePosterImage = (
+  _asset: string,
+  type: string,
+  env: DocumentEnv
+): string => {
+  const asset = env.document.images(_asset)
 
   if (!fs.existsSync(asset)) {
     throw log.error(
@@ -34,9 +39,10 @@ export const validatePosterImage = (_asset: string, type: string): string => {
 
 export const validateLocalMediaSource = (
   asset: string,
-  mediaType: MediaType
+  mediaType: MediaType,
+  env: DocumentEnv
 ): string => {
-  const media = [...state[mediaType]].map((file) => toAlias(file))
+  const media = [...env.document[mediaType]].map((file) => toAlias(file))
   if (!asset.length || media.indexOf(asset) < 0) {
     throw log.error(
       `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
@@ -60,8 +66,8 @@ export const createLocalMediaSources = (sources: string[]): string =>
 export const createRemoteMediaSource = (sources: string[]): string =>
   `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
-export function getWebOnlyAttributesString(): string {
-  return state.target.features.liveEmbeds
+export function getWebOnlyAttributesString(env: DocumentEnv): string {
+  return env.document.target.features.liveEmbeds
     ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
     : ''
 }

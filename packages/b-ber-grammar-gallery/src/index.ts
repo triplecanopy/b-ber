@@ -4,10 +4,7 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
-import {
-  type DirectiveToken,
-  State as state,
-} from '@canopycanopycanopy/b-ber-lib'
+import type { DirectiveToken, DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
 import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -17,7 +14,12 @@ const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
 // a simple `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
-const render = (tokens: DirectiveToken[], idx: number) => {
+const render = (
+  tokens: DirectiveToken[],
+  idx: number,
+  _options: unknown,
+  env: DocumentEnv
+) => {
   const token = tokens[idx].info.trim().match(MARKER_OPEN_RE)
 
   if (tokens[idx].nesting !== 1 || !token) return ''
@@ -36,7 +38,7 @@ const render = (tokens: DirectiveToken[], idx: number) => {
   //      container that is initialized as a slider via JS if available.
   //      defaults to a simple sequence of images
 
-  if (state.target.features.fullbleedContainers) {
+  if (env.document.target.features.fullbleedContainers) {
     return `
                 <section id="${htmlId(id)}" ${attrsString}>
                 <div class="figure__large figure__inline figure__fullbleed figure__gallery">

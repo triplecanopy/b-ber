@@ -3,11 +3,10 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
+  type DocumentEnv,
   type FigureToken,
   Html,
-  type RendererContext,
   type RendererInstance,
-  State as state,
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -22,32 +21,31 @@ import { createFigure, createFigureInline } from './image'
 
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
-// Optional so the tests can render without a file
-type Context = Partial<RendererContext>
-
 function prepare({
   token,
   match,
   instance,
-  context,
+  env,
   fileName,
   lineNumber,
 }: {
   token: FigureToken
   match: RegExpMatchArray
   instance: RendererInstance
-  context: Context
+  env: DocumentEnv
   fileName: string
   lineNumber: number | null
 }) {
   const [, type, id, attrs] = match
   const figureId = htmlId(id)
-  const caption = token.children ? instance.renderInline(token.children) : ''
+  const caption = token.children
+    ? instance.renderInline(token.children, env)
+    : ''
   const comment = Html.comment(
     `START: figure:${type}#${figureId}; ${fileName}:${lineNumber}`
   )
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
-  const asset = state.src.images(attrsObject.source)
+  const asset = env.document.images(attrsObject.source)
   const mediaType =
     (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
@@ -62,7 +60,7 @@ function prepare({
     height,
     caption,
     comment,
-    context,
+    env,
     attrsObject,
     asset,
     mediaType,
@@ -70,30 +68,33 @@ function prepare({
   }
 }
 
-const validate =
-  ({ context = { fileName: '' } }: { context?: Context }) =>
-  (params: string, line: number) => {
-    const match = params.trim().match(MARKER_OPEN_RE)
-    if (!match) return false
+const validate = (params: string, line: number, env: DocumentEnv) => {
+  const match = params.trim().match(MARKER_OPEN_RE)
+  if (!match) return false
 
-    const [, , id, source] = match
-    if (isUndefined(id) || isUndefined(source)) {
-      // Images require `id` and `source`
-      throw log.error(
-        `Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`
-      )
-    }
-
-    return true
+  const [, , id, source] = match
+  if (isUndefined(id) || isUndefined(source)) {
+    // Images require `id` and `source`
+    throw log.error(
+      `Missing [id] or [source] attribute for [figure] directive${env.document.fileName}.md:${line}`
+    )
   }
 
+  return true
+}
+
 const render =
-  ({ instance, context }: { instance: RendererInstance; context: Context }) =>
-  (tokens: FigureToken[], index: number) => {
+  ({ instance }: { instance: RendererInstance }) =>
+  (
+    tokens: FigureToken[],
+    index: number,
+    _options: unknown,
+    env: DocumentEnv
+  ) => {
     const token = tokens[index]
     if (token.type === 'container_figure_close') return ''
 
-    const fileName = `_markdown/${context.fileName}.md`
+    const fileName = `_markdown/${env.document.fileName}.md`
     const lineNumber = token.map ? token.map[0] : null
     // `validate` has already matched this marker against MARKER_OPEN_RE
     const match = token.info.trim().match(MARKER_OPEN_RE)!
@@ -102,7 +103,7 @@ const render =
       token,
       match,
       instance,
-      context,
+      env,
       fileName,
       lineNumber,
     })
@@ -116,17 +117,11 @@ const render =
 export default {
   plugin: figure,
   name: 'figure',
-  renderer: ({
-    instance,
-    context = { fileName: '' },
-  }: {
-    instance: RendererInstance
-    context?: Context
-  }) => ({
+  renderer: ({ instance }: { instance: RendererInstance }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: MARKER_OPEN_RE,
-    validate: validate({ context }),
-    render: render({ instance, context }),
+    validate,
+    render: render({ instance }),
   }),
 }

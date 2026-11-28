@@ -82,8 +82,8 @@ describe('task: render', () => {
     expect(await fs.readdir(text)).toEqual(['one.xhtml'])
   })
 
-  // The grammar plugins still collect these through State, which is this
-  // build's context in a build; render returns them for the steps after it
+  // Render collects into the build's context, and returns those collections
+  // for the steps after it
   test('returns what the documents collected', async () => {
     project = await createProject({
       toc: ['one'],
@@ -122,6 +122,77 @@ describe('task: render', () => {
       'render markdown [b.md]',
       'render markdown [a.md]',
     ])
+  })
+
+  // The renderer returns what each document collects (TASK-177), and render
+  // returns it for the steps after it. The front matter goes on the spine,
+  // where web reads it
+  test('returns what each document collects, and puts its front matter on the spine', async () => {
+    project = await createProject({
+      toc: ['one'],
+      markdown: {
+        one: '---\ntitle: One\ntype: bodymatter\n---\n\nText^[A note].\n',
+      },
+    })
+
+    const { spine } = project.ctx.settings
+    const output = await render(project.ctx, { spine })
+    await settle()
+
+    // The notes page is headed with the document's title in the spine
+    expect(output.footnotes).toEqual([
+      expect.objectContaining({ fileName: 'one', title: 'One' }),
+    ])
+    expect(output.footnotes[0].notes).toContain('A note')
+    expect(output.guide).toEqual([
+      expect.objectContaining({
+        fileName: 'one',
+        title: 'One',
+        type: 'bodymatter',
+      }),
+    ])
+    expect(spine.frontMatter.get('one')).toEqual({
+      title: 'One',
+      type: 'bodymatter',
+    })
+  })
+
+  // Five published books number their notes across the book. The numbering
+  // is made once per render task and passed to every document
+  test('numbers footnotes across the book under group_footnotes: false', async () => {
+    project = await createProject({
+      toc: ['one', 'two'],
+      config: { group_footnotes: false },
+      markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
+    })
+
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
+    await settle()
+
+    const [one, two] = output.footnotes.map((f) => f.notes)
+    expect(one).toContain('<ol class="footnotes" start="1">')
+    expect(two).toContain('<ol class="footnotes" start="3">')
+    const xhtml = await fs.readFile(
+      path.join(project.dist, 'OPS', 'text', 'two.xhtml'),
+      'utf8'
+    )
+    expect(xhtml).toMatch(/>3<\/a>.*>4<\/a>/)
+  })
+
+  test('numbers each document’s footnotes from 1 by default', async () => {
+    project = await createProject({
+      toc: ['one', 'two'],
+      markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
+    })
+
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
+    await settle()
+
+    expect(output.footnotes[1].notes).toContain('start="1"')
   })
 
   test('collects nothing when the Markdown directory is empty', async () => {

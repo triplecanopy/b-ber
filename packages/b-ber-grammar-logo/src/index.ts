@@ -3,11 +3,7 @@ import {
   attributesString,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import {
-  type FigureToken,
-  type RendererContext,
-  State as state,
-} from '@canopycanopycanopy/b-ber-lib'
+import type { DocumentEnv, FigureToken } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
@@ -22,17 +18,22 @@ const DIRECTIVE_RE = /(logo)(?::([^\s]+)(\s?.*)?)?$/
 export default {
   plugin: figure,
   name: 'logo',
-  renderer: ({ context }: { context: Partial<RendererContext> }) => ({
+  renderer: () => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     validate(params: string) {
       return params.trim().match(MARKER_RE)
     },
-    render(tokens: FigureToken[], index: number) {
+    render(
+      tokens: FigureToken[],
+      index: number,
+      _options: unknown,
+      env: DocumentEnv
+    ) {
       const match = tokens[index].info.trim().match(DIRECTIVE_RE)
       if (!match) return ''
 
-      const fileName = `_markdown/${context.fileName}.md`
+      const fileName = `_markdown/${env.document.fileName}.md`
       const lineNumber = tokens[index].map ? tokens[index].map[0] : null
       const [, type, id, attrs] = match
       const attrsObj = attributesObject(attrs, type, { fileName, lineNumber })
@@ -42,7 +43,7 @@ export default {
           '[source] attribute is required by [logo] directive, aborting'
         )
 
-      const inputImagePath = state.src.images(attrsObj.source)
+      const inputImagePath = env.document.images(attrsObj.source)
       const outputImagePath = `../images/${attrsObj.source}`
 
       if (!fs.existsSync(inputImagePath))

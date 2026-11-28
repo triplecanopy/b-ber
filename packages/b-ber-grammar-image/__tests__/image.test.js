@@ -1,24 +1,10 @@
 import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import mimeTypes from 'mime-types'
+import { getTarget } from '../../b-ber-lib/src/Target'
 import { createFigure, createFigureInline } from '../src/image'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  build: 'epub',
-  // The real target of `build`, as State gives it
-  get target() {
-    return jest
-      .requireActual('../../b-ber-lib/src/Target')
-      .getTarget(this.build)
-  },
-  figures: [],
-  add: jest.fn(),
-  src: {
-    images: (p) => p,
-  },
-}))
-
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
+  ...jest.requireActual('../../b-ber-lib/src/markdown'),
   Html: {
     comment: jest.fn((s) => s),
     escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
@@ -36,10 +22,18 @@ jest.mock('mime-types', () => ({
   lookup: jest.fn(() => 'image/jpeg'),
 }))
 
-const { State: state } = jest.requireMock('@canopycanopycanopy/b-ber-lib')
+// The render's env: the document, for `target`, as the renderer passes it
+const envFor = (target = 'epub', figuresBefore = 0) => ({
+  document: {
+    fileName: 'chapter-01',
+    target: getTarget(target),
+    figuresBefore,
+  },
+  result: { figures: [] },
+})
 
+let env
 const baseArgs = {
-  context: { fileName: 'chapter-01' },
   width: 100,
   height: 150,
   comment: '<!-- comment -->',
@@ -51,17 +45,16 @@ const baseArgs = {
 
 describe('b-ber-grammar-image / image', () => {
   beforeEach(() => {
-    state.build = 'epub'
-    state.figures = []
-    state.add.mockClear()
+    env = envFor()
   })
 
-  describe('createFigure', () => {
-    it('registers a figure entry in state.figures via state.add', () => {
-      createFigure(baseArgs)
+  const args = () => ({ ...baseArgs, env })
 
-      expect(state.add).toHaveBeenCalledWith(
-        'figures',
+  describe('createFigure', () => {
+    it('collects a figure entry into the document’s figures', () => {
+      createFigure(args())
+
+      expect(env.result.figures).toEqual([
         expect.objectContaining({
           id: 'fig1',
           width: 100,
@@ -72,30 +65,31 @@ describe('b-ber-grammar-image / image', () => {
           mediaType: 'figure',
           pageOrder: 0,
           mime: 'image/jpeg',
-        })
-      )
+        }),
+      ])
     })
 
-    it('uses pageOrder based on the current number of registered figures', () => {
-      state.figures = [{ id: 'existing' }]
+    // A figure's place in the list of illustrations is book-wide
+    it('orders a figure after the book’s figures so far', () => {
+      env = envFor('epub', 2)
+      env.result.figures.push({ id: 'existing' })
 
-      createFigure(baseArgs)
+      createFigure(args())
 
-      expect(state.add).toHaveBeenCalledWith(
-        'figures',
-        expect.objectContaining({ pageOrder: 1 })
+      expect(env.result.figures[1]).toEqual(
+        expect.objectContaining({ pageOrder: 3 })
       )
     })
 
     it('appends the orientation class when no classes are provided', () => {
-      const result = createFigure(baseArgs)
+      const result = createFigure(args())
 
       expect(result).toContain('figure__small figure__small--landscape')
     })
 
     it('appends the orientation class to existing classes', () => {
       const result = createFigure({
-        ...baseArgs,
+        ...args(),
         attrsObject: { ...baseArgs.attrsObject, classes: 'custom-class' },
       })
 
@@ -105,23 +99,21 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('links to the figure page for non-reader builds', () => {
-      state.build = 'epub'
-
-      const result = createFigure(baseArgs)
+      const result = createFigure(args())
 
       expect(result).toContain('href="figurefig1.xhtml#fig1"')
     })
 
     it('links to the titlepage for reader builds', () => {
-      state.build = 'reader'
+      env = envFor('reader')
 
-      const result = createFigure(baseArgs)
+      const result = createFigure(args())
 
       expect(result).toContain('href="figures-titlepage.xhtml#fig1"')
     })
 
     it('encodes the image source in the img src attribute', () => {
-      const result = createFigure(baseArgs)
+      const result = createFigure(args())
 
       expect(result).toContain(
         `src="../images/${encodeURIComponent('image one.jpg')}"`
@@ -129,7 +121,7 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('includes the alt text and the comment', () => {
-      const result = createFigure(baseArgs)
+      const result = createFigure(args())
 
       expect(result).toContain('alt="an image"')
       expect(result).toContain('<!-- comment -->')
@@ -137,7 +129,7 @@ describe('b-ber-grammar-image / image', () => {
 
     it('escapes the alt text and the classes (TASK-161)', () => {
       const result = createFigure({
-        ...baseArgs,
+        ...args(),
         attrsObject: {
           ...baseArgs.attrsObject,
           alt: 'Tom & "Jerry" <3',
@@ -153,6 +145,7 @@ describe('b-ber-grammar-image / image', () => {
   describe('createFigureInline', () => {
     it('renders via the figures template with classes defaulted to empty string', () => {
       const result = createFigureInline({
+        env,
         attrsObject: { source: 'image.jpg', alt: 'an image' },
         id: 'fig1',
         width: 100,
@@ -172,13 +165,14 @@ describe('b-ber-grammar-image / image', () => {
           inline: true,
           mime: 'image/jpeg',
         }),
-        state.target
+        env.document.target
       )
       expect(result).toBe('<figure class="inline">inline figure</figure>')
     })
 
     it('preserves provided classes', () => {
       createFigureInline({
+        env,
         attrsObject: {
           source: 'image.jpg',
           alt: 'an image',
@@ -192,12 +186,13 @@ describe('b-ber-grammar-image / image', () => {
 
       expect(figureTemplate).toHaveBeenCalledWith(
         expect.objectContaining({ classes: 'custom-class' }),
-        state.target
+        env.document.target
       )
     })
 
     it('looks up the mime type from the image source', () => {
       createFigureInline({
+        env,
         attrsObject: { source: 'image.png', alt: '' },
         id: 'fig2',
         width: 10,

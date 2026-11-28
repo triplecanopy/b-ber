@@ -1,13 +1,18 @@
 import path from 'node:path'
 import {
   type BuildContext,
+  type DocumentInput,
+  type FootnoteNumbering,
   type FootnotesEntry,
   type GuideItem,
   type Spine,
   Template,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
-import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
+import MarkdownRenderer, {
+  createFootnoteNumbering,
+  type RenderedDocument,
+} from '@canopycanopycanopy/b-ber-markdown-renderer'
 import type { FigureData } from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
@@ -27,6 +32,49 @@ export interface RenderOutput {
   remoteAssets: string[]
 }
 
+// What the renderer is told about a document and the book it is in
+const documentInput = (
+  ctx: BuildContext,
+  spine: Spine,
+  fileName: string,
+  footnotes: FootnoteNumbering
+): DocumentInput => {
+  const entry = spine.flattened.find((item) => item.fileName === fileName)
+
+  return {
+    fileName,
+    title: entry?.title || fileName,
+    target: ctx.target,
+    images: (name) => src(ctx).images(name),
+    audio: ctx.project.audio,
+    video: ctx.project.video,
+    media: ctx.project.media,
+    groupFootnotes: Boolean(ctx.config.group_footnotes),
+    figuresBefore: ctx.settings.figures.length,
+    footnotesBefore: ctx.settings.footnotes.length,
+    footnotes,
+  }
+}
+
+// Adds what rendering a document collected to the build's collections, which
+// render returns once every document has rendered. The front matter is merged
+// into the spine, where `web` reads it
+const collect = (
+  ctx: BuildContext,
+  spine: Spine,
+  fileName: string,
+  rendered: RenderedDocument
+) => {
+  ctx.settings.figures.push(...rendered.figures)
+  ctx.settings.footnotes.push(...rendered.footnotes)
+  ctx.settings.guide.push(...rendered.guide)
+  ctx.settings.remoteAssets.push(...rendered.remoteAssets)
+  for (const meta of rendered.frontMatter) {
+    const data = spine.frontMatter.get(fileName)
+    if (data) spine.frontMatter.set(fileName, { ...data, ...meta })
+  }
+}
+
 // Returned, so that render resolves once every page is on disk. It used to
 // start the write and carry on, so the steps after render could read a page
 // before it was written, and a failed write was an unhandled rejection (#770)
@@ -38,12 +86,18 @@ const writeMarkupToFile = (ctx: BuildContext, fname: string, markup: string) =>
 // Convert Markdown to HTML and wrap with page template
 const createPageLayout = (
   ctx: BuildContext,
+  spine: Spine,
   fileName: string,
-  data: string
+  data: string,
+  footnotes: FootnoteNumbering
 ) => {
   const textDir = dist(ctx).text()
-  const body = MarkdownRenderer.render(fileName, data)
-  const markup = Template.render(body, Xhtml.body())
+  const rendered = MarkdownRenderer.renderDocument(
+    documentInput(ctx, spine, fileName, footnotes),
+    data
+  )
+  collect(ctx, spine, fileName, rendered)
+  const markup = Template.render(rendered.html, Xhtml.body())
 
   return fs
     .mkdirp(textDir)
@@ -53,17 +107,21 @@ const createPageLayout = (
     })
 }
 
-const createXTHMLFile = (ctx: BuildContext, fpath: string) =>
+const createXTHMLFile = (
+  ctx: BuildContext,
+  spine: Spine,
+  fpath: string,
+  footnotes: FootnoteNumbering
+) =>
   fs
     .readFile(fpath, 'utf8')
-    .then((data) => createPageLayout(ctx, path.basename(fpath, '.md'), data))
+    .then((data) =>
+      createPageLayout(ctx, spine, path.basename(fpath, '.md'), data, footnotes)
+    )
     .catch((err) => {
       throw log.error(err)
     })
 
-// The grammar plugins still collect what they find through `State`, which
-// routes to this build's context; it is read back from there once every
-// document has rendered
 const collected = (ctx: BuildContext): RenderOutput => ({
   figures: ctx.settings.figures as ListedFigure[],
   footnotes: ctx.settings.footnotes,
@@ -78,6 +136,8 @@ async function render(
   { spine }: { spine: Spine }
 ): Promise<RenderOutput> {
   const markdownDir = src(ctx).markdown()
+  // One per build: footnotes may be numbered across the whole book
+  const footnotes = createFootnoteNumbering()
   const indexOf = (fileName: string) =>
     spine.flattened.findIndex((item) => item.fileName === fileName)
 
@@ -93,9 +153,12 @@ async function render(
       .reduce(
         (acc, curr) =>
           acc.then(() =>
-            createXTHMLFile(ctx, path.join(markdownDir, curr)).then(() =>
-              log.info(`render markdown [${path.basename(curr)}]`)
-            )
+            createXTHMLFile(
+              ctx,
+              spine,
+              path.join(markdownDir, curr),
+              footnotes
+            ).then(() => log.info(`render markdown [${path.basename(curr)}]`))
           ),
         Promise.resolve()
       )

@@ -1,4 +1,4 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import type { DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isUndefined from 'lodash/isUndefined'
@@ -67,8 +67,12 @@ export const transformAttributes = (
   return nextObj
 }
 
-export const validatePosterImage = (asset: string, type: string): string => {
-  const assetPath = state.src.images(asset)
+export const validatePosterImage = (
+  asset: string,
+  type: string,
+  env: DocumentEnv
+): string => {
+  const assetPath = env.document.images(asset)
 
   if (!fs.existsSync(assetPath)) {
     throw log.error(
@@ -121,24 +125,27 @@ export interface VimeoInlineArgs {
   caption: string
 }
 
-export function createVimeoInline({
-  id,
-  commentStart,
-  commentEnd,
-  mediaType,
-  attrString,
-  attrQuery,
-  aspectRatio,
-  aspectRatioClassName,
-  source,
-  poster,
-  caption,
-}: VimeoInlineArgs): string {
+export function createVimeoInline(
+  {
+    id,
+    commentStart,
+    commentEnd,
+    mediaType,
+    attrString,
+    attrQuery,
+    aspectRatio,
+    aspectRatioClassName,
+    source,
+    poster,
+    caption,
+  }: VimeoInlineArgs,
+  env: DocumentEnv
+): string {
   return `
     ${commentStart}
       <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
         <div id="${id}"${attrString}>
-          ${state.target.features.readerRuntime ? '' : renderPosterImage(poster)}
+          ${env.document.target.features.readerRuntime ? '' : renderPosterImage(poster)}
           <iframe
             data-vimeo="true"
             data-vimeo-poster="${poster}"

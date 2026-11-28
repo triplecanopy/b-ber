@@ -39,10 +39,11 @@ export const INLINE_TOKEN = 'directive_inline'
 
 // How a single-line directive's grammar claims its lines: b-ber-parser-figure
 // asked the grammar's `validate`, which may throw. `line` is 1-based, and is
-// the line markdown-it's block state is at, as that parser passed it
+// the line markdown-it's block state is at, as that parser passed it. `env` is
+// the render's
 export interface InlineClaim {
   family: InlineFamily
-  validate(params: string, line: number): unknown
+  validate(params: string, line: number, env: DirectiveEnv): unknown
 }
 
 const COLON = 0x3a
@@ -86,7 +87,8 @@ const TAG: Record<BlockFamily, string> = {
 }
 
 // Work a family's old parser did once a block's tokens were complete, which
-// needs more than the parse has (b-ber-parser-gallery's items read State)
+// needs more than the parse has (b-ber-parser-gallery's items read the
+// document's media files from the env)
 export type AfterBlock = Partial<
   Record<Family, (state: MarkdownIt.StateBlock) => void>
 >
@@ -251,7 +253,7 @@ export const createRule =
     }
 
     if (!claimed) {
-      const single = inline.find((c) => c.validate(params, state.line + 1))
+      const single = inline.find((c) => c.validate(params, state.line + 1, env))
       if (!single) return false
       if (silent) return true
 
