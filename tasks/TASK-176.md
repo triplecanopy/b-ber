@@ -228,7 +228,7 @@ golden output covers it.
   now unused, with `renderPosterImage` and `renderCaption`.
 - **b-ber-markdown-renderer's `src/index.ts`:** the `directives` options take
   `blocks` (each family's `BlockRender`) instead of `legacy` and `close`, and
-  `inline` takes each grammar's `InlineRender`. Nothing else in it changed,
+  `inline` takes each grammar's `InlineRender`, from the same code. Nothing else in it changed,
   so it meets TASK-178's changes there (`host`, `withDefaults`, `parse`) only
   at that call.
 - **The directive rule's options:** `legacy`, `close` and the string

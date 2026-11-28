@@ -124,13 +124,18 @@ class MarkdownRenderer {
     }
 
     // The single-line directives, in the order their plugins were registered
-    const inline = [
-      { family: 'figure', ...markdownItImage.renderer(reference) },
-      { family: 'audio-video', ...markdownItAudioVideo.renderer(reference) },
-      { family: 'vimeo', ...markdownItVimeo.renderer(reference) },
-      { family: 'iframe', ...markdownItIframe.renderer(reference) },
-      { family: 'logo', ...markdownItLogo.renderer() },
-    ] as const
+    const inline = (
+      [
+        ['figure', markdownItImage],
+        ['audio-video', markdownItAudioVideo],
+        ['vimeo', markdownItVimeo],
+        ['iframe', markdownItIframe],
+        ['logo', markdownItLogo],
+      ] as const
+    ).map(([family, grammar]) => {
+      const { validate, render } = grammar.renderer(reference)
+      return { family, validate, render }
+    })
 
     const section = markdownItSection.renderer()
     const pullquote = markdownItPullquote.renderer(reference)
