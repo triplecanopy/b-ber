@@ -51,8 +51,8 @@ const setup = async (options = {}) => {
   await writeEpubBuild()
 }
 
-// `writeWebpubManifest` does not wait for its write (see the defect test),
-// so the writes are collected and awaited. The spy calls through.
+// The writes are collected so a test can hold one back. The spy calls
+// through.
 beforeEach(() => {
   // State logs while it initialises at import, before any test
   jest.clearAllMocks()
@@ -268,13 +268,12 @@ describe('task: reader', () => {
     expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(false)
   })
 
-  // DEFECT (#770): `writeWebpubManifest` (src/reader/index.ts:193) does not return
-  // its fs.writeJson, so the task can resolve before manifest.json is
-  // written, and a failed write is an unhandled rejection
-  test('does not wait for manifest.json to be written (defect)', async () => {
+  // #770: `writeWebpubManifest` did not return its fs.writeJson, so the task
+  // could resolve before manifest.json was written, and a failed write was an
+  // unhandled rejection
+  test('waits for manifest.json to be written (#770)', async () => {
     await setup()
-    // Hold the manifest write until the task has resolved. Were the task
-    // waiting on it, it would never resolve and this test would time out
+    // Hold the manifest write, and check the task does not finish before it
     let release
     const gate = new Promise((resolve) => {
       release = resolve
@@ -287,15 +286,30 @@ describe('task: reader', () => {
     )
     const manifest = path.join(project.dist, 'manifest.json')
 
-    await reader(project.ctx)
-    expect(fs.existsSync(manifest)).toBe(false)
-    expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(true)
+    let resolved = false
+    const task = reader(project.ctx).then(() => {
+      resolved = true
+    })
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(resolved).toBe(false)
 
     release()
-    await gate
-    await Promise.all(writes)
-    await fs.writeJson.mock.results.at(-1).value
+    await task
     expect(fs.existsSync(manifest)).toBe(true)
+  })
+
+  test('rejects, through log.error, when manifest.json cannot be written (#770)', async () => {
+    await setup()
+    const error = Object.assign(new Error('disk full'), { code: 'ENOSPC' })
+    const writeJson = fs.writeJson.getMockImplementation()
+    fs.writeJson.mockImplementation((file, ...rest) =>
+      path.basename(file) === 'manifest.json'
+        ? Promise.reject(error)
+        : writeJson(file, ...rest)
+    )
+
+    await expect(reader(project.ctx)).rejects.toBe(error)
+    expect(log.error).toHaveBeenCalledWith(error)
   })
 
   test('requires an http remote_url in production', async () => {

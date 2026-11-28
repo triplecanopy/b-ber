@@ -9,9 +9,9 @@ jest.mock('@canopycanopycanopy/b-ber-logger')
 
 beforeEach(() => returnReportedErrors(log))
 
-// `render` does not wait for its own writes (see the defect test below), so
-// the tests collect the promises fs.writeFile returns and await them. The
-// spy calls through: the files are really written.
+// The tests collect the promises fs.writeFile returns, so a test can wait
+// for them and check render did too. The spy calls through: the files are
+// really written.
 let writes
 let project
 
@@ -167,11 +167,10 @@ describe('task: render', () => {
     ).toBe(false)
   })
 
-  // DEFECT (#770): `writeMarkupToFile` (src/render/index.ts:9) neither returns nor
-  // awaits its fs.writeFile, so `render()` resolves before the XHTML is on
-  // disk and a write failure is unhandled. The next task in the sequence can
-  // read a file that is not there yet.
-  test('resolves before its XHTML writes complete (defect)', async () => {
+  // #770: `writeMarkupToFile` neither returned nor awaited its fs.writeFile,
+  // so render resolved before the XHTML was on disk, and a write failure was
+  // unhandled. The next step could read a page that was not there yet
+  test('resolves once its XHTML writes are complete (#770)', async () => {
     project = await createProject({ toc: ['one'], markdown: { one: 'x' } })
 
     let writeSettled = false
@@ -185,9 +184,17 @@ describe('task: render', () => {
     })
 
     await render(project.ctx, { spine: project.ctx.settings.spine })
-    expect(writeSettled).toBe(false)
-
-    await settle()
     expect(writeSettled).toBe(true)
+  })
+
+  test('rejects, through log.error, when a page cannot be written (#770)', async () => {
+    project = await createProject({ toc: ['one'], markdown: { one: 'x' } })
+    const error = Object.assign(new Error('disk full'), { code: 'ENOSPC' })
+    fs.writeFile.mockImplementation(() => Promise.reject(error))
+
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toBe(error)
+    expect(log.error).toHaveBeenCalledWith(error)
   })
 })

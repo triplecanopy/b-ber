@@ -163,7 +163,8 @@ const writeWebpubManifest = (ctx: BuildContext, { outputDir }: ReaderPaths) => {
   )
   return rrdir(assetsDir).then((files) => {
     const manifest = generateWebpubManifest(files)
-    fs.writeJson(dist(ctx).root('manifest.json'), manifest)
+    // Returned, so that the task waits for it (#770)
+    return fs.writeJson(dist(ctx).root('manifest.json'), manifest)
   })
 }
 

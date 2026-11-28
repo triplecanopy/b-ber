@@ -374,7 +374,9 @@ function writeWebWorker(w: WebBuild) {
 function writeWebpubManifest({ DIST_PATH }: WebBuild) {
   return new Promise((resolve, reject) => {
     rrdir(DIST_PATH, (err1, files) => {
-      if (err1) reject(err1)
+      // Returned: it used to go on to read `files`, which is undefined after
+      // an error, and throw in the callback, where nothing caught it (#770)
+      if (err1) return reject(err1)
 
       const manifest = generateWebpubManifest(files)
 

@@ -27,15 +27,13 @@ export interface RenderOutput {
   remoteAssets: string[]
 }
 
-const writeMarkupToFile = (
-  ctx: BuildContext,
-  fname: string,
-  markup: string
-) => {
-  fs.writeFile(dist(ctx).text(`${fname}.xhtml`), markup).then(() =>
-    log.info(`render xhtml [${path.basename(fname)}.xhtml]`)
-  )
-}
+// Returned, so that render resolves once every page is on disk. It used to
+// start the write and carry on, so the steps after render could read a page
+// before it was written, and a failed write was an unhandled rejection (#770)
+const writeMarkupToFile = (ctx: BuildContext, fname: string, markup: string) =>
+  fs
+    .writeFile(dist(ctx).text(`${fname}.xhtml`), markup)
+    .then(() => log.info(`render xhtml [${path.basename(fname)}.xhtml]`))
 
 // Convert Markdown to HTML and wrap with page template
 const createPageLayout = (
