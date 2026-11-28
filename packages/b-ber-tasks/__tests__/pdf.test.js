@@ -80,7 +80,7 @@ describe('task: pdf', () => {
 
     // Switches by name, settings with their value, unknown keys dropped
     expect(flags()).toBe(
-      '--pdf-page-numbers --paper-size=a5 --pdf-page-margin-top=36'
+      "--pdf-page-numbers --paper-size='a5' --pdf-page-margin-top='36'"
     )
   })
 
@@ -102,34 +102,34 @@ describe('task: pdf', () => {
     expect(log.error).toHaveBeenCalledWith(err)
   })
 
-  // Defect: a switch is passed whatever its value (src/pdf/index.ts:128), so
-  // `false` turns it on.
-  test('turns a switch on when pdf_options sets it false (defect)', async () => {
-    await setup({ pdf_page_numbers: false })
+  // #801: a switch was passed whatever its value, so `false` turned it on
+  test('leaves a switch off when pdf_options sets it false (#801)', async () => {
+    await setup({ pdf_page_numbers: false, pdf_add_toc: true })
 
     await pdf(project.ctx)
 
-    expect(flags()).toBe('--pdf-page-numbers')
+    expect(flags()).toBe('--pdf-add-toc')
   })
 
-  // Defect: `embed_all_fonts` and `insert_metadata` are listed with a
-  // trailing space (src/pdf/index.ts:19, 39), so they never match and are
-  // dropped.
-  test('drops embed_all_fonts and insert_metadata (defect)', async () => {
+  // #801: `embed_all_fonts` and `insert_metadata` were listed with a
+  // trailing space, so they never matched and were dropped
+  test('passes embed_all_fonts and insert_metadata (#801)', async () => {
     await setup({ embed_all_fonts: true, insert_metadata: true })
 
     await pdf(project.ctx)
 
-    expect(flags()).toBe('')
+    expect(flags()).toBe('--embed-all-fonts --insert-metadata')
   })
 
-  // Defect: setting values are not quoted for the shell, so one with a space
-  // (a TOC title, a header template) splits into several arguments.
-  test('does not quote option values (defect)', async () => {
-    await setup({ toc_title: 'The Contents' })
+  // #801: setting values were not quoted for the shell, so one with a space
+  // (a TOC title, a header template) split into several arguments
+  test('quotes option values for the shell (#801)', async () => {
+    await setup({ toc_title: "The Book's Contents", margin_top: 72 })
 
     await pdf(project.ctx)
 
-    expect(flags()).toBe('--toc-title=The Contents')
+    expect(flags()).toBe(
+      "--toc-title='The Book'\\''s Contents' --margin-top='72'"
+    )
   })
 })
