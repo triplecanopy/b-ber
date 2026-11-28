@@ -1,22 +1,25 @@
 # `@canopycanopycanopy/b-ber-validator`
 
-`b-ber-validator` validates the custom directive syntax in b-ber Markdown source files before a build runs. It is written in TypeScript and implements a parser-combinator library (`combinators/`) that parses the b-ber fence syntax (`::: directive-name id attr:value ...` / `exit`). The validator checks that directive names are known, that open blocks are correctly closed, and that attribute syntax is well-formed. On failure it reports the line number and a caret-pointed excerpt via the `report` helper. The `validate` task in `b-ber-tasks` calls this package.
+`b-ber-validator` checks the directives in a b-ber Markdown file with the same parse the build runs, and reports what it finds. It is what `bber check` runs, through the `validate` task in `b-ber-tasks`.
 
 ## Key exports
 
-| Export                  | Purpose                                                                 |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `validator` (default)   | Top-level parser; run against the full file text                        |
-| `report(name, failure)` | Prints a human-readable parse error with line number and source context |
-| `colors`                | ANSI colour constants used by `report`                                  |
+| Export                              | Purpose                                                                                     |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| `check(source, file)`               | The file's diagnostics, in source order. `file` is the name they carry, e.g. `_markdown/ch-01.md` |
+| `report(source, diagnostic, opts?)` | One diagnostic as text: `file:line:col - severity code: message`, the source line with the span underlined, then each note. `{ color: true }` adds ANSI colour |
+| `Diagnostic`, `Severity`, …         | The diagnostic types                                                                        |
 
-### Combinators (`src/combinators/`)
-
-Parser-combinator primitives: `string`, `regex`, `sequence`, `oneOf`, `many`, `optional`, `required`, `map`, `not`, `lazy`, `close`, `constrained`, `eol`, `eos`.
+```
+_markdown/ch-01.md:3:5 - warning unknown-name: Unknown directive `chaptr`. Did you mean `chapter`?
+  3 | ::: chaptr:ch-01
+    |     ^^^^^^
+  note: The line is rendered as text
+```
 
 ## Dev
 
 ```bash
-npm test      # tsc type-check + eslint + jest
+npm test      # tsc type-check + biome + jest
 npm run build
 ```

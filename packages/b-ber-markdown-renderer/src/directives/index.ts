@@ -25,7 +25,7 @@ import {
 import { liftTree } from './tree'
 import type { DirectiveEnv, DirectiveHost, DirectiveNode } from './types'
 
-export { formatDiagnostic, type Location, locate } from './diagnostics'
+export { type Location, locate } from './diagnostics'
 export { type DirectiveLine, readDirectiveLine } from './syntax'
 export { liftTree } from './tree'
 export type * from './types'

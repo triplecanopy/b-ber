@@ -29,44 +29,6 @@ export function locate(src: string, offset: number): Location {
   return { line, column: offset - lineStart + 1 }
 }
 
-const excerpt = (src: string, span: Span): string[] => {
-  const { line, column } = locate(src, span.start)
-  const lineStart = span.start - column + 1
-  const newline = src.indexOf('\n', lineStart)
-  const text = src.slice(lineStart, newline === -1 ? src.length : newline)
-  const gutter = String(line)
-  const width = Math.max(
-    1,
-    Math.min(span.end, lineStart + text.length) - span.start
-  )
-  return [
-    `  ${gutter} | ${text}`,
-    `  ${' '.repeat(gutter.length)} | ${' '.repeat(column - 1)}${'^'.repeat(width)}`,
-  ]
-}
-
-// TASK-161's reporter: `file:line:col - severity code: message`, the source
-// line with the span underlined, then each note the same way
-export function formatDiagnostic(src: string, diagnostic: Diagnostic): string {
-  const { line, column } = locate(src, diagnostic.span.start)
-  const out = [
-    `${diagnostic.file}:${line}:${column} - ${diagnostic.severity} ${diagnostic.code}: ${diagnostic.message}`,
-    ...excerpt(src, diagnostic.span),
-  ]
-  for (const note of diagnostic.notes ?? []) {
-    if (note.span && (note.file ?? diagnostic.file) === diagnostic.file) {
-      const at = locate(src, note.span.start)
-      out.push(
-        `  note: ${diagnostic.file}:${at.line}:${at.column}: ${note.message}`
-      )
-      out.push(...excerpt(src, note.span))
-    } else {
-      out.push(`  note: ${note.message}`)
-    }
-  }
-  return out.join('\n')
-}
-
 const code = (s: string): string => `\`${s}\``
 
 // `chapter:a`, as messages name a directive

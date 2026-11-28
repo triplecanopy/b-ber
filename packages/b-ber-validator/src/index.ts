@@ -1,7 +1,9 @@
-import validator from './validator'
-
-export { default as colors } from './colors'
-export { default as report } from './report'
-export type { Context, Failure, Parser, Result, Success } from './types'
-
-export default validator
+export type {
+  Diagnostic,
+  DiagnosticCode,
+  DiagnosticNote,
+  Severity,
+  Span,
+} from '@canopycanopycanopy/b-ber-markdown-renderer/parse'
+export { check } from './check'
+export { type ReportOptions, report } from './report'
