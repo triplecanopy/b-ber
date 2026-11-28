@@ -109,13 +109,13 @@ export const isFamily =
 
 const CAPTION_MARKER_LENGTH = 2
 
-// b-ber-parser-figure's caption scan, kept exactly so that the rule takes the
-// same lines. A caption is the lines from the next line starting `::` to the
-// line after it starting `::`, both at the container's column 0; a line
-// starting with one `:` is skipped over, and any other line ends the search.
-// A `:::` line starts with `::`, so consecutive single-line directives take
-// each other as captions (TASK-161 bug 11; an intended output difference).
-// Returns the caption's source and the line after the closing `::`
+// b-ber-parser-figure's caption scan. A caption is the lines from the next
+// line starting `::` to the line after it starting `::`, both at the
+// container's column 0; a line starting with one `:` is skipped over, and any
+// other line ends the search. A `:::` line is never part of a caption: the
+// old scan took it as one, so consecutive single-line directives swallowed
+// each other (TASK-161 bug 11). Returns the caption's source and the line
+// after the closing `::`
 function scanCaption(
   state: MarkdownIt.StateBlock,
   startLine: number,
@@ -135,6 +135,7 @@ function scanCaption(
     if (src[state.bMarks[nextLine]].charCodeAt(0) !== COLON) break
 
     const at = state.bMarks[nextLine]
+    if (src.charCodeAt(at + 2) === COLON) break
     if (src.charCodeAt(at) === COLON && src.charCodeAt(at + 1) === COLON) {
       if (captionStart === undefined) {
         captionStart = at + CAPTION_MARKER_LENGTH

@@ -541,17 +541,28 @@ describe('directive structure', () => {
       ).toBe('<figure> Cap\n</figure>')
     })
 
-    // b-ber-parser-figure takes the next line starting `::` as a caption, and
-    // a `:::` line starts with `::` (TASK-161 bug 11): `b` opens a caption and
-    // `c` closes it, so neither renders
-    it('still takes the next directive lines as a caption', () => {
+    // b-ber-parser-figure took the next line starting `::` as a caption, and a
+    // `:::` line starts with `::` (TASK-161 bug 11): `b` opened a caption and
+    // `c` closed it, so neither rendered
+    it('does not take the next directive lines as a caption', () => {
       const { tokens } = parseFigures(
         '::: figure:a source:a.png\n::: figure:b source:b.png\n::: figure:c source:c.png\n'
       )
       const inline = tokens.filter((t) => t.type === 'directive_inline')
-      expect(inline).toHaveLength(1)
-      expect(inline[0].meta.caption).toBe(': figure:b source:b.png\n')
-      expect(inline[0].map).toEqual([0, 2])
+      expect(inline.map((t) => t.meta.directive.id)).toEqual(['a', 'b', 'c'])
+      expect(inline.map((t) => t.meta.caption)).toEqual([
+        undefined,
+        undefined,
+        undefined,
+      ])
+    })
+
+    it('still takes a caption between two `::` lines after a directive', () => {
+      const { tokens } = parseFigures(
+        '::: figure:a source:a.png\n:: Cap\n::\n::: figure:b source:b.png\n'
+      )
+      const inline = tokens.filter((t) => t.type === 'directive_inline')
+      expect(inline.map((t) => t.meta.caption)).toEqual([' Cap\n', undefined])
     })
   })
 
