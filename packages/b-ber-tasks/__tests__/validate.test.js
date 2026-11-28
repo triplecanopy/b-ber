@@ -135,17 +135,18 @@ describe('task: validate', () => {
     })
   })
 
-  // Defect (#736): the missing-project check tests `fs.pathExists`'s promise,
-  // which is always truthy, so it never fires: the task rejects from readdir
-  // instead of reporting "Project path does not exist".
-  test('rejects from readdir for a missing project (defect)', async () => {
+  // #736: the check tested `fs.pathExists`'s promise, which is always
+  // truthy, so the task rejected from readdir instead
+  test('reports a missing project', async () => {
     project = await createProject()
     await fs.remove(path.join(project.src, '_markdown'))
 
-    await expect(validate({ project: project.root })).rejects.toMatchObject({
-      code: 'ENOENT',
-    })
-    expect(log.error).not.toHaveBeenCalled()
+    await expect(validate({ project: project.root })).rejects.toThrow(
+      'Project path does not exist, aborting'
+    )
+    expect(log.error).toHaveBeenCalledWith(
+      'Project path does not exist, aborting'
+    )
   })
 
   // #797: b-ber-validator's own grammar read a directive only after a

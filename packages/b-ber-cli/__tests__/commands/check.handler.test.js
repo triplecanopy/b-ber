@@ -102,9 +102,8 @@ describe('check handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // validate reports through log.error and throws. Note that its
-      // missing-project check never fires today (#736), so a missing project
-      // fails differently; see below.
+      // validate reports through log.error and throws: on a missing
+      // project, and when a file has an error (#796)
       validate.mockImplementationOnce(async () => {
         throw log.error('Project path does not exist, aborting')
       })
@@ -117,9 +116,9 @@ describe('check handler', () => {
 
     it('exits 1 on any other rejection, printing it through the logger', async () => {
       // Issue 740: the handler used to drop validate's promise, so a
-      // rejection (e.g. readdir ENOENT on a missing project, which is how a
-      // missing project actually fails because of #736) was unhandled: Node
-      // crashed with a stack trace, not through the logger.
+      // rejection (e.g. readdir ENOENT, which is how a missing project failed
+      // until #736) was unhandled: Node crashed with a stack trace, not
+      // through the logger.
       validate.mockRejectedValueOnce(new Error('ENOENT'))
 
       await check.handler({ project: 'missing' })

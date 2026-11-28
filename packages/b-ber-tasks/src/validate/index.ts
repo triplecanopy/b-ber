@@ -34,7 +34,9 @@ const validate = async ({
     state.src.markdown()
   )
 
-  if (!fs.pathExists(markdownPath)) {
+  // Awaited: the promise alone is always truthy, so the check never fired
+  // and a missing project failed in readdir instead (#736)
+  if (!(await fs.pathExists(markdownPath))) {
     throw log.error('Project path does not exist, aborting')
   }
 
