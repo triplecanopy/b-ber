@@ -1,12 +1,15 @@
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
+import { distDir } from '../context'
 
-// Remove an ebook's output directory and outdated builds
-const clean = () => {
-  const projectRoot = path.dirname(state.distDir)
-  const fileType = `.${state.build}`
+// Remove an ebook's output directory and outdated builds: the target's files
+// beside it, `*.<target>`, and the directory itself
+const clean = (ctx: BuildContext) => {
+  const dir = distDir(ctx)
+  const projectRoot = path.dirname(dir)
+  const fileType = `.${ctx.target.name}`
 
   const promises = fs
     .readdirSync(projectRoot)
@@ -18,13 +21,11 @@ const clean = () => {
     )
 
   return Promise.all(promises).then(() =>
-    fs
-      .remove(state.distDir)
-      .then(() => log.info('clean remove [%s]', state.distDir))
+    fs.remove(dir).then(() => log.info('clean remove [%s]', dir))
   )
 }
 
-export default () =>
-  clean().catch((err) => {
+export default (ctx: BuildContext) =>
+  clean(ctx).catch((err) => {
     throw log.error(err)
   })

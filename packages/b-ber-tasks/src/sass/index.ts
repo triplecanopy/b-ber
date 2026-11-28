@@ -1,10 +1,11 @@
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import autoprefixer from 'autoprefixer'
 import fs from 'fs-extra'
 import postcss from 'postcss'
 import dartSass from 'sass'
+import { dist, env, src } from '../context'
 
 // dart-sass writes its warnings straight to stderr, where they bury the
 // build's own output: a build of either bundled theme prints dozens of
@@ -30,21 +31,25 @@ const sassLogger = {
 // running the sass task
 const ASSET_DIRNAMES = ['fonts', 'images']
 
-const autoprefixerOptions = state.config.autoprefixer_options || {
-  overrideBrowserslist: ['defaults', '> 1%', 'not dead', 'not IE 11'],
-  flexbox: 'no-2009',
-}
+// config.yml's `autoprefixer_options`, read when the task runs. It used to
+// be read from State when the module was imported, so a target's section of
+// config.yml and the command line could not change it (TASK-162's bug 4)
+const autoprefixerOptions = (ctx: BuildContext) =>
+  ctx.config.autoprefixer_options || {
+    overrideBrowserslist: ['defaults', '> 1%', 'not dead', 'not IE 11'],
+    flexbox: 'no-2009',
+  }
 
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
-const createSCSSString = () => {
+const createSCSSString = (ctx: BuildContext) => {
   const chunks = []
-  const { theme } = state
+  const { theme } = ctx.project
   const themeName = theme.name
 
-  const themeSettingsPath = state.src.stylesheets(themeName, '_settings.scss')
-  const themeOverridesPath = state.src.stylesheets(themeName, '_overrides.scss')
+  const themeSettingsPath = src(ctx).stylesheets(themeName, '_settings.scss')
+  const themeOverridesPath = src(ctx).stylesheets(themeName, '_overrides.scss')
   const themeStylesPath = theme.entry
 
   // load user-defined variables
@@ -78,7 +83,7 @@ const createSCSSString = () => {
 }
 
 // make sure the compiled output dir exists
-const ensureCSSDir = () => fs.mkdirp(state.dist.stylesheets())
+const ensureCSSDir = (ctx: BuildContext) => fs.mkdirp(dist(ctx).stylesheets())
 
 // copy assets that exist in theme directory to the corresponding directory in
 // _project:
@@ -90,13 +95,13 @@ const ensureCSSDir = () => fs.mkdirp(state.dist.stylesheets())
 //
 // these assets are then copied to the correct build dir by the `copy` task.
 //
-const copyThemeAssets = () => {
-  const { theme } = state
+const copyThemeAssets = (ctx: BuildContext) => {
+  const { theme } = ctx.project
 
   const fileData = ASSET_DIRNAMES.reduce(
     (acc, curr) => {
       const themePath = path.resolve(path.dirname(theme.entry), curr)
-      const srcPath = state.src.root(`_${curr}`)
+      const srcPath = src(ctx).root(`_${curr}`)
 
       fs.mkdirpSync(srcPath)
 
@@ -132,7 +137,7 @@ const copyThemeAssets = () => {
   return Promise.all(promises)
 }
 
-function resolveImportedModule(importPath: string) {
+function resolveImportedModule(ctx: BuildContext, importPath: string) {
   // Remove preceeding tilde
   const trimmedImportPath = importPath.slice(1)
 
@@ -159,7 +164,7 @@ function resolveImportedModule(importPath: string) {
 
   // Get the module
   const modulePath = require.resolve(moduleNameWithScope, {
-    paths: [path.join(path.dirname(state.theme.entry))],
+    paths: [path.join(path.dirname(ctx.project.theme.entry))],
   })
 
   // No path was provided, return the imported node module
@@ -174,27 +179,33 @@ function resolveImportedModule(importPath: string) {
   return importedModule
 }
 
-const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
+const renderCSS = (
+  ctx: BuildContext,
+  scssString: Buffer
+): Promise<{ css: Buffer }> =>
   new Promise((resolve) => {
+    const { theme } = ctx.project
     dartSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files
         importer: (url, _file, done) => {
-          const file = url[0] === '~' ? resolveImportedModule(url) : url
+          const file = url[0] === '~' ? resolveImportedModule(ctx, url) : url
 
           return done({ file })
         },
 
         // Add build vars at runtime with the SCSS buffer (which is transformed
         // to string in the backticks)
-        data: `$build: "${state.build}";${scssString}`,
+        // `$build` is the target's name, one of the four places a project
+        // sees it (TASK-160)
+        data: `$build: "${ctx.target.name}";${scssString}`,
 
         includePaths: [
-          state.src.stylesheets(),
-          path.dirname(state.theme.entry),
-          path.dirname(path.dirname(state.theme.entry)),
+          src(ctx).stylesheets(),
+          path.dirname(theme.entry),
+          path.dirname(path.dirname(theme.entry)),
         ],
-        outputStyle: state.env === 'production' ? 'compressed' : 'expanded',
+        outputStyle: env() === 'production' ? 'compressed' : 'expanded',
         logger: sassLogger,
         // @ts-expect-error `errLogToConsole` is a node-sass option, which
         // dart-sass ignores. Kept so this change is types-only; it can go
@@ -207,23 +218,25 @@ const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
     )
   })
 
-const applyPostProcessing = ({ css }: { css: Buffer }) =>
-  postcss(autoprefixer(autoprefixerOptions)).process(css, { from: undefined })
+const applyPostProcessing = (ctx: BuildContext, { css }: { css: Buffer }) =>
+  postcss(autoprefixer(autoprefixerOptions(ctx))).process(css, {
+    from: undefined,
+  })
 
-const writeCSSFile = ({ css }: { css: string }) => {
+const writeCSSFile = (ctx: BuildContext, { css }: { css: string }) => {
   const fileName =
-    state.env === 'production' ? `${state.hash}.css` : 'application.css'
+    env() === 'production' ? `${ctx.hash}.css` : 'application.css'
 
-  return fs.writeFile(state.dist.stylesheets(fileName), css)
+  return fs.writeFile(dist(ctx).stylesheets(fileName), css)
 }
 
-const sass = () =>
-  ensureCSSDir()
-    .then(copyThemeAssets)
-    .then(createSCSSString)
-    .then(renderCSS)
-    .then(applyPostProcessing)
-    .then(writeCSSFile)
+const sass = (ctx: BuildContext) =>
+  ensureCSSDir(ctx)
+    .then(() => copyThemeAssets(ctx))
+    .then(() => createSCSSString(ctx))
+    .then((scss) => renderCSS(ctx, scss))
+    .then((result) => applyPostProcessing(ctx, result))
+    .then((result) => writeCSSFile(ctx, result))
     .catch((err) => {
       throw log.error(err)
     })

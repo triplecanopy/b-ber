@@ -54,12 +54,12 @@ interface Book {
 }
 
 async function book(ctx: BuildContext): Promise<Book> {
-  await step(ctx, 'clean', () => clean())
-  await step(ctx, 'container', () => container())
-  await step(ctx, 'cover', () => cover())
-  await step(ctx, 'sass', () => sass())
-  await step(ctx, 'copy', () => copy())
-  await step(ctx, 'scripts', () => scripts())
+  await step(ctx, 'clean', () => clean(ctx))
+  await step(ctx, 'container', () => container(ctx))
+  await step(ctx, 'cover', () => cover(ctx))
+  await step(ctx, 'sass', () => sass(ctx))
+  await step(ctx, 'copy', () => copy(ctx))
+  await step(ctx, 'scripts', () => scripts(ctx))
   const { spine, toc } = ctx.settings
   const pages = await step(ctx, 'render', () => render(ctx, { spine }))
   const figures = await step(ctx, 'loi', () =>
@@ -68,7 +68,7 @@ async function book(ctx: BuildContext): Promise<Book> {
   await step(ctx, 'footnotes', () =>
     footnotes(ctx, { footnotes: pages.footnotes, spine })
   )
-  await step(ctx, 'inject', () => inject())
+  await step(ctx, 'inject', () => inject(ctx))
   await step(ctx, 'opf', () =>
     opf(ctx, {
       spine,

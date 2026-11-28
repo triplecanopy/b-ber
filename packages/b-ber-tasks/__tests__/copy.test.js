@@ -12,19 +12,9 @@ jest.mock('fs-extra', () => ({
   statSync: (...args) => mockFsStatSync(...args),
 }))
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  config: { ignore: [] },
-  src: {
-    images: () => '/src/_images',
-    fonts: () => '/src/_fonts',
-    media: () => '/src/_media',
-  },
-  dist: {
-    images: () => '/dist/images',
-    fonts: () => '/dist/fonts',
-    media: () => '/dist/media',
-  },
-}))
+// The build's context: the source in `/src`, building into `/dist`, so the
+// assets go to `/dist/OPS/<images|fonts|media>`
+const ctx = { config: { ignore: [], src: '/src' }, settings: { dist: '/dist' } }
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
@@ -37,19 +27,19 @@ beforeEach(() => {
 
 describe('task: copy', () => {
   test('returns a promise', () => {
-    expect(copy()).toBeInstanceOf(Promise)
+    expect(copy(ctx)).toBeInstanceOf(Promise)
   })
 
   test('creates destination directories via mkdirp', async () => {
-    await copy()
+    await copy(ctx)
     const dirs = mockFsMkdirp.mock.calls.map(([p]) => p)
-    expect(dirs.some((p) => p.includes('dist/images'))).toBe(true)
-    expect(dirs.some((p) => p.includes('dist/fonts'))).toBe(true)
-    expect(dirs.some((p) => p.includes('dist/media'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/OPS/images'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/OPS/fonts'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/OPS/media'))).toBe(true)
   })
 
   test('creates source directories via mkdirp to ensure they exist', async () => {
-    await copy()
+    await copy(ctx)
     const dirs = mockFsMkdirp.mock.calls.map(([p]) => p)
     expect(dirs.some((p) => p.includes('src/_images'))).toBe(true)
     expect(dirs.some((p) => p.includes('src/_fonts'))).toBe(true)
@@ -57,7 +47,7 @@ describe('task: copy', () => {
   })
 
   test('copies each asset directory from src to dist', async () => {
-    await copy()
+    await copy(ctx)
     expect(mockFsCopy).toHaveBeenCalledTimes(3)
     const pairs = mockFsCopy.mock.calls.map(([from, to]) => ({ from, to }))
     expect(
@@ -72,13 +62,13 @@ describe('task: copy', () => {
   })
 
   test('passes overwrite: false to fs.copy', async () => {
-    await copy()
+    await copy(ctx)
     const [, , opts] = mockFsCopy.mock.calls[0]
     expect(opts.overwrite).toBe(false)
   })
 
   test('filter excludes dot files', async () => {
-    await copy()
+    await copy(ctx)
     const [, , { filter }] = mockFsCopy.mock.calls[0]
     expect(filter('.hidden')).toBe(false)
     expect(filter('.gitkeep')).toBe(false)
@@ -88,6 +78,6 @@ describe('task: copy', () => {
   test('resolves without error when files exceed the size warning limit', async () => {
     mockFsReaddir.mockResolvedValue(['large-video.mp4'])
     mockFsStatSync.mockReturnValue({ size: 2000000 }) // over 1.5Mb limit
-    await expect(copy()).resolves.not.toThrow()
+    await expect(copy(ctx)).resolves.not.toThrow()
   })
 })

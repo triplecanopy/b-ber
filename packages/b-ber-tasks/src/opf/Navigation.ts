@@ -150,14 +150,17 @@ class Navigation {
     return Promise.all(promises)
   }
 
-  static async createTocStringsFromTemplate(toc: SpineItem[]) {
+  static async createTocStringsFromTemplate(
+    ctx: BuildContext,
+    toc: SpineItem[]
+  ) {
     log.info('opf build [toc.xhtml]')
 
     const data = new File({
       contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())),
     })
     const file = [{ name: 'toc.xhtml', data }]
-    const [{ contents }] = await getFileObjects(file)
+    const [{ contents }] = await getFileObjects(ctx, file)
 
     return contents
   }
@@ -232,7 +235,7 @@ class Navigation {
       .then(() => Navigation.compareXhtmlWithYaml(ctx, { spine, loi }))
       .then(() =>
         Promise.all([
-          Navigation.createTocStringsFromTemplate(toc),
+          Navigation.createTocStringsFromTemplate(ctx, toc),
           Navigation.createNcxStringsFromTemplate(toc),
           Navigation.createGuideStringsFromTemplate(guide),
           Navigation.createSpineStringsFromTemplate(spine, loi),

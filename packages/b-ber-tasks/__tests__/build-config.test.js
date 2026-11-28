@@ -46,7 +46,7 @@ describe('per-build config sections', () => {
     const context = createBuildContext(loadProject(project.root), 'epub')
     await robots(context.settings.dist)
 
-    await runInBuildContext(context, () => inject())
+    await runInBuildContext(context, () => inject(context))
 
     expect(context.config.private).toBe(true)
     expect(await page(context.settings.dist)).toContain(
@@ -63,7 +63,7 @@ describe('per-build config sections', () => {
     const context = createBuildContext(loadProject(project.root), 'web')
     await robots(context.settings.dist)
 
-    await runInBuildContext(context, () => inject())
+    await runInBuildContext(context, () => inject(context))
 
     expect(context.config.private).toBe(false)
     expect(await page(context.settings.dist)).toContain(

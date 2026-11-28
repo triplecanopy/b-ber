@@ -10,8 +10,8 @@
 
 // Tests for the `sass` task. These compile real SCSS with the real dart-sass
 // and run the real autoprefixer, against fixture themes and projects written
-// to temp directories. Only `State` (a config-loading singleton) and the
-// logger are replaced.
+// to temp directories. Only the build's context and the logger are
+// replaced.
 
 import os from 'node:os'
 import path from 'node:path'
@@ -23,8 +23,9 @@ jest.mock('@canopycanopycanopy/b-ber-logger')
 
 beforeEach(() => returnReportedErrors(log))
 
-// The parts of `State` the task reads. Paths are rebuilt per test in
-// `beforeEach`, everything else is reset there.
+// What the task reads from the build's context, kept as the State it used to
+// read so each test can set it. Paths are rebuilt per test in `beforeEach`,
+// everything else is reset there.
 const mockState = {
   config: {},
   build: 'epub',
@@ -44,12 +45,34 @@ const mockState = {
   },
 }
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => mockState)
+// The build's context, a view of `mockState`
+const ctx = {
+  get target() {
+    return { name: mockState.build }
+  },
+  get config() {
+    return { ...mockState.config, src: mockState.srcDir }
+  },
+  get settings() {
+    return { dist: mockState.distDir }
+  },
+  get hash() {
+    return mockState.hash
+  },
+  project: {
+    get theme() {
+      return mockState.theme
+    },
+  },
+}
+
+const { NODE_ENV } = process.env
+afterEach(() => {
+  process.env.NODE_ENV = NODE_ENV
+})
 
 const dartSass = require('sass')
 
-// Required, not imported, so it loads after `mockState` is initialised: the
-// task reads `state.config` at module load
 const sass = require('../src/sass').default
 
 const THEME_NAME = 'fixture-theme'
@@ -136,7 +159,7 @@ describe('task: sass', () => {
         '_overrides.scss': '/* overrides */\n',
       })
 
-      await sass()
+      await sass(ctx)
       const css = await readCSS()
 
       const settings = css.indexOf('/* settings */')
@@ -155,7 +178,7 @@ describe('task: sass', () => {
       })
       await writeUserStylesheets({ '_settings.scss': '$color: red;\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.title{color:red;}')
     })
@@ -166,7 +189,7 @@ describe('task: sass', () => {
         '_overrides.scss': '.title { color: green; }\n',
       })
 
-      await sass()
+      await sass(ctx)
       const css = squash(await readCSS())
 
       expect(css.indexOf('.title{color:green;}')).toBeGreaterThan(
@@ -180,7 +203,7 @@ describe('task: sass', () => {
         '_overrides.scss': '.link { color: $accent; }\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.link{color:#f00;}')
     })
@@ -191,7 +214,7 @@ describe('task: sass', () => {
         '_overrides.scss': '.overrides { color: green; }\n',
       })
 
-      await sass()
+      await sass(ctx)
       const css = squash(await readCSS())
 
       expect(css).toContain('.theme{color:blue;}')
@@ -206,7 +229,7 @@ describe('task: sass', () => {
       })
       await writeUserStylesheets({ '_settings.scss': '$color: red;\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.theme{color:red;}')
       expect(log.error).not.toHaveBeenCalled()
@@ -215,7 +238,7 @@ describe('task: sass', () => {
     test('compiles the theme alone when the user has no stylesheets', async () => {
       await writeTheme({ 'application.scss': '.theme { color: blue; }\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toBe('.theme{color:blue;}')
       expect(log.error).not.toHaveBeenCalled()
@@ -227,7 +250,7 @@ describe('task: sass', () => {
         '_overrides.scss': '.other { color: green; }\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).not.toContain('.other')
     })
@@ -239,14 +262,16 @@ describe('task: sass', () => {
         '_overrides.scss': '.overrides { color: green; }\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toBe('.overrides{color:green;}')
       expect(log.error).not.toHaveBeenCalled()
     })
 
     test('reports an error when there is nothing to compile', async () => {
-      await expect(sass()).rejects.toThrow('No readable stylesheets were found')
+      await expect(sass(ctx)).rejects.toThrow(
+        'No readable stylesheets were found'
+      )
 
       expect(log.error).toHaveBeenCalledWith(
         'No readable stylesheets were found'
@@ -268,7 +293,7 @@ describe('task: sass', () => {
           'application.scss': '.build::after { content: "#{$build}"; }\n',
         })
 
-        await sass()
+        await sass(ctx)
 
         expect(squash(await readCSS())).toContain(
           `.build::after{content:"${build}";}`
@@ -287,7 +312,7 @@ describe('task: sass', () => {
         ].join('\n'),
       })
 
-      await sass()
+      await sass(ctx)
       const css = squash(await readCSS())
 
       expect(css).toContain('.reader{display:block;}')
@@ -308,7 +333,7 @@ describe('task: sass', () => {
           "$color: red;\n@if $build == 'web' { $color: purple; }\n",
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.title{color:purple;}')
     })
@@ -319,7 +344,7 @@ describe('task: sass', () => {
       await writeTheme({ 'application.scss': '.theme { color: blue; }\n' })
       await writeUserStylesheets({ '_settings.scss': '$color: red;\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(getOptions().data).toBe(
         '$build: "mobi";$color: red;\n.theme { color: blue; }\n'
@@ -346,7 +371,7 @@ describe('task: sass', () => {
           "@import '~@fixture/mixins/colors';\n.brand { color: $brand; }\n",
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.brand{color:#0a0;}')
     })
@@ -360,7 +385,7 @@ describe('task: sass', () => {
           "@import '~fixture-mixins/stylesheets/space';\n.gap { margin: $gap; }\n",
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.gap{margin:3px;}')
     })
@@ -377,7 +402,7 @@ describe('task: sass', () => {
         'application.scss': "@import '~fixture-scss-main';\n",
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.from-main{color:teal;}')
     })
@@ -387,7 +412,7 @@ describe('task: sass', () => {
       await writePackage('@fixture/mixins', {})
       await writeTheme({ 'application.scss': '' })
 
-      await sass()
+      await sass(ctx)
 
       expect(runImporter(getOptions(), '~@fixture/mixins/colors')).toEqual({
         file: path.join(tmp, 'node_modules', '@fixture', 'mixins', 'colors'),
@@ -398,7 +423,7 @@ describe('task: sass', () => {
       const getOptions = captureRenderOptions()
       await writeTheme({ 'application.scss': '' })
 
-      await sass()
+      await sass(ctx)
 
       expect(runImporter(getOptions(), 'layout/text')).toEqual({
         file: 'layout/text',
@@ -421,7 +446,7 @@ describe('task: sass', () => {
       await writeFiles(path.join(project, 'theme'), { 'application.scss': '' })
       mockState.theme.entry = path.join(project, 'theme', 'application.scss')
 
-      await sass()
+      await sass(ctx)
 
       const { file } = runImporter(getOptions(), '~fixture-mixins/space')
       expect(file).toBe(path.join(tmp, 'fixture-mixins', 'space'))
@@ -442,7 +467,7 @@ describe('task: sass', () => {
         '_overrides.scss': "@import 'project-partial';\n",
       })
 
-      await sass()
+      await sass(ctx)
       const css = squash(await readCSS())
 
       expect(css).toContain('.theme-partial{color:blue;}')
@@ -461,7 +486,7 @@ describe('task: sass', () => {
         '_settings.scss': '$color: orange;\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('.title{color:orange;}')
     })
@@ -475,7 +500,7 @@ describe('task: sass', () => {
     test('compiles b-ber-theme-serif, resolving its `~` imports', async () => {
       useBuiltInTheme('b-ber-theme-serif')
 
-      await sass()
+      await sass(ctx)
       const css = await readCSS()
 
       expect(css.length).toBeGreaterThan(1000)
@@ -489,11 +514,11 @@ describe('task: sass', () => {
       const readerOnly = 'fast.fonts.net'
 
       mockState.build = 'reader'
-      await sass()
+      await sass(ctx)
       expect(await readCSS()).toContain(readerOnly)
 
       mockState.build = 'epub'
-      await sass()
+      await sass(ctx)
       expect(await readCSS()).not.toContain(readerOnly)
     })
 
@@ -503,7 +528,7 @@ describe('task: sass', () => {
         '_settings.scss': '$font-sans: "Fixture Sans", sans-serif;\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(await readCSS()).toContain('"Fixture Sans"')
       expect(log.error).not.toHaveBeenCalled()
@@ -519,11 +544,11 @@ describe('task: sass', () => {
       })
 
       mockState.build = 'epub'
-      await sass()
+      await sass(ctx)
       expect(await readCSS()).toContain('"Fixture Face"')
 
       mockState.build = 'reader'
-      await sass()
+      await sass(ctx)
       expect(await readCSS()).not.toContain('"Fixture Face"')
     })
   })
@@ -532,37 +557,23 @@ describe('task: sass', () => {
     test('adds vendor prefixes to the compiled CSS', async () => {
       await writeTheme({ 'application.scss': '.a { user-select: none; }\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('-webkit-user-select:none;')
     })
 
-    test('uses `autoprefixer_options` from the config', async () => {
+    // Read from the build's config when the task runs. They were read from
+    // State once, when the module was imported, so neither a target's section
+    // of config.yml nor the command line could change them
+    test("uses `autoprefixer_options` from the build's config", async () => {
       mockState.config = {
         autoprefixer_options: { overrideBrowserslist: ['ie 10'] },
       }
       await writeTheme({ 'application.scss': '.b { display: flex; }\n' })
 
-      // The options are read when the module loads, so load a fresh copy
-      let isolatedSass
-      jest.isolateModules(() => {
-        isolatedSass = require('../src/sass').default
-      })
-      await isolatedSass()
+      await sass(ctx)
 
       expect(squash(await readCSS())).toContain('display:-ms-flexbox;')
-    })
-
-    test('ignores `autoprefixer_options` set after the module has loaded', async () => {
-      // Current behaviour: the options are captured once, at import
-      mockState.config = {
-        autoprefixer_options: { overrideBrowserslist: ['ie 10'] },
-      }
-      await writeTheme({ 'application.scss': '.b { display: flex; }\n' })
-
-      await sass()
-
-      expect(squash(await readCSS())).not.toContain('-ms-flexbox')
     })
   })
 
@@ -570,17 +581,17 @@ describe('task: sass', () => {
     test('writes expanded CSS to `application.css` in development', async () => {
       await writeTheme({ 'application.scss': '.a { color: red; }\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(await readCSS()).toBe('.a {\n  color: red;\n}')
     })
 
     test('writes compressed CSS to `<hash>.css` in production', async () => {
-      mockState.env = 'production'
+      process.env.NODE_ENV = 'production'
       mockState.hash = 'abc123'
       await writeTheme({ 'application.scss': '.a { color: red; }\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(await readCSS('abc123.css')).toBe('.a{color:red}')
       expect(fs.existsSync(mockState.dist.stylesheets('application.css'))).toBe(
@@ -595,7 +606,7 @@ describe('task: sass', () => {
         'application.scss': '@warn "check this";\n.a { color: red; }\n',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(log.warn).toHaveBeenCalledWith('sass %s', 'check this')
     })
@@ -603,7 +614,7 @@ describe('task: sass', () => {
     test('send deprecations to the verbose output instead of stderr', async () => {
       await writeTheme({ 'application.scss': '.a { width: (4px / 2); }\n' })
 
-      await sass()
+      await sass(ctx)
 
       expect(log.info).toHaveBeenCalledWith(
         'sass deprecation: %s',
@@ -623,7 +634,7 @@ describe('task: sass', () => {
         'images/texture.png': 'image',
       })
 
-      await sass()
+      await sass(ctx)
 
       expect(await fs.readdir(mockState.src.root('_fonts'))).toEqual([
         'body.woff2',
@@ -637,7 +648,7 @@ describe('task: sass', () => {
       await writeTheme({ 'application.scss': '', 'fonts/body.woff2': 'theme' })
       await writeFiles(mockState.src.root('_fonts'), { 'body.woff2': 'user' })
 
-      await sass()
+      await sass(ctx)
 
       expect(
         await fs.readFile(mockState.src.root('_fonts', 'body.woff2'), 'utf8')
@@ -647,7 +658,7 @@ describe('task: sass', () => {
     test('creates `_fonts` and `_images` when the theme has neither', async () => {
       await writeTheme({ 'application.scss': '' })
 
-      await sass()
+      await sass(ctx)
 
       expect(fs.existsSync(mockState.src.root('_fonts'))).toBe(true)
       expect(fs.existsSync(mockState.src.root('_images'))).toBe(true)
@@ -686,7 +697,7 @@ describe('task: sass', () => {
       // stops
       await writeTheme({ 'application.scss': '', fonts: 'not a directory' })
 
-      await expect(sass()).rejects.toMatchObject({ code: 'ENOTDIR' })
+      await expect(sass(ctx)).rejects.toMatchObject({ code: 'ENOTDIR' })
 
       expect(log.error).toHaveBeenCalledWith(
         expect.objectContaining({ code: 'ENOTDIR' })
@@ -703,7 +714,7 @@ describe('task: sass', () => {
         await fs.chmod(themeDir, 0o000)
 
         try {
-          await expect(sass()).rejects.toThrow('There was a problem copying')
+          await expect(sass(ctx)).rejects.toThrow('There was a problem copying')
         } finally {
           await fs.chmod(themeDir, 0o755)
         }
@@ -729,7 +740,7 @@ describe('task: sass', () => {
       await writeTheme({ 'application.scss': '.a { color: $undefined; }\n' })
 
       let settled = false
-      sass().then(
+      sass(ctx).then(
         () => {
           settled = true
         },
@@ -757,7 +768,7 @@ describe('task: sass', () => {
         'application.scss': "@import '~@fixture/not-installed/file';\n",
       })
 
-      sass()
+      sass(ctx)
       const thrown = await trap.thrown
 
       expect(thrown).toBeInstanceOf(Error)

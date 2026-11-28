@@ -1,53 +1,44 @@
-/* eslint-disable class-methods-use-this */
-
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xml from '@canopycanopycanopy/b-ber-templates/Xml'
 import fs from 'fs-extra'
+import { dist } from '../context'
 
-class Container {
-  get dirs() {
-    return [state.dist.ops(), state.dist.root('META-INF')]
-  }
+const write = (ctx: BuildContext) => {
+  const files = [
+    {
+      path: path.join('META-INF', 'container.xml'),
+      content: Xml.container(),
+    },
+    { path: 'mimetype', content: Xml.mimetype() },
+  ]
 
-  constructor() {
-    this.init = this.init.bind(this)
-  }
+  const promises = files.map((file) =>
+    fs
+      .writeFile(dist(ctx).root(file.path), file.content)
+      .then(() => log.info('container emit [%s]', file.path))
+  )
 
-  write() {
-    const files = [
-      {
-        path: path.join('META-INF', 'container.xml'),
-        content: Xml.container(),
-      },
-      { path: 'mimetype', content: Xml.mimetype() },
-    ]
-
-    const promises = files.map((file) =>
-      fs
-        .writeFile(state.dist.root(file.path), file.content)
-        .then(() => log.info('container emit [%s]', file.path))
-    )
-
-    return Promise.all(promises)
-  }
-
-  makedirs() {
-    const promises = this.dirs.map((dir) =>
-      fs.mkdirs(dir).then(() => log.info('container emit [%s]', dir))
-    )
-    return Promise.all(promises)
-  }
-
-  init() {
-    return this.makedirs()
-      .then(() => this.write())
-      .catch((err) => {
-        throw log.error(err)
-      })
-  }
+  return Promise.all(promises)
 }
 
-const container = new Container()
-export default container.init
+const makedirs = (ctx: BuildContext) => {
+  const dirs = [dist(ctx).ops(), dist(ctx).root('META-INF')]
+  const promises = dirs.map((dir) =>
+    fs.mkdirs(dir).then(() => log.info('container emit [%s]', dir))
+  )
+  return Promise.all(promises)
+}
+
+// Writes the epub's `mimetype` and `META-INF/container.xml`, and creates its
+// `OPS` directory. A plain function: it was a method of an instance created
+// when the module was imported
+const container = (ctx: BuildContext) =>
+  makedirs(ctx)
+    .then(() => write(ctx))
+    .catch((err) => {
+      throw log.error(err)
+    })
+
+export default container

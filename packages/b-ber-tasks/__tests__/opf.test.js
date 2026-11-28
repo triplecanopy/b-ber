@@ -359,7 +359,10 @@ describe('Navigation', () => {
     })
 
     test('createTocStringsFromTemplate renders the TOC page', async () => {
-      const toc = await Navigation.createTocStringsFromTemplate(state.toc)
+      const toc = await Navigation.createTocStringsFromTemplate(
+        project.ctx,
+        state.toc
+      )
 
       expect(toc).toContain('<html')
       expect(toc).toContain('href="text/one.xhtml"')
