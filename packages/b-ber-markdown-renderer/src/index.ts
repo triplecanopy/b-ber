@@ -150,7 +150,7 @@ class MarkdownRenderer {
     this.markdownIt.use(directives, {
       host: legacyHost(),
       blocks: {
-        section: legacyBlock(section.render, section.close, options),
+        section: section.render,
         pullquote: legacyBlock(pullquote.render, pullquote.close, options),
         dialogue: legacyBlock(
           markdownItDialogue.renderer({}).render,

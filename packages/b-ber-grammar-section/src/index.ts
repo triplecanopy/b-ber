@@ -1,10 +1,12 @@
 import {
-  attributes,
+  attributesList,
+  attributesObject,
+  commentLines,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
-  type DirectiveToken,
+  type BlockRender,
   type DocumentEnv,
   Html,
 } from '@canopycanopycanopy/b-ber-lib'
@@ -106,51 +108,51 @@ export function close(
   )
 }
 
-function openElement(
-  token: RegExpMatchArray,
-  fileName: string,
-  lineNumber: number | null
-) {
-  // Destructure the attributes from matches, omitting `matches[0]` since
-  // we're only interested in the captures
-  const [, type, id, attr] = token
-
-  log.debug(`open directive [${id}]`)
-
-  const comment = Html.comment(
-    `START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`
-  )
-
-  const attrs = attributes(attr, type, { fileName, lineNumber })
-  return `${comment}<section id="${htmlId(id)}"${attrs}>`
+// The comment that ends a block, which says how it closed, as it always has
+function endComment(id: string, closedBy: ClosedBy): string {
+  if (closedBy === 'end') return `END: section:#${htmlId(id)}`
+  log.debug(`exit directive [${id}]`)
+  return `END: section:exit#${htmlId(id)}`
 }
 
-const render = (
-  tokens: DirectiveToken[],
-  index: number,
-  _options: unknown,
-  env: DocumentEnv
-) => {
-  const token = tokens[index]
-  const lineNumber = token.map ? token.map[0] : null
+// A structural block, built whole: its start comment, the <section> with its
+// children, and its end comment. Called at the opener, it reads and checks
+// the opener's attributes before anything inside the block renders
+const render: BlockRender = ({ node, env, h }) => {
+  const lineNumber = node.line
   const fileName = `_markdown/${env.document.fileName}.md`
-  const marker = token.info.trim()
-
-  // Closes are drawn by `close`, from the directive rule's node
-  if (token.nesting !== 1) return ''
-
-  const tokenClose = marker.match(MARKER_CLOSE_RE)
-  const tokenOpen = marker.match(MARKER_OPEN_RE)
+  const marker = node.info.trim()
 
   // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
   // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
   // block with no id, and fails in `htmlId`, as it always has
-  if (tokenClose)
-    return close({ name: '', id: tokenClose[2], info: marker }, 'exit', env)
+  const tokenClose = marker.match(MARKER_CLOSE_RE)
+  if (tokenClose) {
+    const stray = close(
+      { name: '', id: tokenClose[2], info: marker },
+      'exit',
+      env
+    )
+    return (children, closedBy) =>
+      h.fragment([h.raw(stray), ...children, h.raw(close(node, closedBy, env))])
+  }
 
-  // `validateOpen` has already matched this marker against MARKER_OPEN_RE,
-  // so a non-exit token always matches here
-  return openElement(tokenOpen!, fileName, lineNumber)
+  // The directive rule claims only the lines MARKER_OPEN_RE matches
+  const [, type, id, attr] = marker.match(MARKER_OPEN_RE) as RegExpMatchArray
+
+  log.debug(`open directive [${id}]`)
+
+  const start = `START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`
+  const attrs = attributesList(
+    attributesObject(attr, type, { fileName, lineNumber })
+  )
+
+  return (children, closedBy) =>
+    h.fragment([
+      commentLines(h, start),
+      h('section', [['id', htmlId(id)], ...attrs], children),
+      commentLines(h, endComment(id, closedBy)),
+    ])
 }
 
 export default {

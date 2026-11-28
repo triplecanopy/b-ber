@@ -1,6 +1,6 @@
 import log from '@canopycanopycanopy/b-ber-logger'
-import MarkdownIt from 'markdown-it'
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import section from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -32,18 +32,35 @@ describe('b-ber-grammar-section', () => {
     expect(config.render).toBeFunction()
   })
 
-  it('render openElement produces section with id', () => {
-    const config = section.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'chapter:ch-01', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, env)
-    expect(result).toContain('<section')
-    expect(result).toContain('ch-01')
+  // A block is built whole, from its node and its rendered children
+  // (TASK-176)
+  it('builds a section with its children and its comments', () => {
+    const { render } = section.renderer({ context })
+    const node = {
+      name: 'chapter',
+      id: 'ch.01',
+      info: ' chapter:ch.01 classes:x',
+      line: 3,
+    }
+    const build = render({ node, env, h })
+    expect(serialize(build([h('p', null, ['body'])], 'exit'))).toBe(
+      '\n<!-- START: section:chapter#ch-01; _markdown/test.md:3 -->\n' +
+        '<section id="ch-01" class="x bodymatter chapter" epub:type="bodymatter chapter"><p>body</p></section>' +
+        '\n<!-- END: section:exit#ch-01 -->\n'
+    )
+    expect(serialize(build([], 'end'))).toMatch(
+      /<\/section>\n<!-- END: section:#ch-01 -->\n$/
+    )
   })
 
-  it('render draws nothing for a closing token', () => {
-    const config = section.renderer({ context })
-    const tokens = [{ nesting: -1, info: 'chapter:ch-01', map: [5, 6] }]
-    expect(config.render(tokens, 0, {}, env)).toBe('')
+  // It reads the opener before anything inside the block renders, so its
+  // warnings come first
+  it('reads the opener when it is called, and builds later', () => {
+    log.warn.mockClear()
+    const { render } = section.renderer({ context })
+    const node = { name: 'subchapter', id: 's', info: ' subchapter:s', line: 0 }
+    render({ node, env, h })
+    expect(log.warn).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -95,33 +112,4 @@ describe('b-ber-grammar-section close', () => {
       )
     ).toMatch(/^<\/div>\s+<\/figure>\s+<\/div>\s+<\/section>/)
   })
-})
-
-// Rendered through markdown-it with the old parser, which the build no
-// longer uses (TASK-174)
-describe('b-ber-grammar-section, rendered', () => {
-  beforeEach(() => {
-    log.error.mockImplementation((message) => new Error(message))
-  })
-
-  afterEach(() => {
-    log.error.mockReset()
-  })
-
-  const render = (src) =>
-    new MarkdownIt()
-      .use(section.plugin, 'section', section.renderer({ context }))
-      .render(src, envFor())
-
-  it('renders a section opened after a blank line', () => {
-    const html = render('para\n\n::: section:b\n\nbody\n\n::: exit:b\n')
-    expect(html).toContain('<section id="b"')
-    expect(html).toContain('<p>body</p>')
-  })
-
-  // TASK-153 pinned a defect here: a directive straight after a paragraph
-  // line threw a false `Duplicate [id]`, because `validateOpen` recorded the
-  // id during markdown-it's silent-mode lookahead. The build parses these
-  // blocks with b-ber-markdown-renderer's directive rule (TASK-174), whose
-  // tests assert the fix, and `validateOpen` records nothing since TASK-175
 })
