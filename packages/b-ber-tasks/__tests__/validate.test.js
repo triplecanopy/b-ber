@@ -44,7 +44,7 @@ describe('task: validate', () => {
 
     expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'one.md')
     expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'two.md')
-    expect(log.notice).toHaveBeenCalledWith('Directives valid in %d files', 2)
+    expect(log.notice).toHaveBeenCalledWith('Directives valid in %s', '2 files')
     expect(printed()).toBe('')
   })
 
@@ -76,24 +76,9 @@ describe('task: validate', () => {
     )
     expect(log.info).toHaveBeenCalledWith('Directives valid %s', 'one.md')
     expect(log.notice).toHaveBeenCalledWith(
-      '%d errors and %d warnings in %d files',
-      0,
-      2,
-      2
+      '0 errors and 2 warnings in 2 files'
     )
-  })
-
-  test('counts errors apart from warnings', async () => {
-    project = await createProject({ markdown: { bad: ERRORS } })
-
-    await expect(validate({ project: project.root })).resolves.toEqual({
-      files: 1,
-      errors: 1,
-      warnings: 0,
-    })
-    expect(printed()).toContain(
-      '_markdown/bad.md:4:13 - error duplicate-id: The id `a` is already used'
-    )
+    expect(log.error).not.toHaveBeenCalled()
   })
 
   test('reads only Markdown files', async () => {
@@ -105,17 +90,27 @@ describe('task: validate', () => {
 
     await validate({ project: project.root })
 
-    expect(log.notice).toHaveBeenCalledWith('Directives valid in %d files', 1)
+    expect(log.notice).toHaveBeenCalledWith('Directives valid in %s', '1 file')
   })
 
-  // Defect: invalid directives are printed, and the task still resolves, so
-  // `bber check` exits 0 on a project with errors and cannot fail a CI run
-  test('resolves when files are invalid (defect)', async () => {
-    project = await createProject({ markdown: { bad: ERRORS } })
-
-    await expect(validate({ project: project.root })).resolves.toMatchObject({
-      errors: 1,
+  // #796: it resolved whatever it found, so `bber check` exited 0 on a
+  // project with errors and could not fail a CI run
+  test('rejects when a file has an error, after reporting every file', async () => {
+    project = await createProject({
+      markdown: { bad: ERRORS, worse: WARNINGS },
     })
+
+    await expect(validate({ project: project.root })).rejects.toThrow(
+      'Check failed: %s'
+    )
+    expect(log.error).toHaveBeenCalledWith(
+      'Check failed: %s',
+      '1 error and 2 warnings in 2 files'
+    )
+    expect(printed()).toContain(
+      '_markdown/bad.md:4:13 - error duplicate-id: The id `a` is already used'
+    )
+    expect(printed()).toContain('_markdown/worse.md:4:1 - warning')
   })
 
   // Defect (#736): the missing-project check tests `fs.pathExists`'s promise,

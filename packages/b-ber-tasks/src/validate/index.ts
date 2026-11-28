@@ -11,6 +11,9 @@ export interface ValidateResult {
   warnings: number
 }
 
+const count = (n: number, noun: string): string =>
+  `${n} ${noun}${n === 1 ? '' : 's'}`
+
 // Checks every Markdown file of the project with the parse the build runs,
 // and prints each diagnostic as TASK-161's reporter formats it.
 //
@@ -58,16 +61,17 @@ const validate = async ({
   }
 
   if (!result.errors && !result.warnings) {
-    log.notice('Directives valid in %d files', result.files)
-  } else {
-    log.notice(
-      '%d errors and %d warnings in %d files',
-      result.errors,
-      result.warnings,
-      result.files
-    )
+    log.notice('Directives valid in %s', count(result.files, 'file'))
+    return result
   }
 
+  const summary = `${count(result.errors, 'error')} and ${count(result.warnings, 'warning')} in ${count(result.files, 'file')}`
+
+  // An error fails the check, so that `bber check` exits 1 and can gate a CI
+  // run. It resolved whatever it found until TASK-178 (#796)
+  if (result.errors) throw log.error('Check failed: %s', summary)
+
+  log.notice(summary)
   return result
 }
 
