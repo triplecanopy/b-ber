@@ -4,8 +4,8 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
   type DocumentEnv,
-  type FigureToken,
-  Html,
+  type InlineDirective,
+  type InlineRender,
   type RendererInstance,
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
@@ -22,14 +22,14 @@ import { createFigure, createFigureInline } from './image'
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
 function prepare({
-  token,
+  node,
   match,
   instance,
   env,
   fileName,
   lineNumber,
 }: {
-  token: FigureToken
+  node: InlineDirective
   match: RegExpMatchArray
   instance: RendererInstance
   env: DocumentEnv
@@ -38,12 +38,8 @@ function prepare({
 }) {
   const [, type, id, attrs] = match
   const figureId = htmlId(id)
-  const caption = token.children
-    ? instance.renderInline(token.children, env)
-    : ''
-  const comment = Html.comment(
-    `START: figure:${type}#${figureId}; ${fileName}:${lineNumber}`
-  )
+  const caption = node.caption ? instance.renderInline(node.caption, env) : ''
+  const comment = `START: figure:${type}#${figureId}; ${fileName}:${lineNumber}`
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
   const asset = env.document.images(attrsObject.source)
   const mediaType =
@@ -84,23 +80,15 @@ const validate = (params: string, line: number, env: DocumentEnv) => {
 }
 
 const render =
-  ({ instance }: { instance: RendererInstance }) =>
-  (
-    tokens: FigureToken[],
-    index: number,
-    _options: unknown,
-    env: DocumentEnv
-  ) => {
-    const token = tokens[index]
-    if (token.type === 'container_figure_close') return ''
-
+  ({ instance }: { instance: RendererInstance }): InlineRender =>
+  ({ node, env, h }) => {
     const fileName = `_markdown/${env.document.fileName}.md`
-    const lineNumber = token.map ? token.map[0] : null
+    const lineNumber = node.line
     // `validate` has already matched this marker against MARKER_OPEN_RE
-    const match = token.info.trim().match(MARKER_OPEN_RE)!
+    const match = node.info.trim().match(MARKER_OPEN_RE) as RegExpMatchArray
     const type = match[1]
     const args = prepare({
-      token,
+      node,
       match,
       instance,
       env,
@@ -109,11 +97,12 @@ const render =
     })
 
     return type === 'figure'
-      ? createFigure(args)
+      ? createFigure(args, h)
       : type === 'figure-inline'
-        ? createFigureInline(args)
-        : ''
+        ? createFigureInline(args, h)
+        : h.fragment([])
   }
+
 export default {
   plugin: figure,
   name: 'figure',
