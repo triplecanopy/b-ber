@@ -193,6 +193,73 @@ describe('b-ber-markdown-renderer: structural blocks', () => {
     expect(html).toContain('<p>:: type:image source:b.png item:2 ::</p>')
   })
 
+  // TASK-161: an exit that closes nothing used to crash b-ber-grammar-pullquote
+  // when no pullquote was open (`international-art-english-e-book`), and close
+  // the open one when its id began with the exit's (`the-world-is-unknown`)
+  describe('an exit that closes nothing', () => {
+    it('is ignored when no block is open', () => {
+      expect(
+        markdownRenderer.render(
+          'test',
+          'Before.\n\n::: exit:nothing\n\nAfter.\n'
+        )
+      ).toBe('<p>Before.</p>\n<p>After.</p>\n')
+    })
+
+    it('does not close the open blockquote', () => {
+      const html = markdownRenderer.render(
+        'test',
+        '::: blockquote:q\n\nA.\n\n::: exit:qq\n\nB.\n\n::: exit:q\n\nC.\n'
+      )
+      expect((html.match(/<\/blockquote>/g) ?? []).length).toBe(1)
+      expect(html.indexOf('</blockquote>')).toBeGreaterThan(html.indexOf('B.'))
+      expect(html.indexOf('</blockquote>')).toBeLessThan(html.indexOf('C.'))
+    })
+  })
+
+  // TASK-161: a block an outer `exit` crossed, and a pullquote left open,
+  // used to be left unclosed in the output
+  describe('balanced output', () => {
+    const count = (html, re) => (html.match(re) ?? []).length
+
+    it('closes a block a crossed exit closes, before the outer block', () => {
+      const html = markdownRenderer.render(
+        'test',
+        '::: chapter:a\n\n::: section:b\n\nInside.\n\n::: exit:a\n\nAfter.\n'
+      )
+      expect(count(html, /<section/g)).toBe(2)
+      expect(count(html, /<\/section>/g)).toBe(2)
+      const closeB = html.indexOf('END: section:exit#b')
+      const closeA = html.indexOf('END: section:exit#a')
+      expect(closeB).toBeGreaterThan(html.indexOf('Inside.'))
+      expect(closeB).toBeLessThan(closeA)
+      expect(closeA).toBeLessThan(html.indexOf('After.'))
+    })
+
+    // The i26 title pages leave a subchapter open inside a spread and close
+    // it with the spread's exit
+    it('closes a subchapter left open inside a spread at the spread’s exit', () => {
+      const html = markdownRenderer.render(
+        'test',
+        '::: spread:s\n\n::: subchapter:x\n\nInside.\n\n::: exit:s\n\nAfter.\n'
+      )
+      expect(count(html, /<section/g)).toBe(count(html, /<\/section>/g))
+      const closeX = html.indexOf('END: section:exit#x')
+      expect(closeX).toBeGreaterThan(html.indexOf('Inside.'))
+      expect(closeX).toBeLessThan(html.indexOf('END: section:exit#s'))
+    })
+
+    it('closes a pullquote left open at the end of the file', () => {
+      const html = markdownRenderer.render(
+        'test',
+        '::: pullquote:p citation:"Someone"\n\nQuoted.\n'
+      )
+      expect(count(html, /<section/g)).toBe(1)
+      expect(count(html, /<\/section>/g)).toBe(1)
+      expect(html).toContain('<cite>&#8212;&#160;Someone</cite>')
+    })
+  })
+
   it('still throws on a real duplicate id', () => {
     expect(() =>
       markdownRenderer.render(
