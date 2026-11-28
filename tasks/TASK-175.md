@@ -74,3 +74,33 @@ golden snapshot regenerated so the PR shows it:
 - Design: [TASK-161](./TASK-161.md), "Directive syntax" (including "Intended output
   differences" and "Decisions"), and Findings for the bugs each port fixes.
 - Depends on TASK-174.
+
+## Findings
+
+### 2026-11-28: the plan
+
+The ports follow TASK-174's method, so each one changes no output by
+construction:
+
+1. **Each port moves a directive's parse into the directive rule, with
+   today's token shape**, and renders it from the node. The block plugins'
+   containers run to the end of their range today, and the parse depends on
+   token levels (TASK-174's Findings), so the rule reproduces that shape. The
+   structure pass already pairs every block and stays the one place that
+   does.
+2. **Each intended output difference is its own commit after the ports**,
+   with the snapshot. Pairing is in one place by then, so most of them are a
+   change to how a pair renders, not to the parse.
+3. **Real open/close pairs come last.** The block rule scans for its `exit`
+   inside its Markdown container and tokenizes only up to it. That is the
+   list-item fix: no output changes except the content that is dropped
+   today. It also makes the reproduced shape, and most of the structure
+   pass's rewriting, unnecessary.
+
+Each port is checked by a differential run over the GitLab projects (every
+Markdown file for all seven targets, before and after the commit), as
+TASK-164 did, and by the golden test.
+
+Order: pullquote and blockquote, dialogue, gallery and spread, the figure
+family, footnotes, front matter, `media`; delete `state.cursor`; then the
+intended differences; then real pairs.
