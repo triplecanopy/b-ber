@@ -1,6 +1,9 @@
 import fs from 'fs-extra'
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import iframe from '../src'
+
+const render = (config, node, env) => serialize(config.render({ node, env, h }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   error: jest.fn((message) => new Error(message)),
@@ -12,6 +15,9 @@ jest.mock('fs-extra', () => ({ existsSync: jest.fn(() => true) }))
 
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesString: jest.fn((attrs) => ` class="${attrs.classes}"`),
+  attributesList: jest.fn((attrs) => [['class', attrs.classes]]),
+  commentLines: jest.requireActual('../../b-ber-grammar-attributes/src')
+    .commentLines,
   attributesObject: jest.fn((attrs) =>
     /poster/.test(attrs)
       ? { source: 'https://example.com/embed', poster: 'p.jpg' }
@@ -84,8 +90,8 @@ describe('b-ber-grammar-iframe', () => {
 
   it('render returns empty string when token info does not match DIRECTIVE_RE', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [{ info: 'not-matching', map: [0, 1], children: null }]
-    expect(config.render(tokens, 0, {}, envFor())).toBe('')
+    const node = { info: 'not-matching', line: 0 }
+    expect(render(config, node, envFor())).toBe('')
   })
 
   it('validate returns truthy for iframe-inline directive', () => {
@@ -95,15 +101,12 @@ describe('b-ber-grammar-iframe', () => {
 
   it('render dispatches to createIframe and collects the figure for iframe type', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'iframe:test-id source="https://example.com/embed"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
+    const node = {
+      info: 'iframe:test-id source="https://example.com/embed"',
+      line: 0,
+    }
     const env = envFor()
-    const result = config.render(tokens, 0, {}, env)
+    const result = render(config, node, env)
     expect(typeof result).toBe('string')
     expect(result.length).toBeGreaterThan(0)
     expect(env.result.figures).toEqual([
@@ -113,66 +116,48 @@ describe('b-ber-grammar-iframe', () => {
 
   it('render dispatches to createUnsupportedInline for iframe-inline on epub build', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'iframe-inline:test-id source="https://example.com/embed"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, envFor())
-    expect(result).toBe('<div class="unsupported"></div>')
+    const node = {
+      info: 'iframe-inline:test-id source="https://example.com/embed"',
+      line: 0,
+    }
+    const result = render(config, node, envFor())
+    expect(result).toContain('Your device does not support embedded media.')
   })
 
   it('render handles iframe-inline for reader build (calls createIframeInline)', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'iframe-inline:test-id source="https://example.com/embed"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, envFor('web'))
+    const node = {
+      info: 'iframe-inline:test-id source="https://example.com/embed"',
+      line: 0,
+    }
+    const result = render(config, node, envFor('web'))
     expect(typeof result).toBe('string')
-    expect(result).not.toBe('<div class="unsupported"></div>')
+    expect(result).toContain('<iframe src="https://example.com/embed"')
   })
 
   // b-ber-lib's ensureSupportedClassNames and ensurePoster read State
   it('marks the embed as supported where the target has live embeds', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [{ info: 'iframe:a source:x', map: [0, 1] }]
+    const node = { info: 'iframe:a source:x', line: 0 }
     const epub = envFor('epub')
     const web = envFor('web')
-    config.render(tokens, 0, {}, epub)
-    config.render(tokens, 0, {}, web)
+    render(config, node, epub)
+    render(config, node, web)
     expect(epub.result.figures[0].classes).toBe(' embed unsupported')
     expect(web.result.figures[0].classes).toBe(' embed supported')
   })
 
   it('takes the poster from the project’s images, and throws when it is missing', () => {
     const config = iframe.renderer({ instance, context })
-    const tokens = [{ info: 'iframe:a source:x poster', map: [0, 1] }]
+    const node = { info: 'iframe:a source:x poster', line: 0 }
     const env = envFor()
-    config.render(tokens, 0, {}, env)
+    render(config, node, env)
     expect(fs.existsSync).toHaveBeenCalledWith('/images/p.jpg')
     expect(env.result.figures[0].poster).toBe('../images/p.jpg')
 
     fs.existsSync.mockReturnValueOnce(false)
-    expect(() => config.render(tokens, 0, {}, envFor())).toThrow(
+    expect(() => render(config, node, envFor())).toThrow(
       'Poster image for [iframe] does not exist'
     )
-  })
-
-  it('render handles token with null map', () => {
-    const config = iframe.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'iframe:test-id source="https://example.com/embed"',
-        map: null,
-        children: null,
-      },
-    ]
-    expect(() => config.render(tokens, 0, {}, envFor())).not.toThrow()
   })
 })
