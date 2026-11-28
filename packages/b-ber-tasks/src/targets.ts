@@ -52,14 +52,21 @@ async function book(ctx: BuildContext): Promise<void> {
   const figures = await step(ctx, 'loi', () =>
     loi(ctx, { figures: pages.figures, spine })
   )
-  // Until the steps that read them take them as inputs
+  // Until web and xml take them as inputs
   ctx.settings.loi = figures.pages
-  ctx.settings.guide = [...pages.guide, ...figures.guide]
   await step(ctx, 'footnotes', () =>
     footnotes(ctx, { footnotes: pages.footnotes, spine })
   )
   await step(ctx, 'inject', () => inject())
-  await step(ctx, 'opf', () => opf())
+  await step(ctx, 'opf', () =>
+    opf(ctx, {
+      spine,
+      toc: ctx.settings.toc,
+      guide: [...pages.guide, ...figures.guide],
+      loi: figures.pages,
+      remoteAssets: pages.remoteAssets,
+    })
+  )
 }
 
 interface TargetBuild {

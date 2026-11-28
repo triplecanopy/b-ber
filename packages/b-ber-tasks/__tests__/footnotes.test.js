@@ -111,7 +111,8 @@ describe('task: footnotes', () => {
     await fs.ensureDir(ops('stylesheets'))
     await fs.ensureDir(ops('javascripts'))
 
-    await opf()
+    const { spine, toc, guide, loi, remoteAssets } = project.ctx.settings
+    await opf(project.ctx, { spine, toc, guide, loi, remoteAssets })
 
     const contents = await fs.readFile(ops('content.opf'), 'utf8')
     expect(contents).toContain('href="text/notes.xhtml"')

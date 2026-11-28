@@ -87,7 +87,13 @@ export const dist = (
 export const env = (): string => process.env.NODE_ENV || 'development'
 
 // b-ber-lib's version, which the OPF's generator and a generated cover print,
-// as `state.version` read it
+// as `state.version` read it. Its package.json is beside the directory of its
+// entry point, `dist/` when built (`src/` under Jest)
 export const libVersion = (): string =>
-  fs.readJSONSync(require.resolve('@canopycanopycanopy/b-ber-lib/package.json'))
-    .version as string
+  fs.readJSONSync(
+    path.join(
+      path.dirname(require.resolve('@canopycanopycanopy/b-ber-lib')),
+      '..',
+      'package.json'
+    )
+  ).version as string
