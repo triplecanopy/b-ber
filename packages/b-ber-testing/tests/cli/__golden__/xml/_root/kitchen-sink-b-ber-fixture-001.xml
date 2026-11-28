@@ -47,7 +47,7 @@ alongside directive markup.</p>
 </div>
 <p>Figure one caption text.</p>
 </subchapter>
-<subchapter class="highlighted subchapter  chapter"><h2>Section Two — Attributes</h2>
+<subchapter class="highlighted subchapter bodymatter chapter"><h2>Section Two — Attributes</h2>
 <p>This paragraph uses an inline attribute block to inject a class name.{.callout}</p>
 </subchapter>
 </section>
