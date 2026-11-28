@@ -61,8 +61,8 @@ golden snapshot regenerated so the PR shows it:
 - [x] pullquote and blockquote
 - [x] dialogue
 - [x] gallery and spread
-- [ ] footnotes
-- [ ] front matter
+- [x] footnotes: nothing to port (Findings, "footnotes and front matter")
+- [x] front matter: nothing to port (same)
 - [ ] `media` as a node
 - [x] Delete `state.cursor`
 - [x] One commit per intended output difference, with the snapshot
