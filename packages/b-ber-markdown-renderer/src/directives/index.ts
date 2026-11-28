@@ -58,10 +58,24 @@ export interface DirectiveOptions {
   // called with a token shaped as their parsers made it, so the output is
   // unchanged. A family without one opens as a plain `<section id>`
   legacy?: Partial<Record<Family, LegacyRender>>
+  // What a `media` line becomes for the target being built
+  // (b-ber-grammar-media's `resolve`): the line of the directive media.yml
+  // names, after its fence, and its caption source. It throws for an id or
+  // target media.yml lacks, as the build always has. Without it a `media`
+  // line renders nothing
+  media?: (type: string, id: string) => ResolvedMedia
   // What draws a block's close: b-ber-grammar-pullquote's `close` for a
   // pullquote or blockquote, b-ber-grammar-section's for every other block.
   // Without one a block closes with a plain `</section>`
   close?: Partial<Record<'section' | 'pullquote', BlockClose>>
+}
+
+export interface ResolvedMedia {
+  params: string
+  caption?: string
+  // The directive's whole source, rendered as Markdown when no grammar claims
+  // it, as the line was when no plugin did
+  source: string
 }
 
 // A block being closed, as the close renderers take it
@@ -92,6 +106,7 @@ export function directives(
     host = pureHost,
     legacy = {},
     close = {},
+    media,
     afterBlock = {},
     inline = [],
   } = options
@@ -145,8 +160,55 @@ export function directives(
   // Rendered by its grammar from the open token b-ber-parser-figure made. Its
   // close token always rendered nothing
   const inlineRender = new Map(inline.map((c) => [c.family, c.render]))
+  // A `media` line renders as the directive it resolves to for this target,
+  // through the grammar that claims that directive's line. Its caption is
+  // media.yml's for the target, or else the one written under the line.
+  //
+  // A pre-pass used to write media.yml's caption into the Markdown, and then
+  // a caption written under the line was left as text after it; with none in
+  // media.yml, the written caption was the directive's. Both are kept
+  const renderMedia = (
+    meta: {
+      mediaType: string
+      mediaId: string
+      caption?: string
+      captionSource?: string
+    },
+    map: [number, number] | null
+  ): string => {
+    if (!media) return ''
+    const resolved = media(meta.mediaType, meta.mediaId)
+    const caption = resolved.caption ?? meta.caption
+    const leftover =
+      resolved.caption !== undefined && meta.captionSource !== undefined
+        ? md.render(meta.captionSource)
+        : ''
+    const line = (map ? map[0] : 0) + 1
+    const claim = inline.find((c) => c.validate(resolved.params, line))
+    // No grammar claims the directive: it was text, and a caption written
+    // under it was part of the same paragraph unless media.yml's came between
+    if (!claim) {
+      return resolved.caption === undefined && meta.captionSource !== undefined
+        ? md.render(`${resolved.source}\n${meta.captionSource}`)
+        : md.render(resolved.source) + leftover
+    }
+    const type = `container_${claim.family}_open`
+    return (
+      claim.render(
+        [{ type, info: resolved.params, nesting: 1, map, children: caption }],
+        0
+      ) + leftover
+    )
+  }
+
   md.renderer.rules[INLINE_TOKEN] = (tokens, idx) => {
     const { info, map, meta } = tokens[idx]
+    if ((meta as { family: string }).family === 'media') {
+      return renderMedia(
+        meta as Parameters<typeof renderMedia>[0],
+        map as [number, number] | null
+      )
+    }
     const { family, caption } = meta as {
       family: InlineFamily
       caption?: string
