@@ -55,9 +55,9 @@ async function book(ctx: BuildContext): Promise<void> {
   // Until the steps that read them take them as inputs
   ctx.settings.loi = figures.pages
   ctx.settings.guide = [...pages.guide, ...figures.guide]
-  await step(ctx, 'footnotes', async () => {
-    await footnotes()
-  })
+  await step(ctx, 'footnotes', () =>
+    footnotes(ctx, { footnotes: pages.footnotes, spine })
+  )
   await step(ctx, 'inject', () => inject())
   await step(ctx, 'opf', () => opf())
 }

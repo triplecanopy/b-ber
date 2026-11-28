@@ -1,59 +1,56 @@
-import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import {
+  type BuildContext,
+  type FootnotesEntry,
+  type Spine,
+  SpineItem,
+  Template,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
+import { dist, distDir } from '../context'
 
-class Footnotes {
-  baseName!: string
+const BASE_NAME = 'notes'
 
-  get file() {
-    return {
-      name: this.baseName,
-      path: state.dist.text(`${this.baseName}.xhtml`),
-    }
+// Writes every document's footnotes to one page, `notes.xhtml`, and adds it to
+// the end of the spine, out of the reading order. Resolves to the page, or to
+// nothing when the book has no footnotes
+async function footnotes(
+  ctx: BuildContext,
+  { footnotes: entries, spine }: { footnotes: FootnotesEntry[]; spine: Spine }
+): Promise<SpineItem | undefined> {
+  if (!entries.length) {
+    log.info('footnotes no footnotes found in source')
+    return undefined
   }
 
-  constructor() {
-    this.baseName = 'notes'
-    this.init = this.init.bind(this)
-  }
+  log.info('footnotes generating links')
 
-  async writeFootnotes() {
-    const notes = state.footnotes.reduce<string>(
+  try {
+    const notes = entries.reduce<string>(
       (acc, cur) => acc.concat(cur.notes),
       ''
     )
-
     const markup = Template.render(notes, Xhtml.body())
-    await fs.writeFile(this.file.path, markup, 'utf8')
+    await fs.writeFile(dist(ctx).text(`${BASE_NAME}.xhtml`), markup, 'utf8')
 
-    const fileData = new SpineItem({
-      fileName: this.file.name,
+    const page = new SpineItem({
+      fileName: BASE_NAME,
       // eslint-disable-next-line camelcase
       in_toc: false,
       linear: false,
       generated: true,
-      dist: state.distDir,
+      dist: distDir(ctx),
     })
 
-    state.add('spine.flattened', fileData)
-    log.info(`create default footnotes page [${this.file.name}.xhtml]`)
-  }
+    // A new list, as `state.add` made it
+    spine.flattened = [...spine.flattened, page]
+    log.info(`create default footnotes page [${BASE_NAME}.xhtml]`)
 
-  init() {
-    if (!state.footnotes.length) {
-      log.info('footnotes no footnotes found in source')
-      return Promise.resolve(state.footnotes)
-    }
-
-    log.info('footnotes generating links')
-
-    return this.writeFootnotes().catch((err) => {
-      throw log.error(err)
-    })
+    return page
+  } catch (err) {
+    throw log.error(err)
   }
 }
 
-const footnotes = new Footnotes()
-export default footnotes.init
+export default footnotes

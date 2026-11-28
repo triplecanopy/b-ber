@@ -33,14 +33,17 @@ const withNote = (text, note) => `${text}[^1]\n\n[^1]: ${note}\n`
 // Render the project, then run the footnotes task
 const build = async (options) => {
   project = await createProject(options)
-  await render(project.ctx, { spine: project.ctx.settings.spine })
+  const { spine } = project.ctx.settings
+  const output = await render(project.ctx, { spine })
   await settle()
-  return footnotes()
+  return footnotes(project.ctx, { footnotes: output.footnotes, spine })
 }
 
 describe('task: footnotes', () => {
   test('writes no notes page when the source has no footnotes', async () => {
-    await build({ toc: ['one'], markdown: { one: 'No notes here' } })
+    await expect(
+      build({ toc: ['one'], markdown: { one: 'No notes here' } })
+    ).resolves.toBeUndefined()
 
     expect(await fs.readdir(ops('text'))).toEqual(['one.xhtml'])
   })
@@ -77,6 +80,21 @@ describe('task: footnotes', () => {
     expect(notes).toMatch(/<h1>\s*Chapter One<\/h1>/)
   })
 
+  test('returns the notes page, added to the end of the spine out of reading order', async () => {
+    const page = await build({
+      toc: ['one'],
+      markdown: { one: withNote('Text', 'A note') },
+    })
+
+    expect(page).toMatchObject({
+      fileName: 'notes',
+      linear: false,
+      in_toc: false,
+      generated: true,
+    })
+    expect(project.ctx.settings.spine.flattened.at(-1)).toBe(page)
+  })
+
   test('the notes link back to the reference in the text', async () => {
     await build({ toc: ['one'], markdown: { one: withNote('Text', 'A note') } })
 
@@ -105,11 +123,14 @@ describe('task: footnotes', () => {
       toc: ['one'],
       markdown: { one: withNote('Text', 'A note') },
     })
-    await render(project.ctx, { spine: project.ctx.settings.spine })
+    const { spine } = project.ctx.settings
+    const output = await render(project.ctx, { spine })
     await settle()
     await fs.remove(ops('text'))
 
-    await expect(footnotes()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      footnotes(project.ctx, { footnotes: output.footnotes, spine })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
