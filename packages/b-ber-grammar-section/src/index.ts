@@ -46,14 +46,10 @@ export interface ClosingBlock {
 const isFullbleed = (name: string, kind: 'gallery' | 'spread'): boolean =>
   name === kind && state.target.features.fullbleedContainers
 
-// The markup that closes a block at its `exit`, or at the outer block's `exit`
-// that crossed it. The block's name used to be looked up in `state.cursor`
-// (TASK-175)
-function closeAtExit(name: string, id: string): string {
-  log.debug(`exit directive [${id}]`)
-
-  const comment = Html.comment(`END: section:exit#${htmlId(id)}`)
-
+// The markup that closes a block. The block's name used to be looked up in
+// `state.cursor` (TASK-175). `comment` is the end comment, which says how the
+// block closed, as it always has
+function closeMarkup(name: string, comment: string): string {
   if (isFullbleed(name, 'gallery')) {
     // prettier-ignore
     return `</div>
@@ -79,23 +75,26 @@ function closeAtExit(name: string, id: string): string {
   return `</section>${comment}`
 }
 
-// What was drawn at the end of the range of a structural block left open. The
-// id is read from the opener's line by splitting it on `:`, as it always was,
-// so an opener with attributes (`chapter:c classes:x`) reads `c classes`,
-// matches the block's id, and draws nothing (TASK-174's quirk 3)
-function closeAtEnd(info: string, id: string): string {
-  const token = info.trim().split(':')
-  if (token.length < 2 || token[1] !== id) return ''
-  return `</section>${Html.comment(`END: section:#${htmlId(id)}`)}`
-}
-
-// The markup that closes a block. A dialogue, gallery or spread left open was
+// Closes a block: at its `exit`, or at the outer block's `exit` that crossed
+// it, with `section:exit#id`; at the end of its container with `section:#id`.
+//
+// Every block left open closes at the end of its container (TASK-161). Only a
+// structural block with no attributes used to: the id was read from the
+// opener's line by splitting it on `:`, so `chapter:c classes:x` read
+// `c classes` and matched nothing, and a dialogue, gallery or spread was
 // never closed
 export function close(block: ClosingBlock, closedBy: ClosedBy): string {
-  if (closedBy !== 'end') return closeAtExit(block.name, block.id)
-  return BLOCK_DIRECTIVES.has(block.name)
-    ? closeAtEnd(block.info, block.id)
-    : ''
+  if (closedBy === 'end') {
+    return closeMarkup(
+      block.name,
+      Html.comment(`END: section:#${htmlId(block.id)}`)
+    )
+  }
+  log.debug(`exit directive [${block.id}]`)
+  return closeMarkup(
+    block.name,
+    Html.comment(`END: section:exit#${htmlId(block.id)}`)
+  )
 }
 
 function openElement(
@@ -134,7 +133,8 @@ const render =
     // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
     // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
     // block with no id, and fails in `htmlId`, as it always has
-    if (tokenClose) return closeAtExit('', tokenClose[2])
+    if (tokenClose)
+      return close({ name: '', id: tokenClose[2], info: marker }, 'exit')
 
     // `validateOpen` has already matched this marker against MARKER_OPEN_RE,
     // so a non-exit token always matches here

@@ -78,18 +78,23 @@ describe('b-ber-grammar-section close', () => {
     )
   })
 
-  it('closes a structural block left open at the end, as before', () => {
+  // Only a structural block with no attributes used to close: the id was read
+  // by splitting the opener's line on `:`, and a dialogue, gallery or spread
+  // was never closed (TASK-161)
+  it('closes every block left open at the end of its container', () => {
     expect(close({ name: 'chapter', id: 'c', info: ' chapter:c' }, 'end')).toBe(
       '</section>\n<!-- END: section:#c -->\n'
     )
-    // With attributes the id was read as `c classes`, and nothing was drawn
     expect(
       close({ name: 'chapter', id: 'c', info: ' chapter:c classes:x' }, 'end')
-    ).toBe('')
-    // A dialogue, gallery or spread left open was never closed
+    ).toBe('</section>\n<!-- END: section:#c -->\n')
     expect(
       close({ name: 'dialogue', id: 'd', info: ' dialogue:d' }, 'end')
-    ).toBe('')
+    ).toBe('</section>\n<!-- END: section:#d -->\n')
+    state.build = 'web'
+    expect(
+      close({ name: 'gallery', id: 'g', info: ' gallery:g' }, 'end')
+    ).toMatch(/^<\/div>\s+<\/figure>\s+<\/div>\s+<\/section>/)
   })
 })
 

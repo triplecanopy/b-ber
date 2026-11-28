@@ -241,6 +241,16 @@ describe('b-ber-markdown-renderer: blocks', () => {
       expect(closeX).toBeLessThan(html.indexOf('END: section:exit#s'))
     })
 
+    it.each([
+      ['a chapter with attributes', '::: chapter:c classes:x'],
+      ['a dialogue', '::: dialogue:c'],
+    ])('closes %s left open at the end of the file', (_label, opener) => {
+      const html = markdownRenderer.render('test', `${opener}\n\nText.\n`)
+      expect(count(html, /<section/g)).toBe(1)
+      expect(count(html, /<\/section>/g)).toBe(1)
+      expect(html).toContain('END: section:#c')
+    })
+
     it('closes a pullquote left open at the end of the file', () => {
       const html = markdownRenderer.render(
         'test',
