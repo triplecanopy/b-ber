@@ -17,11 +17,13 @@
 
 import type MarkdownIt from 'markdown-it'
 import {
+  type BlockFamily,
   CLAIM_RE,
   DIALOGUE_CLAIM_RE,
   EXIT,
   type Family,
   GALLERY_CLAIM_RE,
+  type InlineFamily,
   PULLQUOTE_CLAIM_RE,
   SPREAD_CLAIM_RE,
 } from './registry'
@@ -32,6 +34,16 @@ export const LINE_OPEN = 'directive_line_open'
 export const LINE_CLOSE = 'directive_line_close'
 // A claimed line that opens nothing: an opener or exit without an id
 export const LINE_INVALID = 'directive_line'
+// A single-line directive, with its caption if it has one
+export const INLINE_TOKEN = 'directive_inline'
+
+// How a single-line directive's grammar claims its lines: b-ber-parser-figure
+// asked the grammar's `validate`, which may throw. `line` is 1-based, and is
+// the line markdown-it's block state is at, as that parser passed it
+export interface InlineClaim {
+  family: InlineFamily
+  validate(params: string, line: number): unknown
+}
 
 const COLON = 0x3a
 const MIN_FENCE = 3
@@ -41,7 +53,7 @@ const claim = (
   params: string,
   host: DirectiveHost,
   env: DirectiveEnv
-): { family: Family; name: string; id: string | undefined } | null => {
+): { family: BlockFamily; name: string; id: string | undefined } | null => {
   const section = params.trim().match(CLAIM_RE)
   if (section) {
     const [, name, id] = section
@@ -67,8 +79,8 @@ const claim = (
   return null
 }
 
-// The tag each family's old parser gave its tokens
-const TAG: Record<Family, string> = {
+// The tag each block family's old parser gave its tokens
+const TAG: Record<BlockFamily, string> = {
   section: 'section',
   pullquote: 'section',
   dialogue: 'div',
@@ -95,8 +107,61 @@ export const isFamily =
     token.type === type &&
     (token.meta as { family?: Family } | null)?.family === family
 
+const CAPTION_MARKER_LENGTH = 2
+
+// b-ber-parser-figure's caption scan, kept exactly so that the rule takes the
+// same lines. A caption is the lines from the next line starting `::` to the
+// line after it starting `::`, both at the container's column 0; a line
+// starting with one `:` is skipped over, and any other line ends the search.
+// A `:::` line starts with `::`, so consecutive single-line directives take
+// each other as captions (TASK-161 bug 11; an intended output difference).
+// Returns the caption's source and the line after the closing `::`
+function scanCaption(
+  state: MarkdownIt.StateBlock,
+  startLine: number,
+  endLine: number
+): { caption: string | undefined; mapEnd: number; next: number } {
+  const { src } = state
+  let nextLine = startLine
+  let captionStart: number | undefined
+  let captionEnd: number | undefined
+  let captionEndMark: number | undefined
+
+  for (;;) {
+    nextLine += 1
+    if (nextLine >= endLine) break
+    // The line's first character, ignoring the container's indentation
+    // (bMarks, not bMarks + tShift)
+    if (src[state.bMarks[nextLine]].charCodeAt(0) !== COLON) break
+
+    const at = state.bMarks[nextLine]
+    if (src.charCodeAt(at) === COLON && src.charCodeAt(at + 1) === COLON) {
+      if (captionStart === undefined) {
+        captionStart = at + CAPTION_MARKER_LENGTH
+      } else {
+        captionEnd = at
+        captionEndMark = at
+        break
+      }
+    }
+  }
+
+  if (captionStart && captionEnd) {
+    return {
+      caption: src.slice(captionStart, captionEnd),
+      mapEnd: nextLine,
+      next: state.bMarks.indexOf(captionEndMark as number) + 1,
+    }
+  }
+  return { caption: undefined, mapEnd: startLine + 1, next: startLine + 1 }
+}
+
 export const createRule =
-  (host: DirectiveHost, afterBlock: AfterBlock = {}) =>
+  (
+    host: DirectiveHost,
+    afterBlock: AfterBlock = {},
+    inline: readonly InlineClaim[] = []
+  ) =>
   (
     state: MarkdownIt.StateBlock,
     startLine: number,
@@ -117,7 +182,21 @@ export const createRule =
     const params = src.slice(pos, max)
     const env = state.env as DirectiveEnv
     const claimed = claim(params, host, env)
-    if (!claimed) return false
+    if (!claimed) {
+      const single = inline.find((c) => c.validate(params, state.line + 1))
+      if (!single) return false
+      if (silent) return true
+
+      const { caption, mapEnd, next } = scanCaption(state, startLine, endLine)
+      const token = state.push(INLINE_TOKEN, 'div', 0)
+      token.meta = { family: single.family, caption }
+      token.markup = markup
+      token.info = params
+      token.block = true
+      token.map = [startLine, mapEnd]
+      state.line = next
+      return true
+    }
 
     const { family, name, id } = claimed
     const lineNumber = startLine + 1

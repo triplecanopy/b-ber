@@ -55,8 +55,24 @@ export const isBlockName = (name: string): boolean =>
 //   every other `exit`;
 // - `dialogue`: b-ber-grammar-dialogue's `dialogue`;
 // - `gallery` and `spread`: b-ber-grammar-gallery's and b-ber-grammar-spread's,
-//   both parsed by b-ber-parser-gallery
-export type Family = 'section' | 'pullquote' | 'dialogue' | 'gallery' | 'spread'
+//   both parsed by b-ber-parser-gallery.
+//
+// Then the single-line directives b-ber-parser-figure parsed, each claimed by
+// its grammar's own `validate`, which the renderer passes in (`InlineClaim`):
+// `figure` (b-ber-grammar-image), `audio-video`, `vimeo`, `iframe`, `logo`
+export type BlockFamily =
+  | 'section'
+  | 'pullquote'
+  | 'dialogue'
+  | 'gallery'
+  | 'spread'
+export type InlineFamily =
+  | 'figure'
+  | 'audio-video'
+  | 'vimeo'
+  | 'iframe'
+  | 'logo'
+export type Family = BlockFamily | InlineFamily
 
 export const CLAIM_RE = new RegExp(
   `^(${Array.from(BLOCK_DIRECTIVES).join('|')}|exit)(?::([^\\s]+)(\\s.*)?)?$`

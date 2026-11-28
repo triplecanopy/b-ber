@@ -30,7 +30,7 @@ import {
   OWNED,
   STRUCTURAL,
 } from './registry'
-import { LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
+import { INLINE_TOKEN, LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
 import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
 
@@ -39,16 +39,12 @@ export const CLOSE = 'directive_close'
 export const EXIT_MARK = 'directive_exit'
 export const END_MARK = 'directive_end'
 
-// Old plugins whose open and close tokens are adjacent (b-ber-parser-figure)
-const FIGURE_CONTAINER_RE = /^container_(figure|audio-video|vimeo|iframe|logo)_/
-
 const isRuleToken = (t: MarkdownIt.Token): boolean =>
   t.type === LINE_OPEN || t.type === LINE_CLOSE
 // Every block's tokens are the rule's now. They hold the rest of the
 // enclosing range, so they are transparent to the nesting
 const isRangeContainer = isRuleToken
-const isTransparent = (t: MarkdownIt.Token): boolean =>
-  isRangeContainer(t) || FIGURE_CONTAINER_RE.test(t.type)
+const isTransparent = isRuleToken
 
 interface OpenBlock {
   line: DirectiveLine
@@ -299,16 +295,47 @@ export function structure(state: MarkdownIt.StateCore): void {
     })
   }
 
-  // Lines an old figure-family plugin took as its caption
+  // Lines a single-line directive took as its caption
   const visitCaption = (token: MarkdownIt.Token, at: number): void => {
-    if (typeof token.children !== 'string' || !token.map) return
+    const { caption } = token.meta as { caption?: string }
+    if (typeof caption !== 'string' || !token.map) return
     for (let line = token.map[0] + 1; line <= token.map[1]; line++) {
       const text = src.slice(starts[line], lineEnd(line))
       const offset = fenceOffset(text)
       if (offset === -1) continue
       const directive = read(starts[line] + offset, line, 'directive')
-      if (directive) visit(directive, at + 2, token.level, null)
+      if (directive) visit(directive, at + 1, token.level, null)
     }
+  }
+
+  // A single-line directive's own line. It becomes a node when the line is
+  // one by the spec: the old grammars also claim lines that are not
+  // (`::: junk figure:f`, TASK-161 bug 12)
+  const visitInline = (token: MarkdownIt.Token, at: number): void => {
+    if (!token.map) return
+    const line = token.map[0]
+    const fenceStart = lineEnd(line) - token.info.length - token.markup.length
+    const directive = read(fenceStart, line, 'directive')
+    if (directive) visit(directive, at, token.level, null)
+    if (directive?.id && INLINE.has(directive.name)) {
+      const attrs: Record<string, string> = {}
+      for (const a of directive.attributes) attrs[a.key] = a.value
+      const { caption } = token.meta as { caption?: string }
+      const node: DirectiveNode = {
+        type: 'directive',
+        name: directive.name,
+        id: directive.id,
+        inline: true,
+        attrs,
+        position: directive.span,
+        children: [],
+        info: token.info,
+        line,
+        ...(caption === undefined ? {} : { caption }),
+      }
+      token.meta = { ...token.meta, directive: node }
+    }
+    visitCaption(token, at)
   }
 
   // Open tokens, to pair each close token with
@@ -328,7 +355,6 @@ export function structure(state: MarkdownIt.StateCore): void {
       const directive = read(fenceStart, line, 'directive')
       if (directive)
         visit(directive, i, token.level, isRuleToken(token) ? token : null)
-      if (FIGURE_CONTAINER_RE.test(token.type)) visitCaption(token, i)
       return
     }
 
@@ -339,6 +365,11 @@ export function structure(state: MarkdownIt.StateCore): void {
         token.type = END_MARK
         token.nesting = 0
       }
+      return
+    }
+
+    if (token.type === INLINE_TOKEN) {
+      visitInline(token, i)
       return
     }
 
