@@ -143,7 +143,7 @@ class MarkdownRenderer {
       legacy('audio-video', markdownItAudioVideo.renderer(reference)),
       legacy('vimeo', markdownItVimeo.renderer(reference)),
       legacy('iframe', markdownItIframe.renderer(reference)),
-      legacy('logo', markdownItLogo.renderer()),
+      { family: 'logo', ...markdownItLogo.renderer() },
     ] as const
 
     const section = markdownItSection.renderer()
