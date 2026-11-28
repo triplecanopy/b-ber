@@ -503,7 +503,7 @@ describe('directive structure', () => {
       },
     })
     const env = { file: 'x.md', diagnostics: [] }
-    const tokens = withHooks.parse(
+    withHooks.parse(
       '::: gallery:g\n\n:: type:image source:a.png ::\n\n::: exit:g\n\n::: spread:s\n\nx\n\n::: exit:s\n',
       env
     )

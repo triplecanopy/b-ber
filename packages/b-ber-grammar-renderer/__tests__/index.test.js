@@ -1,14 +1,7 @@
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import renderer from '../src'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  cursor: [],
-  add: jest.fn(),
-  remove: jest.fn(),
-  indexOf: jest.fn(() => -1),
-  contains: jest.fn(() => false),
-}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -71,57 +64,20 @@ describe('b-ber-grammar-renderer', () => {
     expect(log.error).toHaveBeenCalled()
   })
 
-  it('validateOpen returns true for valid new directive', () => {
-    state.indexOf.mockReturnValue(-1)
-    const config = renderer({
-      context,
-      render: renderFn,
-      markerOpen,
-      markerClose,
-    })
-    const result = config.validateOpen('chapter:ch-01', 1)
-    expect(result).toBe(true)
-    expect(state.add).toHaveBeenCalledWith('cursor', {
-      id: 'ch-01',
-      type: 'chapter',
-    })
-  })
-
-  it('validateOpen throws what log.error reports when id is already in state (duplicate)', () => {
-    state.indexOf.mockReturnValue(0)
-    const config = renderer({
-      context,
-      render: renderFn,
-      markerOpen,
-      markerClose,
-    })
-    expect(() => config.validateOpen('chapter:ch-duplicate', 5)).toThrow(
-      'Duplicate [id] [ch-duplicate]'
-    )
-    expect(log.error).toHaveBeenCalled()
-  })
-
-  it('validateOpen returns false when closing a directive that is not open', () => {
-    state.indexOf.mockReturnValue(-1)
-    const exitMarker = /^(exit)(?::([^\s]+))?/
+  // Ids used to be recorded in `state.cursor` here, which threw on a duplicate
+  // and claimed only the exit of an open block. The build's directive rule
+  // does both, per file (TASK-175)
+  it('validateOpen returns true for an opener or an exit with an id, recording nothing', () => {
+    const exitMarker = /^(chapter|exit)(?::([^\s]+))?/
     const config = renderer({
       context,
       render: renderFn,
       markerOpen: exitMarker,
       markerClose,
     })
-    expect(config.validateOpen('exit:ch-99', 10)).toBe(false)
-  })
-
-  it('validateOpen returns true when closing a directive that is open', () => {
-    state.indexOf.mockReturnValue(0)
-    const exitMarker = /^(exit)(?::([^\s]+))?/
-    const config = renderer({
-      context,
-      render: renderFn,
-      markerOpen: exitMarker,
-      markerClose,
-    })
-    expect(config.validateOpen('exit:ch-01', 10)).toBe(true)
+    expect(config.validateOpen('chapter:ch-01', 1)).toBe(true)
+    expect(config.validateOpen('chapter:ch-01', 5)).toBe(true)
+    expect(config.validateOpen('exit:ch-99', 10)).toBe(true)
+    expect(log.error).not.toHaveBeenCalled()
   })
 })

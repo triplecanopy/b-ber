@@ -18,11 +18,12 @@ import {
   type ClosedBy,
   END_MARK,
   EXIT_MARK,
+  exitFamilyOf,
   OPEN,
   structure,
 } from './structure'
 import { liftTree } from './tree'
-import type { DirectiveEnv, DirectiveHost } from './types'
+import type { DirectiveEnv, DirectiveHost, DirectiveNode } from './types'
 
 export { formatDiagnostic, type Location, locate } from './diagnostics'
 export { type DirectiveLine, readDirectiveLine } from './syntax'
@@ -42,7 +43,7 @@ export interface LegacyToken {
 
 export type LegacyRender = (tokens: LegacyToken[], index: number) => string
 
-export type { AfterBlock, Family, InlineClaim }
+export type { AfterBlock, ClosedBy, Family, InlineClaim }
 export { blockSpan }
 
 export interface DirectiveOptions {
@@ -52,18 +53,30 @@ export interface DirectiveOptions {
   // how each grammar claims a line, and how it renders. Without them those
   // lines are text, as they are without the plugins
   inline?: readonly (InlineClaim & { render: LegacyRender })[]
-  // Today's renderer for each family (b-ber-grammar-section's,
-  // b-ber-grammar-pullquote's and b-ber-grammar-dialogue's `render`). It is called with tokens shaped as
-  // b-ber-parser-section made them, at the places that parser put them, so
-  // the output is unchanged. A family without one renders as plain
-  // `<section id>` pairs.
+  // Today's renderer for each block family's opener (b-ber-grammar-section's,
+  // -pullquote's, -dialogue's, -gallery's and -spread's `render`). It is
+  // called with a token shaped as their parsers made it, so the output is
+  // unchanged. A family without one opens as a plain `<section id>`
   legacy?: Partial<Record<Family, LegacyRender>>
+  // What draws a block's close: b-ber-grammar-pullquote's `close` for a
+  // pullquote or blockquote, b-ber-grammar-section's for every other block.
+  // Without one a block closes with a plain `</section>`
+  close?: Partial<Record<'section' | 'pullquote', BlockClose>>
 }
 
-// The spec's behaviour: every `exit` line is the rule's, and nothing is
-// shared outside the parse
+// A block being closed, as the close renderers take it
+export interface ClosingBlock {
+  name: string
+  id: string
+  // The opener's line after the fence
+  info: string
+}
+
+export type BlockClose = (block: ClosingBlock, closedBy: ClosedBy) => string
+
+// The spec's behaviour: nothing is thrown, and nothing is shared outside the
+// parse
 export const pureHost: DirectiveHost = {
-  claimsExit: () => true,
   opened: () => {},
   missingId: () => {},
 }
@@ -75,7 +88,13 @@ export function directives(
   md: MarkdownIt.MarkdownIt,
   options: DirectiveOptions = {}
 ): void {
-  const { host = pureHost, legacy = {}, afterBlock = {}, inline = [] } = options
+  const {
+    host = pureHost,
+    legacy = {},
+    close = {},
+    afterBlock = {},
+    inline = [],
+  } = options
 
   md.block.ruler.before(
     'fence',
@@ -94,47 +113,32 @@ export function directives(
   const legacyOf = (token: MarkdownIt.Token): LegacyRender | undefined =>
     legacy[(token.meta as { family?: Family } | null)?.family ?? 'section']
 
-  const legacyRule =
-    (nesting: number) =>
-    (tokens: MarkdownIt.Token[], idx: number): string => {
-      if ((tokens[idx].meta as { ignored?: boolean } | null)?.ignored) return ''
-      const { type, info, map } = tokens[idx]
-      const render = legacyOf(tokens[idx])
-      return render ? render([{ type, info, nesting, map }], 0) : ''
-    }
-
-  // An exit was an opener to today's parser, and its range's end a closer
   md.renderer.rules[OPEN] = (tokens, idx) => {
-    if (legacyOf(tokens[idx])) return legacyRule(1)(tokens, idx)
+    const { type, info, map } = tokens[idx]
+    const render = legacyOf(tokens[idx])
+    if (render) return render([{ type, info, nesting: 1, map }], 0)
     const { id } = (tokens[idx].meta as { directive: { id: string } }).directive
     return `<section id="${escapeAttribute(id)}">`
   }
-  md.renderer.rules[EXIT_MARK] = legacyRule(1)
-  md.renderer.rules[END_MARK] = legacyRule(-1)
-  // Today's renderers draw a block's close at its `exit` and at the end of its
-  // range. Two blocks got neither, and their output was left unbalanced: one
-  // an outer block's `exit` crossed, and a pullquote or blockquote left open.
-  // Their close is drawn here, as their own `exit` would draw it (TASK-161).
-  // A pullquote's exit is b-ber-grammar-pullquote's to draw; every other
-  // block's is b-ber-grammar-section's
+
+  // Every block's close is drawn at its `directive_close`, which the structure
+  // pass puts where the block closes: at its `exit`, at an outer block's
+  // `exit` that crossed it, or at the end of its container. The exit line and
+  // the end of the block's range draw nothing. They drew the closes from
+  // `state.cursor` until TASK-175, which left a crossed block or an unclosed
+  // pullquote open, and let an exit that closed nothing crash or close the
+  // wrong block
+  md.renderer.rules[EXIT_MARK] = () => ''
+  md.renderer.rules[END_MARK] = () => ''
   md.renderer.rules[CLOSE] = (tokens, idx) => {
-    const token = tokens[idx]
-    if (!legacyOf(token)) return '</section>'
-    const { family, directive, closedBy } = token.meta as {
-      family: Family
-      directive: { id: string }
+    const { directive, closedBy } = tokens[idx].meta as {
+      directive: DirectiveNode
       closedBy: ClosedBy
     }
-    const unbalanced =
-      closedBy === 'crossed-exit' ||
-      (closedBy === 'end' && family === 'pullquote')
-    if (!unbalanced) return ''
-    const exitFamily: Family = family === 'pullquote' ? 'pullquote' : 'section'
-    const render = legacy[exitFamily]
-    const info = ` exit:${directive.id}`
-    return render
-      ? render([{ type: EXIT_MARK, info, nesting: 1, map: token.map }], 0)
-      : ''
+    const closer = close[exitFamilyOf(directive.name)]
+    if (!closer) return '</section>'
+    const { name, id, info } = directive
+    return closer({ name, id, info }, closedBy)
   }
   md.renderer.rules[LINE_INVALID] = () => ''
 

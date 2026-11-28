@@ -9,7 +9,6 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
       .requireActual('../../b-ber-lib/src/Target')
       .getTarget(this.build)
   },
-  cursor: [],
   add: jest.fn(),
   remove: jest.fn(),
   indexOf: jest.fn(() => -1),

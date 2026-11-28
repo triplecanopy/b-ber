@@ -183,7 +183,6 @@ export function readBuildSettings(
     guide: [],
     spine,
     toc: spine.nested,
-    cursor: [],
     figures: [],
     footnotes: [],
     remoteAssets: [],

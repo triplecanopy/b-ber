@@ -88,14 +88,10 @@ export interface DirectiveEnv extends MarkdownIt.Env {
   tree?: TreeRoot
 }
 
-// How the rule coexists with the directive plugins that still track ids in
-// b-ber-lib's `state.cursor` (TASK-175 removes it). Every method is called
-// with the render's env. The parse itself never needs one: `pureHost` is the
-// spec's behaviour.
+// What the build does with the problems it throws on today, which the parse
+// reports as diagnostics instead. Every method is called with the render's
+// env. The parse itself never needs one: `pureHost` is the spec's behaviour.
 export interface DirectiveHost {
-  // Whether an `exit` line for `id` is this rule's to claim. Today only an id
-  // in `state.cursor` is; any other exit goes on to grammar-pullquote
-  claimsExit(id: string, env: DirectiveEnv): boolean
   // A block opener was parsed (never called in silent mode)
   opened(id: string, name: string, line: number, env: DirectiveEnv): void
   // A structural opener or `exit` with no `:id`, which today's build throws on

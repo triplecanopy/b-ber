@@ -11,11 +11,6 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
       .requireActual('../../b-ber-lib/src/Target')
       .getTarget(this.build)
   },
-  cursor: [],
-  add: jest.fn(),
-  remove: jest.fn(),
-  indexOf: jest.fn(() => -1),
-  contains: jest.fn(() => false),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -48,42 +43,64 @@ describe('b-ber-grammar-section', () => {
     expect(result).toContain('ch-01')
   })
 
-  it('render closeElement returns empty string when id is not in state', () => {
-    // state is imported at top level
-    state.contains.mockReturnValue(false)
+  it('render draws nothing for a closing token', () => {
     const config = section.renderer({ context })
-    const tokens = [{ nesting: -1, info: 'chapter:ch-99', map: [5, 6] }]
-    const result = config.render(tokens, 0)
-    expect(result).toBe('')
-  })
-
-  it('render handleExitDirective returns closing section tag', () => {
-    // state is imported at top level
-    state.contains.mockReturnValue(true)
-    const config = section.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'exit:ch-01', map: [5, 6] }]
-    const result = config.render(tokens, 0)
-    expect(result).toContain('</section>')
-    expect(result).toContain('ch-01')
+    const tokens = [{ nesting: -1, info: 'chapter:ch-01', map: [5, 6] }]
+    expect(config.render(tokens, 0)).toBe('')
   })
 })
 
-// Rendered through markdown-it, with the mocked State keeping a real cursor
-describe('b-ber-grammar-section, rendered', () => {
-  let cursor
+// Closes are drawn from b-ber-markdown-renderer's directive rule's node. They
+// used to read the block's name, and whether it was still open, from
+// `state.cursor` (TASK-175)
+describe('b-ber-grammar-section close', () => {
+  const { close } = section.renderer({ context })
 
-  beforeEach(() => {
-    cursor = []
-    state.indexOf.mockImplementation((_coll, { id }) =>
-      cursor.findIndex((entry) => entry.id === id)
+  afterEach(() => {
+    state.build = 'epub'
+  })
+
+  it('closes a block at its exit, or at the exit that crossed it', () => {
+    const block = { name: 'chapter', id: 'ch.01', info: ' chapter:ch.01' }
+    for (const closedBy of ['exit', 'crossed-exit']) {
+      expect(close(block, closedBy)).toBe(
+        '</section>\n<!-- END: section:exit#ch-01 -->\n'
+      )
+    }
+  })
+
+  it('closes a gallery’s full-bleed container where the target has one', () => {
+    const block = { name: 'gallery', id: 'g', info: ' gallery:g' }
+    expect(close(block, 'exit')).toMatch(/^<\/section>/)
+    state.build = 'web'
+    expect(close(block, 'exit')).toMatch(
+      /^<\/div>\s+<\/figure>\s+<\/div>\s+<\/section>/
     )
-    state.add.mockImplementation((_prop, entry) => cursor.push(entry))
+  })
+
+  it('closes a structural block left open at the end, as before', () => {
+    expect(close({ name: 'chapter', id: 'c', info: ' chapter:c' }, 'end')).toBe(
+      '</section>\n<!-- END: section:#c -->\n'
+    )
+    // With attributes the id was read as `c classes`, and nothing was drawn
+    expect(
+      close({ name: 'chapter', id: 'c', info: ' chapter:c classes:x' }, 'end')
+    ).toBe('')
+    // A dialogue, gallery or spread left open was never closed
+    expect(
+      close({ name: 'dialogue', id: 'd', info: ' dialogue:d' }, 'end')
+    ).toBe('')
+  })
+})
+
+// Rendered through markdown-it with the old parser, which the build no
+// longer uses (TASK-174)
+describe('b-ber-grammar-section, rendered', () => {
+  beforeEach(() => {
     log.error.mockImplementation((message) => new Error(message))
   })
 
   afterEach(() => {
-    state.indexOf.mockReset().mockReturnValue(-1)
-    state.add.mockReset()
     log.error.mockReset()
   })
 
@@ -99,10 +116,8 @@ describe('b-ber-grammar-section, rendered', () => {
   })
 
   // TASK-153 pinned a defect here: a directive straight after a paragraph
-  // line threw a false `Duplicate [id]`, because `validateOpen` records the
-  // id during markdown-it's silent-mode lookahead. The build no longer parses
-  // these blocks with `plugin`: b-ber-markdown-renderer's directive rule does
-  // (TASK-174), and its test "renders a section straight after a paragraph
-  // line" asserts the fix. `plugin` and `validateOpen` still have the defect,
-  // as dialogue, gallery and spread do until TASK-175.
+  // line threw a false `Duplicate [id]`, because `validateOpen` recorded the
+  // id during markdown-it's silent-mode lookahead. The build parses these
+  // blocks with b-ber-markdown-renderer's directive rule (TASK-174), whose
+  // tests assert the fix, and `validateOpen` records nothing since TASK-175
 })

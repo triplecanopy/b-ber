@@ -1,7 +1,6 @@
 import dialogue from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  cursor: [],
   add: jest.fn(),
   remove: jest.fn(),
   indexOf: jest.fn(() => -1),

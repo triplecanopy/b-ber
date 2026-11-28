@@ -106,7 +106,6 @@ describe('b-ber-markdown-renderer output', () => {
     state.update('builds.epub', {
       guide: [],
       spine: { frontMatter: new Map(), flattened: [] },
-      cursor: [],
       figures: [],
       footnotes: [],
     })
@@ -140,16 +139,9 @@ describe('b-ber-markdown-renderer output', () => {
   })
 })
 
-// The structural blocks go through the directive rule (TASK-174), which keeps
-// today's ids in `state.cursor` and today's errors for the old plugins
-describe('b-ber-markdown-renderer: structural blocks', () => {
-  let state
-
-  beforeEach(() => {
-    state = require('@canopycanopycanopy/b-ber-lib').State
-    state.cursor = []
-  })
-
+// Every block goes through the directive rule (TASK-174, TASK-175), which
+// throws today's errors for the build
+describe('b-ber-markdown-renderer: blocks', () => {
   // TASK-153 pinned the opposite: markdown-it asks a block rule in silent
   // mode whether it can interrupt a paragraph, and b-ber-parser-section
   // recorded the id then, so the real pass found its own id a duplicate.

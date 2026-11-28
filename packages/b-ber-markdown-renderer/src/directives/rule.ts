@@ -50,15 +50,12 @@ const MIN_FENCE = 3
 
 // Which family claims `params`, as the old plugins decided in turn
 const claim = (
-  params: string,
-  host: DirectiveHost,
-  env: DirectiveEnv
+  params: string
 ): { family: BlockFamily; name: string; id: string | undefined } | null => {
   const section = params.trim().match(CLAIM_RE)
   if (section) {
     const [, name, id] = section
-    if (name !== EXIT || id === undefined || host.claimsExit(id, env))
-      return { family: 'section', name, id }
+    return { family: 'section', name, id }
   }
   const pullquote = params.trim().match(PULLQUOTE_CLAIM_RE)
   if (pullquote) {
@@ -216,7 +213,7 @@ export const createRule =
     const markup = src.slice(start, pos)
     const params = src.slice(pos, max)
     const env = state.env as DirectiveEnv
-    const claimed = claim(params, host, env)
+    const claimed = claim(params)
     if (!claimed) {
       const single = inline.find((c) => c.validate(params, state.line + 1))
       if (!single) return false
@@ -252,10 +249,7 @@ export const createRule =
     }
 
     if (silent) return true
-    // b-ber-grammar-pullquote never recorded its ids; it checked them against
-    // the cursor when they rendered
-    if (name !== EXIT && family !== 'pullquote')
-      host.opened(id, name, lineNumber, env)
+    if (name !== EXIT) host.opened(id, name, lineNumber, env)
 
     const oldParent = state.parentType
     const oldLineMax = state.lineMax
