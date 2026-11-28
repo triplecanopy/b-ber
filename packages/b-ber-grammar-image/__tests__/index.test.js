@@ -38,7 +38,10 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn((s) => s) },
+  Html: {
+    comment: jest.fn((s) => s),
+    escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
+  },
   utils: {
     getImageDimensions: jest.fn(() => ({ width: 100, height: 150 })),
     getImageOrientation: jest.fn(() => 'landscape'),

@@ -1,7 +1,4 @@
-import {
-  type RendererContext,
-  State as state,
-} from '@canopycanopycanopy/b-ber-lib'
+import type { RendererContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVE_MARKER,
@@ -48,35 +45,11 @@ const renderer = <R>({
       )
     }
 
-    // Add the `id` to the global state so that we can verify that the
-    // container is being properly closed in our `validateClose` method
-    const index = state.indexOf('cursor', { id })
-    const isOpening = type && type !== 'exit'
-    const isClosing = type && type === 'exit'
-    const inStore = index > -1
-
-    log.debug(
-      `id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`
-    )
-
-    const location = `${context.fileName}.md:${line}`
-    if (isOpening && inStore) {
-      // It's a duplicate `id`
-      throw log.error(
-        `Duplicate [id] [${id}]. [id] must be unique at [${location}]`
-      )
-    } else if (isClosing && !inStore) {
-      // Trying to close an un-opened directive, but it might belong to a
-      // different directive type
-      return false
-    } else if (isOpening && !inStore) {
-      // It's a new directive
-      state.add('cursor', { id, type })
-      return true
-    } else if (isClosing && inStore) {
-      // It's the end of a directive, handle close in section.js
-      return true
-    }
+    // Ids used to be recorded in `state.cursor` here, which threw on a
+    // duplicate and told the exit apart from another block's. The build's
+    // directive rule does both now, per file (TASK-175), and no longer calls
+    // this, which b-ber-markdown-renderer's parsers did
+    return Boolean(type)
   },
 })
 

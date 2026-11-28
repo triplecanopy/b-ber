@@ -1,13 +1,6 @@
-import log from '@canopycanopycanopy/b-ber-logger'
 import pullquote from '../src'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  cursor: [],
-  add: jest.fn(),
-  remove: jest.fn(),
-  indexOf: jest.fn(() => -1),
-  contains: jest.fn(() => false),
-}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -30,9 +23,9 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
       .map(([key, value]) => ` ${key}="${value}"`)
       .join('')
   ),
+  parseAttrs: jest.requireActual('../../b-ber-grammar-attributes/src')
+    .parseAttrs,
 }))
-
-const { indexOf } = jest.requireMock('@canopycanopycanopy/b-ber-lib/State')
 
 const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
@@ -84,69 +77,46 @@ describe('b-ber-grammar-pullquote', () => {
     expect(config.validateOpen('pullquote:pq-02', 1)).toBe(true)
   })
 
-  it('handleOpen throws what log.error reports when the [id] is a duplicate', () => {
-    indexOf.mockReturnValueOnce(0)
-    const config = pullquote.renderer({ instance, context })
+  // The directive rule draws every close, from the block's node, and checks
+  // its id against the file's other blocks (TASK-175). The citation used to
+  // be kept in module-level state from the open to the exit
+  describe('close', () => {
+    it('draws the citation from the opener’s line', () => {
+      const config = pullquote.renderer({ instance, context })
+      const closed = config.close({
+        name: 'pullquote',
+        id: 'cited-01',
+        info: ' pullquote:cited-01 citation:"Jane Doe"',
+      })
 
-    // It throws before the id joins the module-level index stack, so there
-    // is nothing to close
-    expect(() =>
-      config.render([{ nesting: 1, info: 'pullquote:dup-id', map: [0, 1] }], 0)
-    ).toThrow('Duplicate [id] [dup-id]')
-    expect(log.error).toHaveBeenCalledWith(
-      expect.stringContaining('Duplicate [id] [dup-id]')
-    )
-  })
+      expect(closed).toContain(
+        '<footer><cite>&#8212;&#160;Jane Doe</cite></footer>'
+      )
+      expect(closed).toContain(
+        '</section><!-- END: section:pullquote#cited-01 -->'
+      )
+      expect(instance.renderInline).toHaveBeenCalledWith('Jane Doe')
+    })
 
-  it('emits a citation footer on exit and resets the citation afterwards', () => {
-    const config = pullquote.renderer({ instance, context })
+    it('closes a blockquote, without a footer when there is no citation', () => {
+      const config = pullquote.renderer({ instance, context })
+      const closed = config.close({
+        name: 'blockquote',
+        id: 'plain-01',
+        info: ' blockquote:plain-01 classes:x',
+      })
 
-    config.render(
-      [
-        {
-          nesting: 1,
-          info: 'pullquote:cited-01 citation:"Jane Doe"',
-          map: [0, 1],
-        },
-      ],
-      0
-    )
+      expect(closed).not.toContain('<footer>')
+      expect(closed).toContain(
+        '</blockquote><!-- END: section:blockquote#plain-01 -->'
+      )
+    })
 
-    const closed = config.render(
-      [{ nesting: 1, info: 'exit:cited-01', map: [2, 3] }],
-      0
-    )
-
-    expect(closed).toContain('<footer><cite>')
-    expect(closed).toContain('Jane Doe')
-    expect(closed).toContain('</section>')
-    expect(closed).toContain('END: section:pullquote#cited-01')
-    expect(instance.renderInline).toHaveBeenCalledWith('Jane Doe')
-
-    // the citation was reset, so a subsequent exit has no footer
-    config.render([{ nesting: 1, info: 'pullquote:plain-01', map: [4, 5] }], 0)
-    const closedPlain = config.render(
-      [{ nesting: 1, info: 'exit:plain-01', map: [6, 7] }],
-      0
-    )
-    expect(closedPlain).not.toContain('<footer>')
-  })
-
-  it('handleClose returns an empty string when the exit id does not match the open id', () => {
-    const config = pullquote.renderer({ instance, context })
-
-    config.render(
-      [{ nesting: 1, info: 'pullquote:mismatch-01', map: [0, 1] }],
-      0
-    )
-
-    const result = config.render(
-      [{ nesting: 1, info: 'exit:other-id', map: [2, 3] }],
-      0
-    )
-    expect(result).toBe('')
-
-    // close it for real so the module-level index stack stays balanced
-    config.render([{ nesting: 1, info: 'exit:mismatch-01', map: [4, 5] }], 0)
+    it('draws nothing for an opener with `exit` in its line, which drew no open', () => {
+      const config = pullquote.renderer({ instance, context })
+      const info = ' pullquote:pq citation:"exit:here"'
+      expect(config.render([{ nesting: 1, info, map: [0, 1] }], 0)).toBe('')
+      expect(config.close({ name: 'pullquote', id: 'pq', info })).toBe('')
+    })
   })
 })

@@ -1,13 +1,29 @@
 // The directive grammar of TASK-161: one block rule, a structure pass that
-// pairs blocks and reports diagnostics, and a tree. TASK-174 ports the
-// structural blocks (`b-ber-grammar-section`); the other directives keep their
-// own plugins until TASK-175.
+// pairs blocks and reports diagnostics, and a tree. TASK-174 ported the
+// structural blocks (`b-ber-grammar-section`); TASK-175 ports the others, one
+// family at a time. The rest keep their own plugins until then.
 
 import type MarkdownIt from 'markdown-it'
-import { createRule, LINE_INVALID } from './rule'
-import { CLOSE, END_MARK, EXIT_MARK, OPEN, structure } from './structure'
+import type { Family, InlineFamily } from './registry'
+import {
+  type AfterBlock,
+  blockSpan,
+  createRule,
+  INLINE_TOKEN,
+  type InlineClaim,
+  LINE_INVALID,
+} from './rule'
+import {
+  CLOSE,
+  type ClosedBy,
+  END_MARK,
+  EXIT_MARK,
+  exitFamilyOf,
+  OPEN,
+  structure,
+} from './structure'
 import { liftTree } from './tree'
-import type { DirectiveEnv, DirectiveHost } from './types'
+import type { DirectiveEnv, DirectiveHost, DirectiveNode } from './types'
 
 export { formatDiagnostic, type Location, locate } from './diagnostics'
 export { type DirectiveLine, readDirectiveLine } from './syntax'
@@ -20,21 +36,61 @@ export interface LegacyToken {
   info: string
   nesting: number
   map: [number, number] | null
+  // A single-line directive's caption source, as b-ber-parser-figure stored
+  // it on its open token
+  children?: string
 }
+
+export type LegacyRender = (tokens: LegacyToken[], index: number) => string
+
+export type { AfterBlock, ClosedBy, Family, InlineClaim }
+export { blockSpan }
 
 export interface DirectiveOptions {
   host?: DirectiveHost
-  // Today's renderer for the structural blocks (b-ber-grammar-section's
-  // `render`). It is called with tokens shaped as b-ber-parser-section made
-  // them, at the places that parser put them, so the output is unchanged.
-  // Without it the blocks render as plain `<section id>` pairs.
-  legacyRender?: (tokens: LegacyToken[], index: number) => string
+  afterBlock?: AfterBlock
+  // The single-line directives, in the order their plugins were registered:
+  // how each grammar claims a line, and how it renders. Without them those
+  // lines are text, as they are without the plugins
+  inline?: readonly (InlineClaim & { render: LegacyRender })[]
+  // Today's renderer for each block family's opener (b-ber-grammar-section's,
+  // -pullquote's, -dialogue's, -gallery's and -spread's `render`). It is
+  // called with a token shaped as their parsers made it, so the output is
+  // unchanged. A family without one opens as a plain `<section id>`
+  legacy?: Partial<Record<Family, LegacyRender>>
+  // What a `media` line becomes for the target being built
+  // (b-ber-grammar-media's `resolve`): the line of the directive media.yml
+  // names, after its fence, and its caption source. It throws for an id or
+  // target media.yml lacks, as the build always has. Without it a `media`
+  // line renders nothing
+  media?: (type: string, id: string) => ResolvedMedia
+  // What draws a block's close: b-ber-grammar-pullquote's `close` for a
+  // pullquote or blockquote, b-ber-grammar-section's for every other block.
+  // Without one a block closes with a plain `</section>`
+  close?: Partial<Record<'section' | 'pullquote', BlockClose>>
 }
 
-// The spec's behaviour: every `exit` line is the rule's, and nothing is
-// shared outside the parse
+export interface ResolvedMedia {
+  params: string
+  caption?: string
+  // The directive's whole source, rendered as Markdown when no grammar claims
+  // it, as the line was when no plugin did
+  source: string
+}
+
+// A block being closed, as the close renderers take it
+export interface ClosingBlock {
+  name: string
+  id: string
+  // The opener's line after the fence
+  info: string
+}
+
+export type BlockClose = (block: ClosingBlock, closedBy: ClosedBy) => string
+
+// The spec's behaviour: nothing is thrown, and nothing is shared outside the
+// parse
 export const pureHost: DirectiveHost = {
-  claimsExit: () => true,
   opened: () => {},
   missingId: () => {},
 }
@@ -46,34 +102,121 @@ export function directives(
   md: MarkdownIt.MarkdownIt,
   options: DirectiveOptions = {}
 ): void {
-  const { host = pureHost, legacyRender } = options
+  const {
+    host = pureHost,
+    legacy = {},
+    close = {},
+    media,
+    afterBlock = {},
+    inline = [],
+  } = options
 
-  md.block.ruler.before('fence', 'directive', createRule(host), {
-    alt: ['paragraph', 'reference', 'blockquote'],
-  })
+  md.block.ruler.before(
+    'fence',
+    'directive',
+    createRule(host, afterBlock, inline),
+    {
+      alt: ['paragraph', 'reference', 'blockquote'],
+    }
+  )
   md.core.ruler.after('block', 'directive_structure', structure)
   md.core.ruler.push('directive_tree', (state) => {
     const env = state.env as DirectiveEnv | undefined
     if (env) env.tree = liftTree(state.tokens)
   })
 
-  const legacy =
-    (nesting: number) =>
-    (tokens: MarkdownIt.Token[], idx: number): string => {
-      const { type, info, map } = tokens[idx]
-      return legacyRender ? legacyRender([{ type, info, nesting, map }], 0) : ''
-    }
+  const legacyOf = (token: MarkdownIt.Token): LegacyRender | undefined =>
+    legacy[(token.meta as { family?: Family } | null)?.family ?? 'section']
 
-  // An exit was an opener to today's parser, and its range's end a closer
-  md.renderer.rules[OPEN] = legacyRender
-    ? legacy(1)
-    : (tokens, idx) => {
-        const { id } = (tokens[idx].meta as { directive: { id: string } })
-          .directive
-        return `<section id="${escapeAttribute(id)}">`
-      }
-  md.renderer.rules[EXIT_MARK] = legacy(1)
-  md.renderer.rules[END_MARK] = legacy(-1)
-  md.renderer.rules[CLOSE] = legacyRender ? () => '' : () => '</section>'
+  md.renderer.rules[OPEN] = (tokens, idx) => {
+    const { type, info, map } = tokens[idx]
+    const render = legacyOf(tokens[idx])
+    if (render) return render([{ type, info, nesting: 1, map }], 0)
+    const { id } = (tokens[idx].meta as { directive: { id: string } }).directive
+    return `<section id="${escapeAttribute(id)}">`
+  }
+
+  // Every block's close is drawn at its `directive_close`, which the structure
+  // pass puts where the block closes: at its `exit`, at an outer block's
+  // `exit` that crossed it, or at the end of its container. The exit line and
+  // the end of the block's range draw nothing. They drew the closes from
+  // `state.cursor` until TASK-175, which left a crossed block or an unclosed
+  // pullquote open, and let an exit that closed nothing crash or close the
+  // wrong block
+  md.renderer.rules[EXIT_MARK] = () => ''
+  md.renderer.rules[END_MARK] = () => ''
+  md.renderer.rules[CLOSE] = (tokens, idx) => {
+    const { directive, closedBy } = tokens[idx].meta as {
+      directive: DirectiveNode
+      closedBy: ClosedBy
+    }
+    const closer = close[exitFamilyOf(directive.name)]
+    if (!closer) return '</section>'
+    const { name, id, info } = directive
+    return closer({ name, id, info }, closedBy)
+  }
   md.renderer.rules[LINE_INVALID] = () => ''
+
+  // Rendered by its grammar from the open token b-ber-parser-figure made. Its
+  // close token always rendered nothing
+  const inlineRender = new Map(inline.map((c) => [c.family, c.render]))
+  // A `media` line renders as the directive it resolves to for this target,
+  // through the grammar that claims that directive's line. Its caption is
+  // media.yml's for the target, or else the one written under the line.
+  //
+  // A pre-pass used to write media.yml's caption into the Markdown, and then
+  // a caption written under the line was left as text after it; with none in
+  // media.yml, the written caption was the directive's. Both are kept
+  const renderMedia = (
+    meta: {
+      mediaType: string
+      mediaId: string
+      caption?: string
+      captionSource?: string
+    },
+    map: [number, number] | null
+  ): string => {
+    if (!media) return ''
+    const resolved = media(meta.mediaType, meta.mediaId)
+    const caption = resolved.caption ?? meta.caption
+    const leftover =
+      resolved.caption !== undefined && meta.captionSource !== undefined
+        ? md.render(meta.captionSource)
+        : ''
+    const line = (map ? map[0] : 0) + 1
+    const claim = inline.find((c) => c.validate(resolved.params, line))
+    // No grammar claims the directive: it was text, and a caption written
+    // under it was part of the same paragraph unless media.yml's came between
+    if (!claim) {
+      return resolved.caption === undefined && meta.captionSource !== undefined
+        ? md.render(`${resolved.source}\n${meta.captionSource}`)
+        : md.render(resolved.source) + leftover
+    }
+    const type = `container_${claim.family}_open`
+    return (
+      claim.render(
+        [{ type, info: resolved.params, nesting: 1, map, children: caption }],
+        0
+      ) + leftover
+    )
+  }
+
+  md.renderer.rules[INLINE_TOKEN] = (tokens, idx) => {
+    const { info, map, meta } = tokens[idx]
+    if ((meta as { family: string }).family === 'media') {
+      return renderMedia(
+        meta as Parameters<typeof renderMedia>[0],
+        map as [number, number] | null
+      )
+    }
+    const { family, caption } = meta as {
+      family: InlineFamily
+      caption?: string
+    }
+    const render = inlineRender.get(family)
+    const type = `container_${family}_open`
+    return render
+      ? render([{ type, info, nesting: 1, map, children: caption }], 0)
+      : ''
+  }
 }

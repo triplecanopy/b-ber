@@ -20,6 +20,8 @@ text/figure-ch-03-video-01.xhtml  text
 text/figure-ch-03-vimeo-01.xhtml  text
 text/figurech-01-figure-01.xhtml  text
 text/figurech-02-gallery-figure-01.xhtml  text
+text/figurech-02-gallery-figure-02.xhtml  text
+text/figurech-02-gallery-figure-03.xhtml  text
 text/figurech-02-spread-figure-01.xhtml  text
 text/figures-titlepage.xhtml  text
 text/figurespread-consec-f1.xhtml  text

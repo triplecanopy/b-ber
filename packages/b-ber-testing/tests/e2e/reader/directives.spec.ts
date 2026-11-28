@@ -54,8 +54,9 @@ test.describe('Reader directive rendering', () => {
   }) => {
     await goToChapter(page, SPINE.chapter02.slug, SPINE.chapter02.index)
     await expect(page.locator('section.gallery')).toBeAttached()
-    // 1 outer figure wrapping 1 inner figure (ch-02-gallery-figure-01)
-    await expect(page.locator('section.gallery figure')).toHaveCount(2)
+    // 1 outer figure wrapping the 3 inner figures (ch-02-gallery-figure-01 to
+    // -03). Until TASK-175 the first swallowed the other two as its caption
+    await expect(page.locator('section.gallery figure')).toHaveCount(4)
   })
 
   test('spread: spread div is present in chapter 02', async ({ page }) => {

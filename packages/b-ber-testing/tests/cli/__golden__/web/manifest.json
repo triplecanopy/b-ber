@@ -83,6 +83,16 @@
       "type": "text/xhtml"
     },
     {
+      "href": "http://localhost:4000/_builds-web/text/figurech-02-gallery-figure-02.xhtml",
+      "title": "Figurech 02 Gallery Figure 02 Xhtml",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000/_builds-web/text/figurech-02-gallery-figure-03.xhtml",
+      "title": "Figurech 02 Gallery Figure 03 Xhtml",
+      "type": "text/xhtml"
+    },
+    {
       "href": "http://localhost:4000/_builds-web/text/figurech-02-spread-figure-01.xhtml",
       "title": "Figurech 02 Spread Figure 01 Xhtml",
       "type": "text/xhtml"
@@ -226,6 +236,14 @@
     },
     {
       "href": "http://localhost:4000/_builds-web/text/figurech-02-gallery-figure-01.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000/_builds-web/text/figurech-02-gallery-figure-02.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000/_builds-web/text/figurech-02-gallery-figure-03.xhtml",
       "type": "application/xhtml+xml"
     },
     {

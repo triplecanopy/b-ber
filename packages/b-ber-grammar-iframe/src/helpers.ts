@@ -117,7 +117,7 @@ export function createIframeInline(data: IframeArgs): string {
   const iframeAttrs = Object.entries({ ...defaults, ...rest }).reduce<string[]>(
     (acc, [key, val]) => {
       if (!htmlIframeAttributes.has(key) || val === '') return acc
-      return acc.concat(`${key}="${val}"`)
+      return acc.concat(`${key}="${Html.escape(val)}"`)
     },
     []
   )
@@ -127,7 +127,7 @@ export function createIframeInline(data: IframeArgs): string {
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
         <div id="${id}"${containerAttrsString}>
-          <iframe src="${source}" ${iframeAttrsString}>
+          <iframe src="${Html.escape(source)}" ${iframeAttrsString}>
           </iframe>
         </div>
         ${renderCaption(caption, mediaType)}

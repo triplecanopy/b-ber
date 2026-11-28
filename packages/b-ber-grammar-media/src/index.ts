@@ -1,122 +1,64 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import type { MediaEntry } from '@canopycanopycanopy/b-ber-lib'
 import {
-  INLINE_DIRECTIVE_FENCE,
-  INLINE_DIRECTIVE_MARKER,
-  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-} from '@canopycanopycanopy/b-ber-shapes-directives'
-import {
+  createAttributesString,
   createDirectiveString,
   throMissingBuildTypeError,
   throwMissingIDError,
 } from './helpers'
 
-const DIRECTIVE_REGEXP = /^media(?:-inline)?$/
+// What a `media` or `media-inline` line resolves to when one target is built,
+// from media.yml (TASK-161's "media", TASK-175):
+// - `params`, the line of the directive media.yml names, after its fence;
+// - `caption`, that directive's caption source, as b-ber-parser-figure read it
+//   from between its `::` lines;
+// - `source`, the whole replacement, for a directive no grammar renders.
+//
+// A pre-pass used to splice exactly these lines into the Markdown before it
+// was parsed, for each target, so a document parsed differently per target.
+// The directive rule now parses the `media` line as it is written, and the
+// line is resolved when it renders. So the directive renders as it did
+export interface ResolvedMedia {
+  params: string
+  caption?: string
+  source: string
+}
 
-// Render replacement Markdown string
-function replace({
+export function resolve({
   type,
   id,
   build,
-  str,
-  begin,
-  end,
+  media,
 }: {
+  // `media` or `media-inline`
   type: string
+  // Read from the line as the pre-pass read it: everything between the first
+  // `:` and the next
   id: string
+  // The target's name, which keys media.yml
   build: string
-  str: string
-  begin: number
-  end: number
-}) {
-  const { type: nextType, caption, ...rest } = state.media[id][build]
+  media: Record<string, Record<string, MediaEntry>>
+}): ResolvedMedia {
+  if (!media[id]) throwMissingIDError({ id, build })
+  if (!media[id][build]) throMissingBuildTypeError({ id, build })
 
-  // Check if the replacement directive will be an inline directive based on
-  // whether the original directive was `media` or `media-inline`
+  const { type: nextType, caption, ...rest } = media[id][build]
+
+  // The replacement is an inline directive when the line was `media-inline`
   const modifier = /-/.test(type) ? `-${type.split('-')[1]}` : ''
 
-  // Create replacement directive from media.yml
-  const replacement = createDirectiveString({
-    type: nextType,
-    id,
-    modifier,
-    caption,
-    rest,
-  })
-
-  // Do replacement and update delta
-  const originalLength = end - begin
-  const replacementLength = replacement.length
-
-  const nextStr = `${str.slice(0, begin)}${replacement}${str.slice(end)}`
-  const nextDelta = replacementLength - originalLength
-
-  return { str: nextStr, delta: nextDelta }
+  return {
+    params: ` ${nextType}${modifier}:${id} ${createAttributesString(rest)}`,
+    // The pre-pass wrote `:: <caption>` and a closing `::`, and the parser
+    // took everything after the first line's `::` up to the closing one
+    ...(caption ? { caption: ` ${caption}\n` } : {}),
+    source: createDirectiveString({
+      type: nextType,
+      id,
+      modifier,
+      caption,
+      rest,
+    }),
+  }
 }
 
-// Parse the Markdown. Inject directives to replace the `media`/`media-inline`
-// directives. Returns an updated Markdown string
-function render(data: string) {
-  let str = data
-
-  const { build } = state
-  const lines = []
-
-  // TODO current fence in b-ber-shapes includes whitespace, should remove that.
-  // Accounting for whitespace in `fenceLength` below
-  const fenceLength = INLINE_DIRECTIVE_MARKER_MIN_LENGTH + 1
-  const fenceCharCode = INLINE_DIRECTIVE_MARKER.charCodeAt(0)
-  const fence = INLINE_DIRECTIVE_FENCE
-
-  const newlineCharCode = 0x0a
-
-  // Create a map of the start/end indices of each line in the file.
-  let lineStart = 0
-  for (let i = 0; i < str.length; i++) {
-    if (str[i].charCodeAt(0) === newlineCharCode) {
-      lines.push([lineStart, i])
-      lineStart = i + 1
-    }
-
-    // Add markers in case there's only one line in the file with no trailing
-    // newline
-    if (i === str.length - 1 && str.length && !lines.length) {
-      lines.push([0, i + 1])
-    }
-  }
-
-  // Move through the file replacing entire lines if the match the `media` or
-  // `media-inline` directive. Account for the change in line start/end
-  // positions by storing a delta of the length of content added vs. removed
-  let delta = 0
-  for (let i = 0; i < lines.length; i++) {
-    let [begin, end] = lines[i]
-
-    begin += delta
-    end += delta
-
-    // eslint-disable-next-line no-continue
-    if (str.charCodeAt(begin) !== fenceCharCode) continue
-    // eslint-disable-next-line no-continue
-    if (str.slice(begin, begin + fenceLength) !== fence) continue
-
-    const directive = str.slice(begin + fenceLength, end).trim()
-    const [type, id] = directive.split(':')
-
-    // Check that the directive is a `media`/`media-inline` directive
-    // eslint-disable-next-line no-continue
-    if (DIRECTIVE_REGEXP.test(type) !== true) continue
-
-    if (!state.media[id]) throwMissingIDError({ id, build })
-    if (!state.media[id][build]) throMissingBuildTypeError({ id, build })
-
-    const nextDocumentData = replace({ type, id, build, str, begin, end })
-
-    // eslint-disable-next-line prefer-destructuring
-    str = nextDocumentData.str
-    delta += nextDocumentData.delta
-  }
-
-  return str
-}
-
-export default { render }
+export default { resolve }
