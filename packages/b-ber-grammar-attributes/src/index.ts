@@ -135,6 +135,13 @@ const parseAttrs = (s: string): Record<string, string> => {
       continue
     }
 
+    if (!open && (char === 32 /*   */ || char === 9) /* \t */) {
+      // Whitespace outside a value ends a word that had no `:`. It is not an
+      // attribute, so it is dropped: it used to become part of the next key
+      str = ''
+      continue
+    }
+
     if (char === delim) {
       // token is ending delimiter since we've advanced our pointer
       key = key!.trim() // trim whitespace, allowing for multiple spaces

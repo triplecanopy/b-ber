@@ -164,6 +164,16 @@ describe('b-ber-grammar-attributes', () => {
     )
   })
 
+  // A lone word used to stay in the buffer and become part of the next key,
+  // `bar classes`, so the attribute after it was lost (TASK-161)
+  it('ignores a lone word, and parses the attribute after it', () => {
+    expect(parseAttrs('title:foo bar classes:x')).toEqual({
+      title: 'foo',
+      classes: 'x',
+    })
+    expect(parseAttrs('bar\tclasses:"x y"')).toEqual({ classes: 'x y' })
+  })
+
   // Values are text. They used to be written as they were, so this gave
   // malformed XHTML (TASK-161)
   it('escapes attribute values', () => {
