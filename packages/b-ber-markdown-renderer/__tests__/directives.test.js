@@ -476,6 +476,24 @@ describe('directive structure', () => {
     expect(line.children[0].attrs).toEqual([['class', 'interlocutor']])
   })
 
+  // The dialogue's tokens hold the rest of its range, and a speaker line
+  // anywhere after it used to be marked too (TASK-161)
+  it('leaves a speaker line after the dialogue’s exit as text', () => {
+    const { tokens } = parse(
+      '::: dialogue:d\n\n:: Ann :: Hello.\n\n::: exit:d\n\n:: Bob :: Not dialogue.\n'
+    )
+    const lines = tokens.filter((t) => t.type === 'inline')
+    expect(lines.map((t) => t.content)).toEqual([
+      ' Hello.',
+      ':: Bob :: Not dialogue.',
+    ])
+    const paragraphs = tokens.filter((t) => t.type === 'paragraph_open')
+    expect(paragraphs.map((t) => t.attrGet('class'))).toEqual([
+      'interlocutor-parent',
+      null,
+    ])
+  })
+
   it('makes gallery and spread nodes, and runs their afterBlock hooks (TASK-175)', () => {
     const seen = []
     const withHooks = new MarkdownIt().use(directives, {

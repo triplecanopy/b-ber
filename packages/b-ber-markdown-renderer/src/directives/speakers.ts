@@ -1,12 +1,9 @@
-// Speaker lines (`:: Speaker :: text`) inside a dialogue, as
-// b-ber-parser-dialogue marked them, kept exactly so that the output is
-// unchanged (TASK-175).
+// Speaker lines (`:: Speaker :: text`) inside a dialogue, marked as
+// b-ber-parser-dialogue marked them (TASK-175).
 //
 // It runs each time a dialogue's tokens are complete, over every token parsed
-// so far, and treats everything from a dialogue's open token to its close
-// token as dialogue. A dialogue's close token sits at the end of its range,
-// not at its `exit`, so a speaker line anywhere after a dialogue is marked
-// too: TASK-161's intended output differences fix that.
+// so far, and treats everything from a dialogue's open token to its `exit`
+// as dialogue (`blockSpan`).
 
 import type MarkdownIt from 'markdown-it'
 
