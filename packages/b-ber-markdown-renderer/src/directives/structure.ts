@@ -34,10 +34,6 @@ import { INLINE_TOKEN, LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
 import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
 
-// Which family's renderer draws a block's `exit`
-export const exitFamilyOf = (name: string): 'section' | 'pullquote' =>
-  familyOf(name) === 'pullquote' ? 'pullquote' : 'section'
-
 // How a block's `directive_close` came about: at its own `exit`, at an outer
 // block's `exit` that crossed it, or at the end of its Markdown container
 export type ClosedBy = 'exit' | 'crossed-exit' | 'end'

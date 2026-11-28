@@ -19,7 +19,6 @@ import { liftTree } from './tree'
 import type { DirectiveEnv, DirectiveHost } from './types'
 
 export { formatDiagnostic, type Location, locate } from './diagnostics'
-export { exitFamilyOf } from './structure'
 export { type DirectiveLine, readDirectiveLine } from './syntax'
 export { liftTree } from './tree'
 export type * from './types'
