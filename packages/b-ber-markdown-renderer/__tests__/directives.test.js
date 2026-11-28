@@ -441,6 +441,24 @@ describe('directive structure', () => {
     expect(section.children.map((n) => n.type)).toEqual(['paragraph'])
   })
 
+  it('makes pullquote and blockquote nodes, with their content (TASK-175)', () => {
+    const { env, tokens } = parse(
+      '::: chapter:a\n\n::: pullquote:p citation:"Someone"\n\nquoted\n\n::: exit:p\n\n::: blockquote:q\n\nmore\n\n::: exit:q\n\n::: exit:a\n'
+    )
+    expect(env.diagnostics).toEqual([])
+    const [chapter] = env.tree.children
+    const blocks = chapter.children.filter((n) => n.type === 'directive')
+    expect(blocks).toMatchObject([
+      { name: 'pullquote', id: 'p', attrs: { citation: 'Someone' } },
+      { name: 'blockquote', id: 'q' },
+    ])
+    expect(blocks[0].children.map((n) => n.type)).toEqual(['paragraph'])
+    const families = tokens
+      .filter((t) => t.type === 'directive_open')
+      .map((t) => t.meta.family)
+    expect(families).toEqual(['section', 'pullquote', 'pullquote'])
+  })
+
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'

@@ -1,6 +1,8 @@
 // The directive block rule. It claims the lines that b-ber-parser-section
-// claimed for b-ber-grammar-section: a structural opener (`::: chapter:a`) or
-// an `exit` the host says is this rule's.
+// claimed for b-ber-grammar-section and b-ber-grammar-pullquote: a structural
+// opener (`::: chapter:a`), a `pullquote` or `blockquote` opener, or an
+// `exit` (registry.ts's families). Each token records which family claimed
+// it, which decides how it renders.
 //
 // It deliberately reproduces that parser's token *shape*: each claimed line
 // opens a container holding the rest of the enclosing range, which closes at
@@ -13,7 +15,7 @@
 // recorded. That is what fixes the false `Duplicate [id]` after a paragraph.
 
 import type MarkdownIt from 'markdown-it'
-import { CLAIM_RE, EXIT } from './registry'
+import { CLAIM_RE, EXIT, type Family, PULLQUOTE_CLAIM_RE } from './registry'
 import type { DirectiveEnv, DirectiveHost } from './types'
 
 export const LINE_OPEN = 'directive_line_open'
@@ -23,6 +25,26 @@ export const LINE_INVALID = 'directive_line'
 
 const COLON = 0x3a
 const MIN_FENCE = 3
+
+// Which family claims `params`, as the old plugins decided in turn
+const claim = (
+  params: string,
+  host: DirectiveHost,
+  env: DirectiveEnv
+): { family: Family; name: string; id: string | undefined } | null => {
+  const section = params.trim().match(CLAIM_RE)
+  if (section) {
+    const [, name, id] = section
+    if (name !== EXIT || id === undefined || host.claimsExit(id, env))
+      return { family: 'section', name, id }
+  }
+  const pullquote = params.trim().match(PULLQUOTE_CLAIM_RE)
+  if (pullquote) {
+    const [, name, id] = pullquote
+    return { family: 'pullquote', name, id }
+  }
+  return null
+}
 
 export const createRule =
   (host: DirectiveHost) =>
@@ -44,11 +66,11 @@ export const createRule =
 
     const markup = src.slice(start, pos)
     const params = src.slice(pos, max)
-    const match = params.trim().match(CLAIM_RE)
-    if (!match) return false
-
-    const [, name, id] = match
     const env = state.env as DirectiveEnv
+    const claimed = claim(params, host, env)
+    if (!claimed) return false
+
+    const { family, name, id } = claimed
     const lineNumber = startLine + 1
 
     if (id === undefined) {
@@ -57,6 +79,7 @@ export const createRule =
       if (silent) return true
       host.missingId(name, lineNumber, env)
       const token = state.push(LINE_INVALID, '', 0)
+      token.meta = { family }
       token.markup = markup
       token.info = params
       token.block = true
@@ -65,9 +88,11 @@ export const createRule =
       return true
     }
 
-    if (name === EXIT && !host.claimsExit(id, env)) return false
     if (silent) return true
-    if (name !== EXIT) host.opened(id, name, lineNumber, env)
+    // b-ber-grammar-pullquote never recorded its ids; it checked them against
+    // the cursor when they rendered
+    if (name !== EXIT && family === 'section')
+      host.opened(id, name, lineNumber, env)
 
     const oldParent = state.parentType
     const oldLineMax = state.lineMax
@@ -77,6 +102,7 @@ export const createRule =
     state.lineMax = endLine
 
     const open = state.push(LINE_OPEN, 'section', 1)
+    open.meta = { family }
     open.markup = markup
     open.info = params
     open.block = true
@@ -85,6 +111,7 @@ export const createRule =
     state.md.block.tokenize(state, startLine + 1, endLine)
 
     const close = state.push(LINE_CLOSE, 'section', -1)
+    close.meta = { family }
     close.info = params
     close.block = true
 
