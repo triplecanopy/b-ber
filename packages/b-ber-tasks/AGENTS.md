@@ -2,13 +2,30 @@
 
 ## What This Is
 
-`b-ber-tasks` defines every individual build step in the b-ber pipeline. Each task is an async function (Promise-based) that reads from and writes to the shared `State` singleton in `b-ber-lib`. `b-ber-cli` composes these tasks into ordered sequences to produce EPUB, Mobi, PDF, web, reader, and XML builds. The package also includes tasks for serving output locally via browser-sync, deploying to remote hosts, and generating the Lunr full-text search index.
+`b-ber-tasks` defines every individual build step in the b-ber pipeline, and how each target (EPUB, Mobi, PDF, web, reader, sample, XML) runs them. Each task is an async function of the build's context, `(ctx, inputs) → outputs` (TASK-165): it reads the project, the target and the config from the `BuildContext` b-ber-lib's `runBuild` creates, takes what earlier steps produced as arguments, and returns what later ones need. A target's build is a plain async function in `src/targets.ts` that runs its steps top to bottom. `b-ber-cli` calls `build(ctx)` for each target. The package also includes tasks for serving output locally via browser-sync, deploying to remote hosts, and generating the Lunr full-text search index.
+
+The data flow between the steps:
+
+```
+render(ctx, { spine })                → { figures, footnotes, guide, remoteAssets }
+loi(ctx, { figures, spine })          → { pages, guide }   (adds the figures titlepage to the spine)
+footnotes(ctx, { footnotes, spine })  → the notes page     (adds it to the spine)
+opf(ctx, { spine, toc, guide, loi, remoteAssets })
+web(ctx, { spine, loi, toc }), xml(ctx, { spine, loi }), and the other packagers (ctx)
+```
+
+The spine is the context's (`ctx.settings.spine`), extended in place by loi
+and footnotes and reordered by opf, because b-ber-lib and the templates still
+read it through `State`.
 
 ## Key Files
 
 | File                             | Purpose                                                               |
 | -------------------------------- | --------------------------------------------------------------------- |
-| `src/index.ts`                   | Re-exports all task functions                                         |
+| `src/index.ts`                   | Re-exports all task functions, `build`, `step` and the target names   |
+| `src/targets.ts`                 | Each target's build: its steps, in order, and what passes between them |
+| `src/step.ts`                    | `step(ctx, name, fn)`: one step, between the logger's start and stop events |
+| `src/context.ts`                 | What tasks read from the context: source and output paths, metadata, b-ber-lib's version |
 | `src/render/index.ts`            | Converts Markdown source files to XHTML via `b-ber-markdown-renderer` |
 | `src/opf/Opf.ts`                 | Generates the EPUB OPF package document                               |
 | `src/opf/ManifestAndMetadata.ts` | Builds OPF manifest and Dublin Core metadata sections                 |
@@ -48,7 +65,10 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - All tasks return Promises. Do not use callbacks.
-- Tasks operate on the shared `state` singleton from `b-ber-lib/State`. Do not pass state as an argument.
+- A build task takes the `BuildContext` as its first argument and never imports `State`. What it needs from an earlier step is an argument, and what a later step needs is its return value, passed on by the target's build in `src/targets.ts`. Library code the tasks call (b-ber-lib's utils, the templates, the grammars) still reads `State`, which routes to the same context while the build runs in it; that goes with TASK-173.
+- No module-level mutable state and no instances created at import. Several targets will build at once in one process (TASK-166), and anything that outlives one call is shared between them.
+- A new step goes in a target's build in `src/targets.ts` and in that target's `steps` list, which the logger counts; `__tests__/targets.test.js` checks the two agree.
+- `init`, `generate` and `validate` are commands, not build steps: they run outside a build and still read the project through `State`.
 - Some web-build files (`src/web/search.js`, `src/web/worker.js`, etc.) are excluded from tsdown compilation because they run in the browser; do not add ES module imports to those files.
 - The `copy.sh` script copies non-JS source assets (e.g., web worker scripts) into `dist/` during build. If you add new non-JS files, update `copy.sh`.
 
@@ -69,24 +89,24 @@ Project paths below are relative to the source directory (`config.src`,
 
 1. Creates `OPS/stylesheets/` in the build directory.
 2. Copies everything except dotfiles in the theme's `fonts/` and `images/`
-   (the directories beside `state.theme.entry`) into the project's `_fonts/`
+   (the directories beside the theme's `entry`) into the project's `_fonts/`
    and `_images/`. Files already in the project are not overwritten. The
    `copy` task later moves them into the build.
 3. Concatenates up to three files into one string, each skipped if absent:
    1. `_stylesheets/<theme name>/_settings.scss`, the user's variables;
-   2. `state.theme.entry`, the theme's `application.scss`;
+   2. the theme's `entry`, its `application.scss`;
    3. `_stylesheets/<theme name>/_overrides.scss`, the user's rules.
 
    If none of the three exists it reports that with `log.error` and throws,
    which rejects the task.
-4. Prefixes `$build: "<state.build>";` and compiles the string with dart-sass's
+4. Prefixes `$build: "<target name>";` and compiles the string with dart-sass's
    legacy `render()` API. The output is `compressed` when
    `NODE_ENV=production`, `expanded` otherwise.
 5. Runs autoprefixer through postcss with `config.autoprefixer_options`, or
    the default list (`defaults`, `> 1%`, `not dead`, `not IE 11`, with
-   `flexbox: 'no-2009'`). The options are read once, when the module is first
-   imported.
-6. Writes `application.css`, or `<state.hash>.css` in production.
+   `flexbox: 'no-2009'`), read from the build's config when the task runs.
+   They were read once, at import, until TASK-165.
+6. Writes `application.css`, or `<ctx.hash>.css` in production.
 
 dart-sass is given a `logger`, so nothing it prints reaches stderr directly. A
 `@warn` in a stylesheet goes to `log.warn`; deprecation warnings, which come
@@ -124,8 +144,9 @@ and show at `--verbose`.
 
 ### How a project gets its theme
 
-`state.theme` is loaded from `config.theme` (`State.loadTheme` in
-b-ber-lib). Built-in names map to the two theme packages. Any other name is
+The task reads the theme from the context, `ctx.project.theme`, which
+`loadProject` reads from `config.theme` (`readTheme` in b-ber-lib's
+`Project.ts`). Built-in names map to the two theme packages. Any other name is
 `require`d, from the project's `themes/` directory (`config.themes_directory`)
 or `node_modules`. If that fails, b-ber warns and falls back to
 b-ber-theme-serif. A theme module exports `{ name, entry, fonts, images,

@@ -6,9 +6,8 @@
 installs a `bber` binary that parses user commands via yargs and delegates all
 substantive work to `@canopycanopycanopy/b-ber-tasks`. Each command is a thin
 yargs handler: it validates and normalises CLI flags (including an optional
-`--config` YAML/JSON override file), updates the shared `State` singleton from
-`@canopycanopycanopy/b-ber-lib`, and calls the appropriate task or sequence from
-`b-ber-tasks`.
+`--config` YAML/JSON override file), reads the project, and calls the
+appropriate task from `b-ber-tasks`, in a build context.
 
 ## Key Files
 
@@ -17,7 +16,7 @@ yargs handler: it validates and normalises CLI flags (including an optional
 | `src/index.ts`              | Binary entry point: `--version`, configures the logger, installs the exit handlers, then loads `app.ts` |
 | `src/app.ts`                | Wires yargs commands and defines the custom help message          |
 | `src/commands/index.ts`     | Re-exports all command modules                                    |
-| `src/commands/build.ts`     | `bber build` — creates build sequences and runs tasks             |
+| `src/commands/build.ts`     | `bber build` — runs b-ber-tasks' `build` for each target, each in its own context |
 | `src/commands/new.ts`       | `bber new` — scaffolds a new project via `b-ber-tasks/init`       |
 | `src/commands/generate.ts`  | `bber generate` — creates a chapter file                          |
 | `src/commands/serve.ts`     | `bber serve` — starts a local preview server                      |
@@ -27,6 +26,7 @@ yargs handler: it validates and normalises CLI flags (including an optional
 | `src/commands/deploy.ts`    | `bber deploy` — uploads builds to Amazon S3                       |
 | `src/commands/opf.ts`       | `bber opf` — generates the OPF package document                   |
 | `src/lib/arguments.ts`      | yargs checks that reject words no command, format or positional takes |
+| `src/lib/context.ts`        | `inBuildContext`: runs one build task in a context, for `bber opf` and `bber cover` |
 | `src/lib/config-options.ts` | Shared yargs option definitions and config-file parser            |
 | `src/lib/exit.ts`           | The one place a failure becomes exit status 1; the yargs `fail` handler |
 | `src/lib/logger-options.ts` | Reads the logger's flags, and takes them out of what yargs parses |
@@ -109,8 +109,8 @@ can log or fail, while it loads.
 each): `progress` when stdout is a terminal and the level is the default or
 lower, `plain` when it is not (or `TERM=dumb`), and `lines` from
 `--log-level=3` up and at `--quiet`. `build` calls `log.registerSequence` with
-each format it runs and that format's tasks, which is what the progress line
-counts.
+each format it runs and that format's steps (b-ber-tasks' `targetSteps`),
+which is what the progress line counts.
 
 yargs never sees these flags. `splitLoggerFlags` separates them from the
 rest of the command line, `loggerOptions` reads the first part, and `app.ts`
@@ -139,9 +139,13 @@ Additional standards for this package:
   flags are validated against `config.yml` (`readConfig`), each warned about or
   announced once, and passed to `loadProject` as overrides, so they apply
   before anything reads the project. The handler no longer resets `State` or
-  sets `state.build`.
-- All command handlers must remain thin: validate input, update `State`, call
-  into `b-ber-tasks`. Avoid adding build logic directly in a command file.
+  sets `state.build`. Each target's build is b-ber-tasks' `build(ctx)`
+  (TASK-165).
+- **A command that runs one build task on its own** (`bber opf`, `bber
+  cover`) runs it with `inBuildContext(target, fn)` from `src/lib/context.ts`:
+  every build task takes the context as its first argument.
+- All command handlers must remain thin: validate input, call into
+  `b-ber-tasks`. Avoid adding build logic directly in a command file.
 - Wrap every handler in `exitOnFailure`, and register `fail` from
   `src/lib/exit.ts` in every builder. Never call `process.exit` from a command
   or catch an error to print it: let it reach the wrapper. A failure the CLI
