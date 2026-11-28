@@ -156,16 +156,18 @@ describe('task: mobiCSS', () => {
     )
   })
 
-  // Defect: a rule whose only selectors are `epub|` ones keeps its
-  // declarations with no selector at all (src/mobi/mobi-css.ts:52), which is
-  // not valid CSS.
-  test('leaves a rule with no selector behind (defect)', async () => {
-    await setup({ 'application.css': 'epub|switch { display: none }' })
+  // #806: a rule whose only selectors were `epub|` ones kept its
+  // declarations with no selector at all, which is not valid CSS
+  test('removes a rule left with no selectors (#806)', async () => {
+    await setup({
+      'application.css':
+        'a { color: red } epub|switch { display: none } b { color: blue }',
+    })
 
     await mobiCSS(project.ctx)
 
     expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
-      ' {\n  display: none;\n}'
+      'a {\n  color: red;\n}\n\nb {\n  color: blue;\n}'
     )
   })
 

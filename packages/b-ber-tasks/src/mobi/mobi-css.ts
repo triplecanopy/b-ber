@@ -56,6 +56,15 @@ const process = (file: string) =>
           }
           j-- // eslint-disable-line no-plusplus
         }
+
+        // Every selector was an `epub|` one. The rule used to be kept with
+        // none, which is not valid CSS (#806)
+        if (!rule.selectors.length) {
+          log.info('mobiCSS remove rule with no selectors left')
+          ast.stylesheet.rules.splice(i, 1)
+          i-- // eslint-disable-line no-plusplus
+          continue
+        }
       }
 
       if (blackListedTypes.indexOf(rule.type) > -1) {
