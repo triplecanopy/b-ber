@@ -34,6 +34,7 @@ import {
   directives,
 } from './directives'
 import { legacyHost } from './legacy-host'
+import { legacyBlock, legacyInline } from './legacy-render'
 
 const LINE_BREAK = '\n'
 const SPACE = ' '
@@ -123,6 +124,9 @@ class MarkdownRenderer {
       )
     }
 
+    // What the grammars' string renders were called with
+    const options = this.markdownIt.options
+
     // The single-line directives, in the order their plugins were registered
     const inline = (
       [
@@ -134,7 +138,7 @@ class MarkdownRenderer {
       ] as const
     ).map(([family, grammar]) => {
       const { validate, render } = grammar.renderer(reference)
-      return { family, validate, render }
+      return { family, validate, render: legacyInline(family, render, options) }
     })
 
     const section = markdownItSection.renderer()
@@ -145,14 +149,25 @@ class MarkdownRenderer {
     // them had, and renders each with its grammar as before
     this.markdownIt.use(directives, {
       host: legacyHost(),
-      legacy: {
-        section: section.render,
-        pullquote: pullquote.render,
-        dialogue: markdownItDialogue.renderer({}).render,
-        gallery: markdownItGallery.renderer({}).render,
-        spread: markdownItSpread.renderer().render,
+      blocks: {
+        section: legacyBlock(section.render, section.close, options),
+        pullquote: legacyBlock(pullquote.render, pullquote.close, options),
+        dialogue: legacyBlock(
+          markdownItDialogue.renderer({}).render,
+          section.close,
+          options
+        ),
+        gallery: legacyBlock(
+          markdownItGallery.renderer({}).render,
+          section.close,
+          options
+        ),
+        spread: legacyBlock(
+          markdownItSpread.renderer().render,
+          section.close,
+          options
+        ),
       },
-      close: { section: section.close, pullquote: pullquote.close },
       // A `media` line is resolved for the target being built when it
       // renders. It used to be spliced into the Markdown before the parse
       media: (type, id, env: RenderEnv) =>

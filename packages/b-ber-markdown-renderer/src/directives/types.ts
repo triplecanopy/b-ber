@@ -1,4 +1,6 @@
 import type MarkdownIt from 'markdown-it'
+import type { Family } from './registry'
+import type { ClosedBy } from './structure'
 
 // Offsets into the normalized source (markdown-it's `state.src`), end
 // exclusive
@@ -45,11 +47,21 @@ export interface Diagnostic {
   notes?: DiagnosticNote[]
 }
 
-// A markdown-it token as it sits in the tree
+// A markdown-it token as it sits in the tree. A pair (`paragraph_open` …
+// `paragraph_close`) is one node, with its children and its close token
 export interface TokenNode {
   type: string
   token: MarkdownIt.Token
   children?: TreeNode[]
+  close?: MarkdownIt.Token
+}
+
+// What a `media` line renders from: the type and id it names, and the
+// caption written under it, as written
+export interface MediaLine {
+  type: string
+  id: string
+  captionSource?: string
 }
 
 export interface DirectiveNode {
@@ -71,9 +83,17 @@ export interface DirectiveNode {
   // A single-line directive's caption, the Markdown source between its `::`
   // lines
   caption?: string
+  // Set when the tree is lifted, for rendering: the family that claimed the
+  // line (registry.ts), how a block closed, and what a `media` line names
+  family?: Family | 'media'
+  closedBy?: ClosedBy
+  media?: MediaLine
 }
 
 export type TreeNode = DirectiveNode | TokenNode
+
+export const isDirectiveNode = (node: TreeNode): node is DirectiveNode =>
+  node.type === 'directive'
 
 export interface TreeRoot {
   type: 'root'
