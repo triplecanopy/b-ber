@@ -13,7 +13,14 @@ import {
   type InlineClaim,
   LINE_INVALID,
 } from './rule'
-import { CLOSE, END_MARK, EXIT_MARK, OPEN, structure } from './structure'
+import {
+  CLOSE,
+  type ClosedBy,
+  END_MARK,
+  EXIT_MARK,
+  OPEN,
+  structure,
+} from './structure'
 import { liftTree } from './tree'
 import type { DirectiveEnv, DirectiveHost } from './types'
 
@@ -90,6 +97,7 @@ export function directives(
   const legacyRule =
     (nesting: number) =>
     (tokens: MarkdownIt.Token[], idx: number): string => {
+      if ((tokens[idx].meta as { ignored?: boolean } | null)?.ignored) return ''
       const { type, info, map } = tokens[idx]
       const render = legacyOf(tokens[idx])
       return render ? render([{ type, info, nesting, map }], 0) : ''
@@ -103,8 +111,31 @@ export function directives(
   }
   md.renderer.rules[EXIT_MARK] = legacyRule(1)
   md.renderer.rules[END_MARK] = legacyRule(-1)
-  md.renderer.rules[CLOSE] = (tokens, idx) =>
-    legacyOf(tokens[idx]) ? '' : '</section>'
+  // Today's renderers draw a block's close at its `exit` and at the end of its
+  // range. Two blocks got neither, and their output was left unbalanced: one
+  // an outer block's `exit` crossed, and a pullquote or blockquote left open.
+  // Their close is drawn here, as their own `exit` would draw it (TASK-161).
+  // A pullquote's exit is b-ber-grammar-pullquote's to draw; every other
+  // block's is b-ber-grammar-section's
+  md.renderer.rules[CLOSE] = (tokens, idx) => {
+    const token = tokens[idx]
+    if (!legacyOf(token)) return '</section>'
+    const { family, directive, closedBy } = token.meta as {
+      family: Family
+      directive: { id: string }
+      closedBy: ClosedBy
+    }
+    const unbalanced =
+      closedBy === 'crossed-exit' ||
+      (closedBy === 'end' && family === 'pullquote')
+    if (!unbalanced) return ''
+    const exitFamily: Family = family === 'pullquote' ? 'pullquote' : 'section'
+    const render = legacy[exitFamily]
+    const info = ` exit:${directive.id}`
+    return render
+      ? render([{ type: EXIT_MARK, info, nesting: 1, map: token.map }], 0)
+      : ''
+  }
   md.renderer.rules[LINE_INVALID] = () => ''
 
   // Rendered by its grammar from the open token b-ber-parser-figure made. Its

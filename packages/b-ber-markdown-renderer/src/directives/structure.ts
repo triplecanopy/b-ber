@@ -24,6 +24,7 @@ import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
 import {
   EXIT,
+  type Family,
   familyOf,
   INLINE,
   isBlockName,
@@ -33,6 +34,14 @@ import {
 import { INLINE_TOKEN, LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
 import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
+
+// Which family's renderer draws a block's `exit`
+export const exitFamilyOf = (name: string): Family =>
+  familyOf(name) === 'pullquote' ? 'pullquote' : 'section'
+
+// How a block's `directive_close` came about: at its own `exit`, at an outer
+// block's `exit` that crossed it, or at the end of its Markdown container
+export type ClosedBy = 'exit' | 'crossed-exit' | 'end'
 
 export const OPEN = 'directive_open'
 export const CLOSE = 'directive_close'
@@ -117,11 +126,15 @@ export function structure(state: MarkdownIt.StateCore): void {
     list.push(token)
     inserts.set(at, list)
   }
-  const closeToken = (node: DirectiveNode, level: number) => {
+  const closeToken = (
+    node: DirectiveNode,
+    level: number,
+    closedBy: ClosedBy
+  ) => {
     const token = new state.Token(CLOSE, 'section', -1)
     token.block = true
     token.level = level
-    token.meta = { family: familyOf(node.name), directive: node }
+    token.meta = { family: familyOf(node.name), directive: node, closedBy }
     return token
   }
 
@@ -168,8 +181,13 @@ export function structure(state: MarkdownIt.StateCore): void {
     current().blocks.push({ line, node })
   }
 
-  const exitBlock = (line: DirectiveLine, at: number, level: number): void => {
-    if (!line.id) return
+  // Returns the block the exit closes, or null when it matches none
+  const exitBlock = (
+    line: DirectiveLine,
+    at: number,
+    level: number
+  ): OpenBlock | null => {
+    if (!line.id) return null
     const scope = current()
     const k = scope.blocks.map((b) => b.line.id).lastIndexOf(line.id)
 
@@ -182,7 +200,7 @@ export function structure(state: MarkdownIt.StateCore): void {
         span: line.span,
         notes: [unmatchedNote(line.id)],
       })
-      return
+      return null
     }
 
     const inner = scope.blocks.splice(k + 1)
@@ -207,8 +225,10 @@ export function structure(state: MarkdownIt.StateCore): void {
         })),
       })
     }
-    for (const b of [...inner.reverse(), named])
-      if (b.node) insert(at, closeToken(b.node, level))
+    for (const b of inner.reverse())
+      if (b.node) insert(at, closeToken(b.node, level, 'crossed-exit'))
+    if (named.node) insert(at, closeToken(named.node, level, 'exit'))
+    return named
   }
 
   const unmatchedNote = (id: string) => {
@@ -238,8 +258,18 @@ export function structure(state: MarkdownIt.StateCore): void {
     token: MarkdownIt.Token | null
   ): void => {
     if (line.name === EXIT) {
-      exitBlock(line, at, level)
-      if (token) token.type = EXIT_MARK
+      const named = exitBlock(line, at, level)
+      if (token) {
+        token.type = EXIT_MARK
+        // An exit renders as the exit of the block it closes:
+        // b-ber-grammar-pullquote draws a pullquote's or blockquote's, and
+        // b-ber-grammar-section every other block's. One that closes nothing
+        // is ignored: it used to close whichever pullquote was open, or crash
+        // b-ber-grammar-pullquote when none was (TASK-161)
+        token.meta = named
+          ? { ...token.meta, family: exitFamilyOf(named.line.name) }
+          : { ...token.meta, ignored: true }
+      }
       return
     }
     if (!line.id) return
@@ -278,7 +308,7 @@ export function structure(state: MarkdownIt.StateCore): void {
       })
     }
     for (const b of [...scope.blocks].reverse())
-      if (b.node) insert(at, closeToken(b.node, level))
+      if (b.node) insert(at, closeToken(b.node, level, 'end'))
   }
 
   // Lines markdown-it left as text, in a paragraph or a setext heading
@@ -364,6 +394,9 @@ export function structure(state: MarkdownIt.StateCore): void {
       if (token.type === LINE_CLOSE) {
         token.type = END_MARK
         token.nesting = 0
+        // An ignored exit's range draws nothing at its end either
+        if ((open?.token.meta as { ignored?: boolean } | null)?.ignored)
+          token.meta = { ...token.meta, ignored: true }
       }
       return
     }
