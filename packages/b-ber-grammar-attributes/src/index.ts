@@ -257,7 +257,10 @@ const attributesObject = (
     )
   }
 
-  if (DRAFT_DIRECTIVES.has(genus)) {
+  // A draft structural semantic renders as `chapter`. pullquote is in the
+  // draft set too, but it is a misc block with an attribute of its own
+  // (`citation`), so it renders as itself (TASK-161)
+  if (DRAFT_DIRECTIVES.has(genus) && !MISC_DIRECTIVES.has(genus)) {
     log.warn(`render [epub:${genus}] is [draft]. substituting with [chapter]`)
     genus = 'chapter'
   }

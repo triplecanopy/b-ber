@@ -36,9 +36,9 @@ here.</p>
 <!-- END: section:exit#fixture-inner -->
 </section>
 <!-- END: section:exit#fixture-outer -->
-<!-- START: section:pullquote#fixture-pullquote --><section class="pullquote  chapter" epub:type=" chapter"><p>A pull quote.</p>
+<!-- START: section:pullquote#fixture-pullquote --><section class=" pullquote"><p>A pull quote.</p>
 
-        
+        <footer><cite>&#8212;&#160;Someone</cite></footer>
         </section><!-- END: section:pullquote#fixture-pullquote -->
     <!-- START: section:blockquote#fixture-blockquote --><blockquote class=" blockquote"><p>Quoted text with <em>emphasis</em>.</p>
 
