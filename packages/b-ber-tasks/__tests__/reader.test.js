@@ -218,16 +218,26 @@ describe('task: reader', () => {
     expect(log.warn).toHaveBeenCalledWith('Invalid property for config: layout')
   })
 
+  // One hash for the build: books.json, the manifest and the server data
+  // all name the directory it is in (#769)
   test('names the book directory with a random hash when there is no identifier', async () => {
     await setup({ metadata: [{ term: 'title', value: 'A Book' }] })
-    // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(log.warn).toHaveBeenCalledWith(
       'Could not find metadata value for identifier'
     )
     const [dir] = await fs.readdir(path.join(project.dist, 'epub'))
     expect(dir).toMatch(/^[0-9a-f]{40}$/)
+    const [book] = await fs.readJson(
+      path.join(project.dist, 'api', 'books.json')
+    )
+    expect(book.url).toBe(`http://localhost:4000/epub/${dir}`)
+    const index = await fs.readFile(
+      path.join(project.dist, 'index.html'),
+      'utf8'
+    )
+    expect(index).toContain(`epub/${dir}"`)
   })
 
   test('replaces characters other than letters, digits and dashes in the book directory name', async () => {
@@ -237,35 +247,37 @@ describe('task: reader', () => {
         { term: 'identifier', value: 'a.b c' },
       ],
     })
-    // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual(['a-b-c'])
   })
 
-  // DEFECT (#769): the book directory is named `createDirname(identifier)`
-  // (src/reader/index.ts:131), but `writeWebpubManifest` (line 188) reads
-  // `<outputDir>/<identifier>/OPS` with the raw identifier, and
-  // `injectServerDataIntoTemplate` (line 232) builds `bookURL` from it too.
-  // An identifier with any character outside [0-9a-zA-Z-], such as a
-  // `urn:uuid:` one, makes the manifest scan fail with ENOENT, which ends the
-  // task before the reader app is copied.
-  test('fails for an identifier that createDirname changes (defect)', async () => {
+  // #769: the book directory is named `createDirname(identifier)`, but
+  // `writeWebpubManifest` read `<outputDir>/<identifier>/OPS` with the raw
+  // identifier, and `injectServerDataIntoTemplate` built `bookURL` from it
+  // too. An identifier with any character outside [0-9a-zA-Z-], such as a
+  // `urn:uuid:` one, made the manifest scan fail with ENOENT, which ended the
+  // task before the reader app was copied.
+  test('builds for an identifier that createDirname changes (#769)', async () => {
     await setup({
       metadata: [
         ...METADATA.slice(0, 1),
         { term: 'identifier', value: 'urn:uuid:1234' },
       ],
     })
-    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual([
       'urn-uuid-1234',
     ])
-    expect(log.error).toHaveBeenCalledWith(
-      expect.objectContaining({ code: 'ENOENT' })
+    const manifest = await fs.readJson(path.join(project.dist, 'manifest.json'))
+    expect(manifest.resources.length).toBeGreaterThan(0)
+    const index = await fs.readFile(
+      path.join(project.dist, 'index.html'),
+      'utf8'
     )
-    expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(false)
+    expect(index).toContain('epub/urn-uuid-1234"')
+    expect(index).not.toContain('epub/urn:uuid:1234')
   })
 
   // #770: `writeWebpubManifest` did not return its fs.writeJson, so the task

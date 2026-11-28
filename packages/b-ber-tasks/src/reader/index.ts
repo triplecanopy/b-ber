@@ -24,6 +24,9 @@ const READER_MODULE_DIST_DIR = 'dist'
 // Where one reader build writes, and where it found the reader app
 interface ReaderPaths {
   outputDir: string
+  // The book's directory in `outputDir`, from its identifier. Everything that
+  // names the directory uses this one name (#769)
+  bookDir: string
   apiDir: string
   readerAppPath: string | null
 }
@@ -125,21 +128,26 @@ const findReaderApp = (): string => {
 const createOutputDirs = ({ outputDir, apiDir }: ReaderPaths) =>
   fs.ensureDir(outputDir).then(() => fs.ensureDir(apiDir))
 
-const copyEpubToOutputDir = (ctx: BuildContext, { outputDir }: ReaderPaths) => {
-  const epubDir = createDirname(getBookMetadata(ctx, 'identifier'))
+const copyEpubToOutputDir = (
+  ctx: BuildContext,
+  { outputDir, bookDir }: ReaderPaths
+) => {
   const promises = EPUB_ASSETS.map((item) =>
-    fs.move(dist(ctx).root(item), path.join(outputDir, epubDir, item))
+    fs.move(dist(ctx).root(item), path.join(outputDir, bookDir, item))
   )
 
   return Promise.all(promises)
 }
 
-const writeBookManifest = (ctx: BuildContext, { apiDir }: ReaderPaths) => {
+const writeBookManifest = (
+  ctx: BuildContext,
+  { apiDir, bookDir }: ReaderPaths
+) => {
   // Get metadata for books.json
   const id = getBookMetadata(ctx, 'identifier')
   const title = getBookMetadata(ctx, 'title')
 
-  const url = `${Url.trimSlashes(remoteURL(ctx))}/${OUTPUT_DIR_NAME}/${createDirname(id)}`
+  const url = `${Url.trimSlashes(remoteURL(ctx))}/${OUTPUT_DIR_NAME}/${bookDir}`
 
   const cover = `${url}/OPS/images/${getBookMetadata(ctx, 'cover')}`
 
@@ -154,13 +162,13 @@ const writeBookManifest = (ctx: BuildContext, { apiDir }: ReaderPaths) => {
   return fs.writeJson(path.join(apiDir, 'books.json'), manifest)
 }
 
-const writeWebpubManifest = (ctx: BuildContext, { outputDir }: ReaderPaths) => {
-  const assetsDir = path.join(
-    process.cwd(),
-    outputDir,
-    getBookMetadata(ctx, 'identifier'),
-    'OPS'
-  )
+// The book's directory was read here by its raw identifier, which is not
+// its name when the identifier has a character outside [0-9a-zA-Z-] (#769)
+const writeWebpubManifest = (
+  ctx: BuildContext,
+  { outputDir, bookDir }: ReaderPaths
+) => {
+  const assetsDir = path.join(process.cwd(), outputDir, bookDir, 'OPS')
   return rrdir(assetsDir).then((files) => {
     const manifest = generateWebpubManifest(files)
     // Returned, so that the task waits for it (#770)
@@ -200,13 +208,16 @@ const copyReaderAppToOutputDir = (
   return Promise.all(promises)
 }
 
-const injectServerDataIntoTemplate = (ctx: BuildContext) => {
+const injectServerDataIntoTemplate = (
+  ctx: BuildContext,
+  { bookDir }: ReaderPaths
+) => {
   const indexHTML = dist(ctx).root('index.html')
   const readerURL = Url.addTrailingSlash(
     getProjectConfig(ctx, 'reader_url') as string
   )
-  const identifier = getBookMetadata(ctx, 'identifier')
-  const bookURL = `${readerURL}epub/${identifier}`
+  // The book's directory, as for its manifest (#769)
+  const bookURL = `${readerURL}${OUTPUT_DIR_NAME}/${bookDir}`
   const serverData = {
     books: [
       {
@@ -257,6 +268,8 @@ const updateAssetURLsWithAbsolutePaths = (ctx: BuildContext) => {
 const reader = (ctx: BuildContext): Promise<void> => {
   const paths: ReaderPaths = {
     outputDir: dist(ctx).root(OUTPUT_DIR_NAME),
+    // Once: with no identifier it is a random hash
+    bookDir: createDirname(getBookMetadata(ctx, 'identifier')),
     apiDir: dist(ctx).root('api'),
     readerAppPath: null,
   }
@@ -269,7 +282,7 @@ const reader = (ctx: BuildContext): Promise<void> => {
     .then(() => writeBookManifest(ctx, paths))
     .then(() => writeWebpubManifest(ctx, paths))
     .then(() => copyReaderAppToOutputDir(ctx, paths))
-    .then(() => injectServerDataIntoTemplate(ctx))
+    .then(() => injectServerDataIntoTemplate(ctx, paths))
     .then(() => updateAssetURLsWithAbsolutePaths(ctx))
     .then(() => injectWebpubManifestLink(ctx))
     .catch((err) => {
