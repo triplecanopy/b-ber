@@ -1,5 +1,10 @@
+import type { DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import type { DirectiveEnv, DirectiveHost } from './directives'
+
+// The file the errors name, from the render's document
+const fileNameOf = (env: DirectiveEnv): string =>
+  (env as DirectiveEnv & DocumentEnv).document.fileName
 
 // The two errors the build throws on a directive, word for word as
 // b-ber-grammar-renderer's `validateOpen` threw them. The parse reports both
@@ -9,7 +14,7 @@ import type { DirectiveEnv, DirectiveHost } from './directives'
 // `state.cursor` until TASK-175, which held an unclosed block's id for the
 // rest of the build, so a later file could fail on it, and did not check
 // pullquote and blockquote ids against the others. They are kept per parse
-export const legacyHost = (context: { fileName: string }): DirectiveHost => {
+export const legacyHost = (): DirectiveHost => {
   const ids = new WeakMap<DirectiveEnv, Set<string>>()
 
   return {
@@ -21,15 +26,15 @@ export const legacyHost = (context: { fileName: string }): DirectiveHost => {
       }
       if (seen.has(id)) {
         throw log.error(
-          `Duplicate [id] [${id}]. [id] must be unique at [${context.fileName}.md:${line}]`
+          `Duplicate [id] [${id}]. [id] must be unique at [${fileNameOf(env)}.md:${line}]`
         )
       }
       seen.add(id)
     },
 
-    missingId(type, line) {
+    missingId(type, line, env) {
       throw log.error(
-        `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
+        `Missing [id] for [${type}:start] at ${fileNameOf(env)}.md:${line}`
       )
     },
   }

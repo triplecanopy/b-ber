@@ -23,5 +23,5 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - Attribute parsing is delegated to `b-ber-grammar-attributes`; do not duplicate attribute parsing logic here
-- Media source resolution reads from `b-ber-lib/State` — the state object must be populated before the plugin runs
+- Media sources are looked up in the project's audio and video files, which the render's `env.document` lists (TASK-177; they were read from `State`). A caption is parsed with the render's nested env (`nestedEnv`)
 - `validateOpen` and `render` callbacks are injected by the calling directive handler

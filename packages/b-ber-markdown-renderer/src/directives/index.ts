@@ -41,7 +41,18 @@ export interface LegacyToken {
   children?: string
 }
 
-export type LegacyRender = (tokens: LegacyToken[], index: number) => string
+// A markdown-it render rule's arguments, with the token shaped as the old
+// parsers made it. Written as a method so that a grammar's render may declare
+// the env it reads (b-ber-lib's `DocumentEnv`): TypeScript checks a method's
+// parameters bivariantly
+export type LegacyRender = {
+  method(
+    tokens: LegacyToken[],
+    index: number,
+    options: unknown,
+    env: DirectiveEnv
+  ): string
+}['method']
 
 export type { AfterBlock, ClosedBy, Family, InlineClaim }
 export { blockSpan }
@@ -63,7 +74,13 @@ export interface DirectiveOptions {
   // names, after its fence, and its caption source. It throws for an id or
   // target media.yml lacks, as the build always has. Without it a `media`
   // line renders nothing
-  media?: (type: string, id: string) => ResolvedMedia
+  media?: {
+    method(type: string, id: string, env: DirectiveEnv): ResolvedMedia
+  }['method']
+  // The env of a render inside this one: a resolved `media` line, or a
+  // caption written under one, rendered as Markdown. Without it a nested
+  // render starts with an empty env, as markdown-it's does
+  nested?: { method(env: DirectiveEnv): DirectiveEnv }['method']
   // What draws a block's close: b-ber-grammar-pullquote's `close` for a
   // pullquote or blockquote, b-ber-grammar-section's for every other block.
   // Without one a block closes with a plain `</section>`
@@ -86,7 +103,9 @@ export interface ClosingBlock {
   info: string
 }
 
-export type BlockClose = (block: ClosingBlock, closedBy: ClosedBy) => string
+export type BlockClose = {
+  method(block: ClosingBlock, closedBy: ClosedBy, env: DirectiveEnv): string
+}['method']
 
 // The spec's behaviour: nothing is thrown, and nothing is shared outside the
 // parse
@@ -107,6 +126,7 @@ export function directives(
     legacy = {},
     close = {},
     media,
+    nested = () => ({}),
     afterBlock = {},
     inline = [],
   } = options
@@ -128,10 +148,16 @@ export function directives(
   const legacyOf = (token: MarkdownIt.Token): LegacyRender | undefined =>
     legacy[(token.meta as { family?: Family } | null)?.family ?? 'section']
 
-  md.renderer.rules[OPEN] = (tokens, idx) => {
+  md.renderer.rules[OPEN] = (tokens, idx, options, env) => {
     const { type, info, map } = tokens[idx]
     const render = legacyOf(tokens[idx])
-    if (render) return render([{ type, info, nesting: 1, map }], 0)
+    if (render)
+      return render(
+        [{ type, info, nesting: 1, map }],
+        0,
+        options,
+        env as DirectiveEnv
+      )
     const { id } = (tokens[idx].meta as { directive: { id: string } }).directive
     return `<section id="${escapeAttribute(id)}">`
   }
@@ -145,7 +171,7 @@ export function directives(
   // wrong block
   md.renderer.rules[EXIT_MARK] = () => ''
   md.renderer.rules[END_MARK] = () => ''
-  md.renderer.rules[CLOSE] = (tokens, idx) => {
+  md.renderer.rules[CLOSE] = (tokens, idx, _options, env) => {
     const { directive, closedBy } = tokens[idx].meta as {
       directive: DirectiveNode
       closedBy: ClosedBy
@@ -153,7 +179,7 @@ export function directives(
     const closer = close[exitFamilyOf(directive.name)]
     if (!closer) return '</section>'
     const { name, id, info } = directive
-    return closer({ name, id, info }, closedBy)
+    return closer({ name, id, info }, closedBy, env as DirectiveEnv)
   }
   md.renderer.rules[LINE_INVALID] = () => ''
 
@@ -174,39 +200,43 @@ export function directives(
       caption?: string
       captionSource?: string
     },
-    map: [number, number] | null
+    map: [number, number] | null,
+    env: DirectiveEnv
   ): string => {
     if (!media) return ''
-    const resolved = media(meta.mediaType, meta.mediaId)
+    const resolved = media(meta.mediaType, meta.mediaId, env)
     const caption = resolved.caption ?? meta.caption
     const leftover =
       resolved.caption !== undefined && meta.captionSource !== undefined
-        ? md.render(meta.captionSource)
+        ? md.render(meta.captionSource, nested(env))
         : ''
     const line = (map ? map[0] : 0) + 1
-    const claim = inline.find((c) => c.validate(resolved.params, line))
+    const claim = inline.find((c) => c.validate(resolved.params, line, env))
     // No grammar claims the directive: it was text, and a caption written
     // under it was part of the same paragraph unless media.yml's came between
     if (!claim) {
       return resolved.caption === undefined && meta.captionSource !== undefined
-        ? md.render(`${resolved.source}\n${meta.captionSource}`)
-        : md.render(resolved.source) + leftover
+        ? md.render(`${resolved.source}\n${meta.captionSource}`, nested(env))
+        : md.render(resolved.source, nested(env)) + leftover
     }
     const type = `container_${claim.family}_open`
     return (
       claim.render(
         [{ type, info: resolved.params, nesting: 1, map, children: caption }],
-        0
+        0,
+        md.options,
+        env
       ) + leftover
     )
   }
 
-  md.renderer.rules[INLINE_TOKEN] = (tokens, idx) => {
+  md.renderer.rules[INLINE_TOKEN] = (tokens, idx, options, env) => {
     const { info, map, meta } = tokens[idx]
     if ((meta as { family: string }).family === 'media') {
       return renderMedia(
         meta as Parameters<typeof renderMedia>[0],
-        map as [number, number] | null
+        map as [number, number] | null,
+        env as DirectiveEnv
       )
     }
     const { family, caption } = meta as {
@@ -216,7 +246,12 @@ export function directives(
     const render = inlineRender.get(family)
     const type = `container_${family}_open`
     return render
-      ? render([{ type, info, nesting: 1, map, children: caption }], 0)
+      ? render(
+          [{ type, info, nesting: 1, map, children: caption }],
+          0,
+          options,
+          env as DirectiveEnv
+        )
       : ''
   }
 }

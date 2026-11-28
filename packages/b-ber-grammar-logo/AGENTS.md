@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Transforms the `logo` inline directive into a `<figure class="logo"><img style="width:120px;" .../></figure>`. Requires a `source` attribute; checks that the image file exists and logs a warning if not. The source is resolved relative to `state.src.images()` for the existence check, and rendered as `../images/<source>` in the output HTML. Does not add to `state.figures` (logos are not listed in the LOI).
+Transforms the `logo` inline directive into a `<figure class="logo"><img style="width:120px;" .../></figure>`. Requires a `source` attribute; checks that the image file exists and logs a warning if not. The source is resolved with `env.document.images()` for the existence check, and rendered as `../images/<source>` in the output HTML. Does not collect a figure (logos are not listed in the LOI).
 
 ## Key Files
 

@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Transforms `iframe` and `iframe-inline` directives into HTML. The `iframe` form registers a figure entry in state and emits a thumbnail linking to the figure page (LOI). The `iframe-inline` form emits a full `<iframe>` element with attributes (`allow`, `frameborder`, `height`, `width`, `title`) for `reader`/`web` builds; other builds receive an unsupported-content block from `b-ber-lib/utils`. Attribute preparation and validation are handled in `src/helpers.ts`.
+Transforms `iframe` and `iframe-inline` directives into HTML. The `iframe` form collects a figure entry in `env.result.figures` and emits a thumbnail linking to the figure page (LOI). The `iframe-inline` form emits a full `<iframe>` element with attributes (`allow`, `frameborder`, `height`, `width`, `title`) for `reader`/`web` builds; other builds receive an unsupported-content block from `b-ber-lib/utils`. Attribute preparation and validation are handled in `src/helpers.ts`.
 
 ## Key Files
 

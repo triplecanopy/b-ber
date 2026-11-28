@@ -1,19 +1,5 @@
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import { getTarget } from '../../b-ber-lib/src/Target'
 import spread from '../src'
-
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  build: 'epub',
-  // The real target of `build`, as State gives it
-  get target() {
-    return jest
-      .requireActual('../../b-ber-lib/src/Target')
-      .getTarget(this.build)
-  },
-  add: jest.fn(),
-  remove: jest.fn(),
-  indexOf: jest.fn(() => -1),
-  contains: jest.fn(() => false),
-}))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   error: jest.fn(),
@@ -22,6 +8,12 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 }))
 
 const context = { fileName: 'test' }
+
+// The render's env: the document, for `target`, as the renderer passes it
+const envFor = (target = 'epub') => ({
+  document: { fileName: 'test', target: getTarget(target) },
+  result: {},
+})
 
 describe('b-ber-grammar-spread', () => {
   it('exports plugin, name, and renderer', () => {
@@ -40,25 +32,21 @@ describe('b-ber-grammar-spread', () => {
   it('render returns empty string for closing token (nesting -1)', () => {
     const config = spread.renderer({ context })
     const tokens = [{ nesting: -1, info: 'exit:spread-01', map: [10, 11] }]
-    expect(config.render(tokens, 0)).toBe('')
+    expect(config.render(tokens, 0, {}, envFor())).toBe('')
   })
 
   it('render returns section for epub build', () => {
-    // state is imported at top level
-    state.build = 'epub'
     const config = spread.renderer({ context })
     const tokens = [{ nesting: 1, info: 'spread:spread-01', map: [0, 1] }]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, envFor('epub'))
     expect(result).toContain('<section')
     expect(result).toContain('spread-01')
   })
 
   it('render returns div scaffold for reader build', () => {
-    // state is imported at top level
-    state.build = 'reader'
     const config = spread.renderer({ context })
     const tokens = [{ nesting: 1, info: 'spread:spread-02', map: [0, 1] }]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, envFor('reader'))
     expect(result).toContain('spread__content')
     expect(result).toContain('spread-02')
   })

@@ -8,6 +8,10 @@
 // MarkdownIt instance, which is where these are checked against markdown-it's
 // own types.
 
+import type GuideItem from './GuideItem'
+import type { FootnotesEntry, MediaEntry } from './State'
+import type { Target } from './Target'
+
 // A token as the grammars' render rules read it
 export interface DirectiveToken {
   // e.g. `container_figure_open`
@@ -23,21 +27,91 @@ export interface FigureToken extends DirectiveToken {
   children?: string | null
 }
 
-// The markdown-it instance the grammars render captions with
-export interface RendererInstance {
-  renderInline(src: string): string
+// Book-wide footnote numbering: b-ber-parser-footnotes' `Counter`. Under
+// `group_footnotes: false` the notes are numbered across the whole book, so
+// one is made per build and carries from one document to the next (five
+// published books rely on it). `page` is how many documents' footnotes the
+// build has collected so far. TASK-166 moves it onto the build context
+export interface FootnoteNumbering {
+  listCounter(grouped: boolean, page: number): number
+  listItemCounter(grouped: boolean, page: number): number
+  // Inline notes (`^[…]`) have no label
+  setRef(label: string | undefined): string
+  getRef(): string
 }
 
-// b-ber-markdown-renderer's MarkdownRenderer, which tracks the file being
-// rendered
-export interface RendererContext {
+// What the build tells the grammars about the document being rendered and the
+// book it is in. They read it and never change it. It used to be read from
+// `State` (TASK-177)
+export interface DocumentInput {
+  // The document's file name, without `.md`
   fileName: string
+  // Its title in the spine, or else its file name: the notes page's heading
+  title: string
+  target: Target
+  // The path of a file in the project's `_images`
+  images(name: string): string
+  // The audio and video files in the project's `_media`
+  audio: readonly string[]
+  video: readonly string[]
+  // media.yml: media id, then target name, then the directive it becomes
+  media: Readonly<Record<string, Record<string, MediaEntry>>>
+  groupFootnotes: boolean
+  // How many figures and footnote pages the documents before this one gave:
+  // a figure's place in the list of illustrations, and the footnote page
+  // `FootnoteNumbering` counts, are book-wide
+  figuresBefore: number
+  footnotesBefore: number
+  footnotes: FootnoteNumbering
+}
+
+// What rendering one document collects for the build, in source order. The
+// build used to collect it in `State` as each grammar met it
+export interface DocumentResult {
+  // A page in the list of illustrations for each figure, as b-ber-templates'
+  // figure templates take them
+  figures: unknown[]
+  // The rendered notes. A document's notes are one entry; a caption with a
+  // note of its own makes another, as it always has
+  footnotes: FootnotesEntry[]
+  guide: GuideItem[]
+  // The document's front matter, merged into its spine entry
+  frontMatter: Record<string, unknown>[]
+  // The remote sources of audio and video, for the OPF manifest
+  remoteAssets: string[]
+}
+
+// The part of markdown-it's `env` that b-ber's grammars and parsers read and
+// write: everything per document (TASK-177). Nothing they keep outlives a
+// render. A type rather than an interface, so that it is assignable to
+// markdown-it's `Env`, an index signature
+export type DocumentEnv = {
+  document: DocumentInput
+  result: DocumentResult
+}
+
+// The env for a render inside another: a caption, a gallery item's caption, a
+// resolved `media` line. It shares the document and what it collects, and
+// nothing markdown-it's own rules keep in `env`, which a nested render always
+// started without
+export const nestedEnv = (env: DocumentEnv): DocumentEnv => ({
+  document: env.document,
+  result: env.result,
+})
+
+// A figure's place in the book's list of illustrations, if it is added next
+export const nextFigure = (env: DocumentEnv): number =>
+  env.document.figuresBefore + env.result.figures.length
+
+// The markdown-it instance the grammars render captions with. The env is the
+// render's; the instance renders with its nested env
+export interface RendererInstance {
+  renderInline(src: string, env: DocumentEnv): string
 }
 
 // What b-ber-markdown-renderer passes to each grammar's `renderer` factory
 export interface RendererReference {
   instance: RendererInstance
-  context: RendererContext
 }
 
 // A markdown-it token, as the parsers create and change it

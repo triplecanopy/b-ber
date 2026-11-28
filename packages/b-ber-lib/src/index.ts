@@ -18,16 +18,20 @@ export type {
   CoreRule,
   CoreState,
   DirectiveToken,
+  DocumentEnv,
+  DocumentInput,
+  DocumentResult,
   FigurePluginOptions,
   FigureToken,
+  FootnoteNumbering,
   InlineRule,
   InlineState,
   MarkdownItHost,
   MarkdownToken,
-  RendererContext,
   RendererInstance,
   RendererReference,
 } from './markdown'
+export { nestedEnv, nextFigure } from './markdown'
 export type { MediaMap, Metadata, Project } from './Project'
 export {
   loadProject,

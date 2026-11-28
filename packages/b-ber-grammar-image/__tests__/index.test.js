@@ -4,21 +4,6 @@ import fs from 'fs-extra'
 import image from '../src'
 import { createFigure, createFigureInline } from '../src/image'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  build: 'epub',
-  // The real target of `build`, as State gives it
-  get target() {
-    return jest
-      .requireActual('../../b-ber-lib/src/Target')
-      .getTarget(this.build)
-  },
-  figures: [],
-  add: jest.fn(),
-  src: {
-    images: (p) => p,
-  },
-}))
-
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
   // `throw log.error(...)` throws one rather than undefined
@@ -37,7 +22,6 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
   Html: {
     comment: jest.fn((s) => s),
     escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
@@ -57,6 +41,9 @@ jest.mock('../src/image', () => ({
 
 const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
+// The render's env, as the renderer passes it. The project's images are
+// where the document says
+const env = { document: { fileName: 'test', images: (p) => p }, result: {} }
 
 describe('b-ber-grammar-image', () => {
   it('exports plugin, name, and renderer', () => {
@@ -77,7 +64,7 @@ describe('b-ber-grammar-image', () => {
     const config = image.renderer({ instance, context })
     // validate signature is (params, line) and requires id and source
     expect(
-      config.validate('figure:my-id source="my-image.jpg"', 1)
+      config.validate('figure:my-id source="my-image.jpg"', 1, env)
     ).toBeTruthy()
   })
 
@@ -85,7 +72,7 @@ describe('b-ber-grammar-image', () => {
     // MARKER_OPEN_RE is not anchored at the start, so this matches as
     // `figure:foo`, with no source
     const config = image.renderer({ instance, context })
-    expect(() => config.validate('notafigure:foo', 1)).toThrow(
+    expect(() => config.validate('notafigure:foo', 1, env)).toThrow(
       'Missing [id] or [source]'
     )
   })
@@ -93,7 +80,7 @@ describe('b-ber-grammar-image', () => {
   it('validate throws when id or source are missing', () => {
     const config = image.renderer({ instance, context })
     // Only type, no id or source
-    expect(() => config.validate('figure', 1)).toThrow(
+    expect(() => config.validate('figure', 1, env)).toThrow(
       'Missing [id] or [source]'
     )
   })
@@ -108,7 +95,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    expect(config.render(tokens, 0)).toBe('')
+    expect(config.render(tokens, 0, {}, env)).toBe('')
   })
 
   it('renderer config includes markerOpen', () => {
@@ -126,7 +113,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(createFigure).toHaveBeenCalled()
     expect(result).toBe('<div class="figure">test figure</div>')
   })
@@ -142,7 +129,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    config.render(tokens, 0)
+    config.render(tokens, 0, {}, env)
     // attributesObject is mocked to resolve every source to test.jpg
     expect(utils.getImageDimensions).toHaveBeenCalledWith('test.jpg')
     expect(createFigure).toHaveBeenCalledWith(
@@ -160,7 +147,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(createFigureInline).toHaveBeenCalled()
     expect(result).toBe('<div class="figure-inline">test inline</div>')
   })
@@ -175,14 +162,14 @@ describe('b-ber-grammar-image', () => {
         children: 'caption text',
       },
     ]
-    config.render(tokens, 0)
-    expect(instance.renderInline).toHaveBeenCalledWith('caption text')
+    config.render(tokens, 0, {}, env)
+    expect(instance.renderInline).toHaveBeenCalledWith('caption text', env)
   })
 
   it('validate throws what log.error reports when id is undefined', () => {
     const config = image.renderer({ instance, context })
     // 'figure' with no id — id is undefined
-    expect(() => config.validate('figure', 1)).toThrow()
+    expect(() => config.validate('figure', 1, env)).toThrow()
     expect(log.error).toHaveBeenCalled()
   })
 
@@ -197,7 +184,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    expect(() => config.render(tokens, 0)).toThrow('Image not found')
+    expect(() => config.render(tokens, 0, {}, env)).toThrow('Image not found')
     expect(log.error).toHaveBeenCalledWith(
       expect.stringContaining('Image not found')
     )
@@ -213,7 +200,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    expect(() => config.render(tokens, 0)).not.toThrow()
+    expect(() => config.render(tokens, 0, {}, env)).not.toThrow()
     expect(createFigure).toHaveBeenCalled()
   })
 })

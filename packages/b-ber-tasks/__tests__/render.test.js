@@ -102,6 +102,75 @@ describe('task: render', () => {
     ])
   })
 
+  // The renderer returns what each document collects, and the task writes it
+  // where the later tasks read it (TASK-177). The grammars wrote it to State
+  // themselves before
+  test('writes what each document collects to State', async () => {
+    project = await createProject({
+      toc: ['one'],
+      markdown: {
+        one: '---\ntitle: One\ntype: bodymatter\n---\n\nText^[A note].\n',
+      },
+    })
+
+    await render()
+    await settle()
+
+    const state = require('@canopycanopycanopy/b-ber-lib').State
+    // The notes page is headed with the document's title in the spine
+    expect(state.footnotes).toEqual([
+      expect.objectContaining({ fileName: 'one', title: 'One' }),
+    ])
+    expect(state.footnotes[0].notes).toContain('A note')
+    expect(state.guide).toEqual([
+      expect.objectContaining({
+        fileName: 'one',
+        title: 'One',
+        type: 'bodymatter',
+      }),
+    ])
+    expect(state.spine.frontMatter.get('one')).toEqual({
+      title: 'One',
+      type: 'bodymatter',
+    })
+  })
+
+  // Five published books number their notes across the book. The numbering
+  // is made once per render task and passed to every document
+  test('numbers footnotes across the book under group_footnotes: false', async () => {
+    project = await createProject({
+      toc: ['one', 'two'],
+      config: { group_footnotes: false },
+      markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
+    })
+
+    await render()
+    await settle()
+
+    const state = require('@canopycanopycanopy/b-ber-lib').State
+    const [one, two] = state.footnotes.map((f) => f.notes)
+    expect(one).toContain('<ol class="footnotes" start="1">')
+    expect(two).toContain('<ol class="footnotes" start="3">')
+    const xhtml = await fs.readFile(
+      path.join(project.dist, 'OPS', 'text', 'two.xhtml'),
+      'utf8'
+    )
+    expect(xhtml).toMatch(/>3<\/a>.*>4<\/a>/)
+  })
+
+  test('numbers each document’s footnotes from 1 by default', async () => {
+    project = await createProject({
+      toc: ['one', 'two'],
+      markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
+    })
+
+    await render()
+    await settle()
+
+    const state = require('@canopycanopycanopy/b-ber-lib').State
+    expect(state.footnotes[1].notes).toContain('start="1"')
+  })
+
   test('resolves with nothing when the Markdown directory is empty', async () => {
     project = await createProject()
 

@@ -1,13 +1,17 @@
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import markdownItFootnotePlugin from '../src'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  add: jest.fn(),
-  find: jest.fn(() => null),
-}))
+// The env of the render that found the notes. The document's title is the
+// build's: its spine entry's, or else its file name (b-ber-tasks' render)
+const envFor = (fileName, title = fileName) => ({
+  document: { fileName, title, marker: 'document' },
+  result: { footnotes: [], marker: 'result' },
+  // What markdown-it's footnote rules keep in the env, which the notes'
+  // render does not share
+  footnotes: { list: [] },
+})
 
-afterEach(() => {
-  jest.clearAllMocks()
+const selfWith = (render = jest.fn(() => '<p>notes</p>')) => ({
+  markdownIt: { renderer: { render } },
 })
 
 describe('b-ber-grammar-footnotes', () => {
@@ -16,78 +20,42 @@ describe('b-ber-grammar-footnotes', () => {
   })
 
   it('calling the factory with self returns a plugin function', () => {
-    const self = {
-      fileName: 'chapter-01',
-      markdownIt: { renderer: { render: jest.fn(() => '<p>notes</p>') } },
-    }
-    const plugin = markdownItFootnotePlugin(self)
-    expect(plugin).toBeFunction()
+    expect(markdownItFootnotePlugin(selfWith())).toBeFunction()
   })
 
-  it('plugin adds footnotes entry to state', () => {
-    // state is imported at top level
-    const self = {
-      fileName: 'chapter-01',
-      markdownIt: { renderer: { render: jest.fn(() => '<p>notes</p>') } },
-    }
-    const plugin = markdownItFootnotePlugin(self)
-    plugin([])
-    expect(state.add).toHaveBeenCalledWith(
-      'footnotes',
-      expect.objectContaining({ fileName: 'chapter-01' })
-    )
+  it('collects the notes into the document’s result', () => {
+    const env = envFor('chapter-01', 'Chapter One')
+    markdownItFootnotePlugin(selfWith())([], env)
+    expect(env.result.footnotes).toEqual([
+      { fileName: 'chapter-01', title: 'Chapter One', notes: '<p>notes</p>' },
+    ])
   })
 
-  it('plugin uses spine entry title when available', () => {
-    // state is imported at top level
-    state.find.mockReturnValue({ title: 'Chapter One' })
-    const self = {
-      fileName: 'chapter-01',
-      markdownIt: { renderer: { render: jest.fn(() => '<p>notes</p>') } },
-    }
-    const plugin = markdownItFootnotePlugin(self)
-    plugin([])
-    expect(state.add).toHaveBeenCalledWith(
-      'footnotes',
-      expect.objectContaining({ title: 'Chapter One' })
-    )
-  })
-
-  it('plugin falls back to fileName as title when spine entry is missing', () => {
-    // state is imported at top level
-    state.find.mockReturnValue(null)
-    const self = {
-      fileName: 'chapter-02',
-      markdownIt: { renderer: { render: jest.fn(() => '<p>notes</p>') } },
-    }
-    const plugin = markdownItFootnotePlugin(self)
-    plugin([])
-    expect(state.add).toHaveBeenCalledWith(
-      'footnotes',
-      expect.objectContaining({ title: 'chapter-02' })
-    )
+  it('renders the notes with the document, and a reference to its page', () => {
+    const render = jest.fn(() => '')
+    const env = envFor('chapter-02')
+    markdownItFootnotePlugin(selfWith(render))([], env)
+    expect(render.mock.calls[0][2]).toEqual({
+      document: env.document,
+      result: env.result,
+      reference: 'chapter-02.xhtml',
+    })
   })
 
   it('plugin wraps tokens with section and heading tokens', () => {
-    // state is imported at top level
-    state.find.mockReturnValue({ title: 'Notes' })
     let capturedTokens = null
-    const self = {
-      fileName: 'chapter-03',
-      markdownIt: {
-        renderer: {
-          render: jest.fn((tokens) => {
-            capturedTokens = tokens
-            return '<p>rendered</p>'
-          }),
-        },
-      },
-    }
-    const plugin = markdownItFootnotePlugin(self)
-    plugin([])
+    const render = jest.fn((tokens) => {
+      capturedTokens = tokens
+      return '<p>rendered</p>'
+    })
+    markdownItFootnotePlugin(selfWith(render))(
+      [],
+      envFor('chapter-03', 'Notes')
+    )
     // Token stream should start with section open and end with section close
     expect(capturedTokens[0].tag).toBe('section')
     expect(capturedTokens[0].nesting).toBe(1)
+    expect(capturedTokens[2].content).toBe('Notes')
     expect(capturedTokens[capturedTokens.length - 1].tag).toBe('section')
     expect(capturedTokens[capturedTokens.length - 1].nesting).toBe(-1)
   })

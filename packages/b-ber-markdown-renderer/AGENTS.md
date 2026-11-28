@@ -2,7 +2,7 @@
 
 ## What This Is
 
-`b-ber-markdown-renderer` converts Markdown source files into XHTML for b-ber builds. It configures a `markdown-it` instance and registers all b-ber grammar plugins (section, pullquote, logo, image, audio/video, Vimeo, iframe, dialogue, gallery, spread, footnotes, frontmatter) as `markdown-it` plugins. The package exports a single `markdownRenderer` singleton; the `b-ber-tasks` render task calls `markdownRenderer.render(fileName, data)` to produce XHTML for each chapter.
+`b-ber-markdown-renderer` converts Markdown source files into XHTML for b-ber builds. It configures a `markdown-it` instance and registers all b-ber grammar plugins (section, pullquote, logo, image, audio/video, Vimeo, iframe, dialogue, gallery, spread, footnotes, frontmatter) as `markdown-it` plugins. The package exports a single `markdownRenderer` singleton; the `b-ber-tasks` render task calls `markdownRenderer.renderDocument(document, source)` for each chapter, which returns its XHTML and what it collected.
 
 ## Key Files
 
@@ -20,10 +20,20 @@ Every directive is parsed by `src/directives` (TASK-174, TASK-175); the `b-ber-p
 - **The rule claims the lines the old plugins claimed**, in their old order (`registry.ts`'s families, then `InlineClaim`s). A single-line directive becomes one `directive_inline` token, with its caption.
 - **Blocks keep the old parsers' token shape** (each claimed line opens a container that runs to the end of its Markdown container: the file, a blockquote, a list item, a footnote), because the parse decides tight lists and markdown-it's `maxNesting` from token levels. The structure pass pairs every block and inserts one `directive_close` where it closes: at its `exit`, at an outer block's `exit` that crossed it, or at the end of its Markdown container. **Every close is drawn there**; the exit line and the range end draw nothing. An exit that closes nothing is ignored.
 - **Passes that need a block's span during the parse** (speaker lines, gallery items) use `blockSpan`, which ends a block at its own `exit`.
-- **Diagnostics go to `env.diagnostics`**; `render(fileName, data, env)` takes the env. `legacy-host.ts` throws the two errors the build has always thrown (`Duplicate [id]`, `Missing [id]`), word for word. Block ids are checked per file; `state.cursor` is gone (TASK-175).
+- **Diagnostics go to `env.diagnostics`**; `render(fileName, data, env)` takes the env, and `renderDocument` returns them. `legacy-host.ts` throws the two errors the build has always thrown (`Duplicate [id]`, `Missing [id]`), word for word. Block ids are checked per file; `state.cursor` is gone (TASK-175).
 - **Silent mode records nothing.** That is the TASK-153 fix: a block straight after a paragraph line no longer reports its own id as a duplicate.
 - Diagnostic positions are offsets into the author's source: nothing rewrites the Markdown before the parse.
 - **`media` is a node resolved when it renders** (b-ber-grammar-media's `resolve`, passed in as `media`), so the parse is the same for every target. It becomes the directive media.yml names for the target, rendered by that directive's grammar. Its caption is media.yml's, or else the one written under the line. There is no `prepare()` pre-pass any more (TASK-175).
+
+## Per-document state is in `env`
+
+Nothing in the grammars, the parsers or this package imports `State` (TASK-177). Each render's env carries b-ber-lib's `DocumentEnv`:
+
+- **`env.document`** is what the build tells the grammars, read only: the file name and its spine title, the target (render code branches on `target.features`), the project's images and media files, media.yml, `group_footnotes`, how many figures and footnote pages the earlier documents gave, and the book's footnote numbering.
+- **`env.result`** is what the document collects for the build, in source order: figures, footnotes, guide items, front matter and remote assets. `renderDocument` returns it with the XHTML and the diagnostics; the render task writes it where State holds it (b-ber-tasks' `render`).
+- **A nested render** (a caption, a gallery item's caption, a resolved `media` line, the notes page) gets `nestedEnv(env)`: the same document and result, and none of markdown-it's own env keys, as a nested render always started without them.
+- **No module-level state outlives a render.** The footnote numbering is book-wide on purpose, so the build makes one per render task (`createFootnoteNumbering`) and passes it in every document; TASK-166 moves it onto the build context. markdown-it-front-matter's callback gets no env, so its rule is wrapped to hand the callback the env of the parse it is in, for the length of the rule's call.
+- `render(fileName, data)` without a document renders as the first document of an epub with no media (tests).
 
 ## Dev Commands
 

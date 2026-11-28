@@ -2,12 +2,6 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import logo from '../src'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  src: {
-    images: jest.fn((p) => `/fake/images/${p}`),
-  },
-}))
-
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
   // `throw log.error(...)` throws one rather than undefined
@@ -27,6 +21,14 @@ afterEach(() => {
 })
 
 const context = { fileName: 'titlepage' }
+// The render's env, as the renderer passes it
+const env = {
+  document: {
+    fileName: 'titlepage',
+    images: jest.fn((p) => `/fake/images/${p}`),
+  },
+  result: {},
+}
 
 describe('b-ber-grammar-logo', () => {
   it('exports plugin, name, and renderer', () => {
@@ -58,7 +60,7 @@ describe('b-ber-grammar-logo', () => {
     fs.existsSync.mockReturnValue(true)
     const config = logo.renderer({ context })
     const tokens = [{ info: 'logo:my-logo source:logo.png', map: [0, 1] }]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(result).toContain('<figure')
     expect(result).toContain('class="logo"')
     expect(result).toContain('<img')
@@ -68,7 +70,7 @@ describe('b-ber-grammar-logo', () => {
   it('render throws what log.error reports when source attribute is missing', () => {
     const config = logo.renderer({ context })
     const tokens = [{ info: 'logo:my-logo', map: [0, 1] }]
-    expect(() => config.render(tokens, 0)).toThrow(
+    expect(() => config.render(tokens, 0, {}, env)).toThrow(
       '[source] attribute is required'
     )
     expect(log.error).toHaveBeenCalled()
@@ -78,7 +80,7 @@ describe('b-ber-grammar-logo', () => {
     fs.existsSync.mockReturnValue(false)
     const config = logo.renderer({ context })
     const tokens = [{ info: 'logo:my-logo source:missing.png', map: [0, 1] }]
-    config.render(tokens, 0)
+    config.render(tokens, 0, {}, env)
     expect(log.warn).toHaveBeenCalled()
   })
 })

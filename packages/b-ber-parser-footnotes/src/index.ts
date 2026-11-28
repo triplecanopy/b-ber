@@ -1,26 +1,25 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign,no-plusplus */
 
-import {
-  type BlockState,
-  State as bberState,
-  type CoreRule,
-  type CoreState,
-  type InlineRule,
-  type InlineState,
-  type MarkdownItHost,
-  type MarkdownToken,
+import type {
+  BlockState,
+  CoreRule,
+  CoreState,
+  DocumentEnv,
+  InlineRule,
+  InlineState,
+  MarkdownItHost,
+  MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
-import Counter from './counter'
+
+export { default as Counter } from './counter'
 
 /*
 Modified version of markdown-it-footnote@3.0.1
 https://github.com//markdown-it/markdown-it-footnote
 MIT license
 */
-
-const counter = new Counter()
 
 // One note in `env.footnotes.list`: an inline note (`^[…]`) carries its parsed
 // tokens, a reference (`[^label]`) its label and how often it is cited
@@ -31,8 +30,11 @@ interface FootnoteListItem {
 }
 
 // What these rules keep in markdown-it's `env` while rendering one file, plus
-// what b-ber passes in
-type FootnoteEnv = {
+// what b-ber passes in. The numbering is the book's (`document.footnotes`), and
+// the footnote page it counts is how many documents' notes the build has
+// collected, this one's included once they are. The counter was a module-level
+// singleton until TASK-177
+type FootnoteEnv = DocumentEnv & {
   footnotes?: {
     // Prefixed with `:` to avoid Object.prototype's members; -1 until cited
     refs?: Record<string, number>
@@ -63,19 +65,21 @@ function renderFootnoteAnchorName(
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
+// The footnote pages collected so far: what `State.footnotes.length` was
+const footnotePages = (env: FootnoteEnv): number =>
+  env.document.footnotesBefore + env.result.footnotes.length
+
 function renderFootnoteCaption(
   tokens: FootnoteToken[],
   idx: number,
   _options: unknown,
-  _env: unknown,
+  env: FootnoteEnv,
   _slf: unknown
 ): number | string {
   let n: number | string
-  if (!bberState.config.group_footnotes) {
-    n = counter.listItemCounter(
-      bberState.config.group_footnotes,
-      bberState.footnotes.length
-    )
+  const { groupFootnotes, footnotes: counter } = env.document
+  if (!groupFootnotes) {
+    n = counter.listItemCounter(groupFootnotes, footnotePages(env))
   } else {
     n = Number(tokens[idx].meta.id + 1)
   }
@@ -92,15 +96,20 @@ function renderFootnoteRef(
   slf: FootnoteRenderer
 ): string {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
-  const ref = counter.getRef()
+  const ref = env.document.footnotes.getRef()
 
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
-function renderFootnoteBlockOpen(/* tokens, idx, options */): string {
-  const start = counter.listCounter(
-    bberState.config.group_footnotes,
-    bberState.footnotes.length
+function renderFootnoteBlockOpen(
+  _tokens: unknown,
+  _idx: number,
+  _options: unknown,
+  env: FootnoteEnv
+): string {
+  const start = env.document.footnotes.listCounter(
+    env.document.groupFootnotes,
+    footnotePages(env)
   )
   return `<ol class="footnotes" start="${start}">`
 }
@@ -116,7 +125,7 @@ function renderFootnoteOpen(
   env: FootnoteEnv,
   _self: unknown
 ): string {
-  const ref = counter.setRef(tokens[idx].meta.label)
+  const ref = env.document.footnotes.setRef(tokens[idx].meta.label)
   const child = tokens[idx + 2]
 
   // push the backlink into the parent paragraph
@@ -198,10 +207,10 @@ interface FootnotesHost extends MarkdownItHost {
 }
 
 // `callback` receives the footnote tokens, which b-ber-grammar-footnotes
-// renders into the notes page
+// renders into the notes page, and the render's env
 export default function footnotePlugin(
   md: FootnotesHost,
-  callback: (tokens: MarkdownToken[]) => void
+  callback: (tokens: MarkdownToken[], env: DocumentEnv) => void
 ): void {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils
@@ -552,7 +561,7 @@ export default function footnotePlugin(
     })
 
     // return to MarkdownRenderer class
-    callback(footnoteTokens)
+    callback(footnoteTokens, state.env)
   }
 
   md.block.ruler.before('reference', 'footnote_def', footnoteDef, {

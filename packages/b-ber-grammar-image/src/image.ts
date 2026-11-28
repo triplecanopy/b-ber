@@ -1,4 +1,9 @@
-import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type DocumentEnv,
+  Html,
+  nextFigure,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import mimeTypes from 'mime-types'
 
@@ -6,7 +11,7 @@ const { getImageOrientation } = utils
 
 // What `prepare` in ./index builds for each figure
 export type FigureArgs = {
-  context: { fileName?: string }
+  env: DocumentEnv
   width: number
   height: number
   comment: string
@@ -17,7 +22,7 @@ export type FigureArgs = {
 }
 
 export function createFigure({
-  context,
+  env,
   width,
   height,
   comment,
@@ -30,19 +35,19 @@ export function createFigure({
     width,
     height
   )}`
-  const ref = context.fileName
+  const ref = env.document.fileName
   const mime = mimeTypes.lookup(attrsObject.source)
-  const pageOrder = state.figures.length
+  const pageOrder = nextFigure(env)
   const { classes, ...rest } = attrsObject
   const classes_ = classes ? classes.concat(` ${classNames}`) : classNames
 
   const page = `figure${id}.xhtml`
   const href =
-    state.target.features.figuresOn === 'titlepage'
+    env.document.target.features.figuresOn === 'titlepage'
       ? 'figures-titlepage.xhtml'
       : page
 
-  state.add('figures', {
+  env.result.figures.push({
     ...rest,
     classes: classes_,
     id,
@@ -72,12 +77,16 @@ export function createFigure({
 }
 
 export function createFigureInline({
+  env,
   attrsObject,
   id,
   width,
   height,
   caption,
-}: Pick<FigureArgs, 'attrsObject' | 'id' | 'width' | 'height' | 'caption'>) {
+}: Pick<
+  FigureArgs,
+  'env' | 'attrsObject' | 'id' | 'width' | 'height' | 'caption'
+>) {
   const { classes, ...rest } = attrsObject
   const mime = mimeTypes.lookup(attrsObject.source)
   const inline = true
@@ -98,6 +107,6 @@ export function createFigureInline({
       inline,
       mime,
     },
-    state.target
+    env.document.target
   )
 }

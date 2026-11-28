@@ -13,11 +13,12 @@ import {
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
-  State as _state,
   type BlockState,
   type ContainerPluginOptions,
+  type DocumentEnv,
   type MarkdownItHost,
   type MarkdownToken,
+  nestedEnv,
 } from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
 
@@ -37,7 +38,8 @@ const childrenOf = (tok: MarkdownToken) =>
 const addCaption = (
   md: GalleryHost,
   t: MarkdownToken,
-  attrs: ItemAttrs
+  attrs: ItemAttrs,
+  env: DocumentEnv
 ): void => {
   if (!attrs.caption) return
 
@@ -58,7 +60,7 @@ const addCaption = (
       nesting: 1,
     },
 
-    ...childrenOf(md.parseInline(attrs.caption, {})[0]),
+    ...childrenOf(md.parseInline(attrs.caption, nestedEnv(env))[0]),
 
     {
       type: 'block',
@@ -87,9 +89,13 @@ const createImageElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
   })
 }
 
-const createMediaElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
+const createMediaElement = (
+  tok: MarkdownToken,
+  attrs: ItemAttrs,
+  env: DocumentEnv
+): void => {
   // Only called for `video` and `audio` items
-  const media = [..._state[attrs.type as 'video' | 'audio']]
+  const media = [...env.document[attrs.type as 'video' | 'audio']]
   const supportedMediaAttrs: Record<string, string[]> = {
     audio: ['controls', 'loop'],
     video: ['controls', 'loop', 'fullscreen'],
@@ -164,12 +170,14 @@ const createMediaElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
 // Gallery items (`:: type:image source:… ::`) between a gallery's open and
 // close tokens, turned into images and media. It runs over every token parsed
 // so far each time a gallery's or a spread's tokens are complete. The
-// directive rule calls it too, with its own tokens (TASK-175)
+// directive rule calls it too, with its own tokens (TASK-175). `env` is the
+// render's
 export function markGalleryItems(
   md: GalleryHost,
   tokens: MarkdownToken[],
   isOpen: (token: MarkdownToken) => boolean,
-  isClose: (token: MarkdownToken) => boolean
+  isClose: (token: MarkdownToken) => boolean,
+  env: DocumentEnv
 ): void {
   // set a flag so that we don't render other directives' children which may use the same syntax
   let childOfGallery = false
@@ -193,13 +201,13 @@ export function markGalleryItems(
         switch (attrs.type) {
           case 'image':
             createImageElement(tok, attrs)
-            addCaption(md, tok, attrs)
+            addCaption(md, tok, attrs, env)
             break
 
           case 'video':
           case 'audio':
-            createMediaElement(tok, attrs)
-            addCaption(md, tok, attrs)
+            createMediaElement(tok, attrs, env)
+            addCaption(md, tok, attrs, env)
             break
 
           default:
@@ -223,7 +231,7 @@ const containerPlugin = (
   const { validateOpen, render } = options
 
   function container(
-    state: BlockState,
+    state: BlockState<DocumentEnv>,
     startLine: number,
     endLine: number,
     silent: boolean
@@ -303,7 +311,8 @@ const containerPlugin = (
       md,
       state.tokens,
       (tok) => tok.type === 'container_gallery_open',
-      (tok) => tok.type === 'container_gallery_close'
+      (tok) => tok.type === 'container_gallery_close',
+      state.env
     )
 
     return true

@@ -10,7 +10,7 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import type {
   DirectiveToken,
-  RendererContext,
+  DocumentEnv,
   RendererInstance,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -25,8 +25,9 @@ import isUndefined from 'lodash/isUndefined'
 const MARKER_OPEN_RE = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
 
-// Optional so the tests can render without a file
-type Context = Partial<RendererContext>
+// The file `validateOpen` names. Only b-ber-parser-section's plugin calls
+// it, which the build no longer registers (TASK-175)
+type Context = { fileName?: string }
 
 function handleOpen(
   token: RegExpMatchArray,
@@ -67,7 +68,7 @@ export interface ClosingBlock {
 // The markup that closes a pullquote or blockquote, with its citation
 const close =
   (instance: RendererInstance) =>
-  (block: ClosingBlock): string => {
+  (block: ClosingBlock, _closedBy: unknown, env: DocumentEnv): string => {
     const { name, id, info } = block
     // An opener with `exit` in its line drew no open (see `render`), so it
     // draws no close either
@@ -80,13 +81,13 @@ const close =
     const comment = `<!-- END: section:${name}#${id} -->`
 
     return `
-        ${citation ? cite(instance.renderInline(citation)) : ''}
+        ${citation ? cite(instance.renderInline(citation, env)) : ''}
         </${elementName}>${comment}
     `
   }
 
 const validateOpen =
-  ({ context }: { context: Context }) =>
+  ({ context = {} }: { context?: Context }) =>
   (params: string, line: number) => {
     const match = params.trim().match(MARKER_OPEN_RE)
     if (!match || match.length < 3) return false
@@ -101,25 +102,28 @@ const validateOpen =
     return true
   }
 
-const render =
-  ({ context }: { context: Context }) =>
-  (tokens: DirectiveToken[], idx: number) => {
-    const fileName = `_markdown/${context.fileName}.md`
-    const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
-    const token = tokens[idx].info.trim()
+const render = (
+  tokens: DirectiveToken[],
+  idx: number,
+  _options: unknown,
+  env: DocumentEnv
+) => {
+  const fileName = `_markdown/${env.document.fileName}.md`
+  const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
+  const token = tokens[idx].info.trim()
 
-    // Closes are drawn by `close`
-    if (tokens[idx].nesting !== 1) return ''
+  // Closes are drawn by `close`
+  if (tokens[idx].nesting !== 1) return ''
 
-    // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
-    // line was taken for an exit, and drew nothing. It still draws nothing
-    const tokenOpen = token.match(MARKER_OPEN_RE)
-    const tokenClose = token.match(MARKER_CLOSE_RE)
+  // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
+  // line was taken for an exit, and drew nothing. It still draws nothing
+  const tokenOpen = token.match(MARKER_OPEN_RE)
+  const tokenClose = token.match(MARKER_CLOSE_RE)
 
-    return tokenClose || !tokenOpen
-      ? ''
-      : handleOpen(tokenOpen, fileName, lineNumber)
-  }
+  return tokenClose || !tokenOpen
+    ? ''
+    : handleOpen(tokenOpen, fileName, lineNumber)
+}
 
 export default {
   plugin,
@@ -129,14 +133,14 @@ export default {
     context,
   }: {
     instance: RendererInstance
-    context: Context
+    context?: Context
   }) => ({
     marker: BLOCK_DIRECTIVE_MARKER,
     minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: MARKER_OPEN_RE,
     markerClose: MARKER_CLOSE_RE,
     validateOpen: validateOpen({ context }),
-    render: render({ context }),
+    render,
     close: close(instance),
   }),
 }

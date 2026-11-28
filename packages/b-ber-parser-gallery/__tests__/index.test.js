@@ -2,15 +2,9 @@ import { parseAttrs } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import MarkdownIt from 'markdown-it'
 import galleryPlugin from '../src'
 
-// Mock b-ber-lib — gallery reads _state[attrs.type] for media lookups
-jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  State: {
-    config: {},
-    audio: [],
-    video: [],
-    figures: [],
-  },
-}))
+// The render's env: gallery items read the project's media files from the
+// document
+const env = () => ({ document: { audio: [], video: [] }, result: {} })
 
 // b-ber-grammar-attributes is symlinked in node_modules; mock the three helpers
 // used by the gallery plugin to avoid pulling in its heavy dependency tree
@@ -59,7 +53,7 @@ describe('b-ber-parser-gallery', () => {
   test('calls validateOpen when rendering gallery content', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
-    md.render('::: gallery:my-id\nContent\n')
+    md.render('::: gallery:my-id\nContent\n', env())
     expect(mockOptions.validateOpen).toHaveBeenCalled()
   })
 
@@ -67,7 +61,7 @@ describe('b-ber-parser-gallery', () => {
     const render = jest.fn(() => '')
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', { ...mockOptions, render })
-    md.render('::: gallery:my-id\nContent\n')
+    md.render('::: gallery:my-id\nContent\n', env())
     expect(render).toHaveBeenCalled()
   })
 
@@ -76,7 +70,7 @@ describe('b-ber-parser-gallery', () => {
     const render = jest.fn(() => '')
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', { ...mockOptions, validateOpen, render })
-    md.render('::: gallery:my-id\nContent\n')
+    md.render('::: gallery:my-id\nContent\n', env())
     expect(validateOpen).toHaveBeenCalled()
     expect(render).not.toHaveBeenCalled()
   })
@@ -85,7 +79,7 @@ describe('b-ber-parser-gallery', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
     expect(() =>
-      md.render('::: gallery:my-id\n:: item source="img.jpg" ::\n')
+      md.render('::: gallery:my-id\n:: item source="img.jpg" ::\n', env())
     ).not.toThrow()
     expect(mockOptions.validateOpen).toHaveBeenCalled()
   })
@@ -95,7 +89,7 @@ describe('b-ber-parser-gallery', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
     expect(() =>
-      md.render('::: gallery:my-id\n:: image source="img.jpg" ::\n')
+      md.render('::: gallery:my-id\n:: image source="img.jpg" ::\n', env())
     ).not.toThrow()
   })
 
@@ -104,7 +98,7 @@ describe('b-ber-parser-gallery', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
     expect(() =>
-      md.render('::: gallery:my-id\n:: video source="clip.mp4" ::\n')
+      md.render('::: gallery:my-id\n:: video source="clip.mp4" ::\n', env())
     ).not.toThrow()
   })
 
@@ -112,7 +106,10 @@ describe('b-ber-parser-gallery', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
     expect(() =>
-      md.render('::: gallery:my-id\nPlain content without double-colon.\n')
+      md.render(
+        '::: gallery:my-id\nPlain content without double-colon.\n',
+        env()
+      )
     ).not.toThrow()
     expect(mockOptions.render).toHaveBeenCalled()
   })
@@ -122,7 +119,7 @@ describe('b-ber-parser-gallery', () => {
     // Register as 'section', not 'gallery' — forEach loop checks for container_gallery_open
     galleryPlugin(md, 'section', mockOptions)
     expect(() =>
-      md.render('::: section:my-id\n:: item source="img.jpg" ::\n')
+      md.render('::: section:my-id\n:: item source="img.jpg" ::\n', env())
     ).not.toThrow()
   })
 })

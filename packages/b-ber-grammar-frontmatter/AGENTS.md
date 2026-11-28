@@ -2,13 +2,13 @@
 
 ## What This Is
 
-A MarkdownIt front matter plugin callback that extracts YAML metadata from the top of each Markdown source file. Parses the raw YAML string using `YamlAdaptor`, constructs a `GuideItem`, adds it to `state.guide`, and merges the parsed metadata into the corresponding `state.spine.frontMatter` entry. This metadata is consumed downstream by `b-ber-templates` when building EPUB OPF and guide XML.
+A MarkdownIt front matter plugin callback that extracts YAML metadata from the top of each Markdown source file. Parses the raw YAML string using `YamlAdaptor`, constructs a `GuideItem`, and collects both into the render's `env.result` (`guide`, `frontMatter`). The build adds the guide item to `state.guide` and merges the metadata into the document's `state.spine.frontMatter` entry. This metadata is consumed downstream by `b-ber-templates` when building EPUB OPF and guide XML.
 
 ## Key Files
 
 | File                      | Purpose                                                                                         |
 | ------------------------- | ----------------------------------------------------------------------------------------------- |
-| `src/index.ts`            | Single exported factory `markdownItFrontmatterPlugin(self)` returning the front matter callback |
+| `src/index.ts`            | Single exported factory `markdownItFrontmatterPlugin()` returning the front matter callback `(meta, env)` |
 | `__tests__/index.test.js` | Jest tests                                                                                      |
 
 ## Dev Commands
@@ -23,4 +23,5 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - This is a MarkdownIt front matter callback, not a container directive — receives the raw YAML string, not a token stream
-- All side effects go to `state.guide` and `state.spine.frontMatter`; no HTML is produced
+- Everything goes to `env.result`; no HTML is produced
+- **Front matter with a `type` declares a guide item, which needs a `title`.** One without a title throws, naming the file (#735); it used to give the OPF's guide `title="undefined"`. Front matter with no `type` is metadata only and makes no guide item (the guide never listed one). Front matter that is not a mapping holds nothing

@@ -1,18 +1,26 @@
 import MarkdownIt from 'markdown-it'
+import footnotePlugin, { Counter } from '../src'
 
-// Mock b-ber-lib before importing the plugin
-jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  State: {
-    /* eslint-disable camelcase */
-    config: {
-      group_footnotes: false,
-    },
-    /* eslint-enable camelcase */
-    footnotes: [],
-  },
-}))
+// The render's env: the document, with the book's numbering, and what the
+// build has collected of it
+const envFor = ({
+  groupFootnotes = false,
+  footnotes = new Counter(),
+  footnotesBefore = 0,
+} = {}) => ({
+  document: { groupFootnotes, footnotes, footnotesBefore },
+  result: { footnotes: [] },
+})
 
-const footnotePlugin = require('../src').default
+// Renders as b-ber-grammar-footnotes does: the notes once the parse has them,
+// collected into the document's result
+const renderer = () => {
+  const md = new MarkdownIt()
+  footnotePlugin(md, (tokens, env) => {
+    env.result.footnotes.push(md.renderer.render(tokens, md.options, env))
+  })
+  return md
+}
 
 describe('b-ber-parser-footnotes', () => {
   test('exports a function', () => {
@@ -59,7 +67,8 @@ describe('b-ber-parser-footnotes', () => {
     footnotePlugin(md, callback)
     expect(() =>
       md.render(
-        '[^1]: The footnote definition.\n\nText with a reference[^1].\n'
+        '[^1]: The footnote definition.\n\nText with a reference[^1].\n',
+        envFor()
       )
     ).not.toThrow()
   })
@@ -68,7 +77,7 @@ describe('b-ber-parser-footnotes', () => {
     const md = new MarkdownIt()
     const callback = jest.fn()
     footnotePlugin(md, callback)
-    md.render('[^note]: The definition.\n\nText with [^note].\n')
+    md.render('[^note]: The definition.\n\nText with [^note].\n', envFor())
     expect(callback).toHaveBeenCalled()
   })
 
@@ -77,7 +86,7 @@ describe('b-ber-parser-footnotes', () => {
     const callback = jest.fn()
     footnotePlugin(md, callback)
     expect(() =>
-      md.render('Text with an inline footnote^[inline definition].\n')
+      md.render('Text with an inline footnote^[inline definition].\n', envFor())
     ).not.toThrow()
     expect(callback).toHaveBeenCalled()
   })
@@ -86,7 +95,7 @@ describe('b-ber-parser-footnotes', () => {
     const md = new MarkdownIt()
     const callback = jest.fn()
     footnotePlugin(md, callback)
-    const result = md.render('[^1]: definition\n\nText[^1].\n')
+    const result = md.render('[^1]: definition\n\nText[^1].\n', envFor())
     expect(result).toContain('epub:type="noteref"')
     expect(result).toContain('footnote-ref')
   })
@@ -97,7 +106,7 @@ describe('b-ber-parser-footnotes', () => {
     footnotePlugin(md, callback)
     const callbackArg = []
     callback.mockImplementation((tokens) => callbackArg.push(...tokens))
-    md.render('[^1]: definition\n\nText[^1].\n')
+    md.render('[^1]: definition\n\nText[^1].\n', envFor())
     const types = callbackArg.map((t) => t.type)
     expect(types).toContain('footnote_block_open')
   })
@@ -107,7 +116,7 @@ describe('b-ber-parser-footnotes', () => {
     const callback = jest.fn()
     footnotePlugin(md, callback)
     // Ordinary paragraph — footnote_def rule should not fire
-    md.render('Just a regular paragraph.\n')
+    md.render('Just a regular paragraph.\n', envFor())
     expect(callback).not.toHaveBeenCalled()
   })
 
@@ -116,8 +125,54 @@ describe('b-ber-parser-footnotes', () => {
     const callback = jest.fn()
     footnotePlugin(md, callback)
     // [^1] reference without a definition — should not trigger footnote_ref
-    md.render('Text with [^unknown] reference only.\n')
+    md.render('Text with [^unknown] reference only.\n', envFor())
     expect(callback).not.toHaveBeenCalled()
+  })
+
+  // Under `group_footnotes: false` notes are numbered across the whole book:
+  // the build makes one Counter and passes it to every document (TASK-177;
+  // it was a module-level singleton)
+  describe('book-wide numbering', () => {
+    const chapter = 'One^[a] two^[b].\n'
+
+    test('continues across the documents given one Counter', () => {
+      const md = renderer()
+      const footnotes = new Counter()
+      const first = envFor({ footnotes })
+      md.render(chapter, first)
+      const second = envFor({ footnotes, footnotesBefore: 1 })
+      const body = md.render(chapter, second)
+
+      expect(first.result.footnotes[0]).toContain(
+        '<ol class="footnotes" start="1">'
+      )
+      expect(second.result.footnotes[0]).toContain(
+        '<ol class="footnotes" start="3">'
+      )
+      expect(body).toMatch(/>3<\/a>.*>4<\/a>/)
+    })
+
+    test('starts again with a new Counter', () => {
+      const md = renderer()
+      md.render(chapter, envFor())
+      const next = envFor()
+      md.render(chapter, next)
+      expect(next.result.footnotes[0]).toContain('start="1"')
+    })
+
+    test('numbers each document from 1 when grouped', () => {
+      const md = renderer()
+      const footnotes = new Counter()
+      md.render(chapter, envFor({ groupFootnotes: true, footnotes }))
+      const second = envFor({
+        groupFootnotes: true,
+        footnotes,
+        footnotesBefore: 1,
+      })
+      const body = md.render(chapter, second)
+      expect(second.result.footnotes[0]).toContain('start="1"')
+      expect(body).toMatch(/>1<\/a>.*>2<\/a>/)
+    })
   })
 
   test('handles multiple footnote references to the same label', () => {
@@ -125,7 +180,10 @@ describe('b-ber-parser-footnotes', () => {
     const callback = jest.fn()
     footnotePlugin(md, callback)
     expect(() =>
-      md.render('[^a]: definition\n\nFirst[^a] and second[^a] reference.\n')
+      md.render(
+        '[^a]: definition\n\nFirst[^a] and second[^a] reference.\n',
+        envFor()
+      )
     ).not.toThrow()
     expect(callback).toHaveBeenCalled()
   })
