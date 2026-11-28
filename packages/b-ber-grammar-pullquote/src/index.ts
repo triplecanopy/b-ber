@@ -70,12 +70,12 @@ const render =
     const fileName = `_markdown/${env.document.fileName}.md`
     const marker = node.info.trim()
 
-    // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
-    // line was taken for an exit, and drew neither an open nor a close. It
-    // still draws neither
+    // An opener with `exit` anywhere in its line is a pullquote: the exit
+    // was matched anywhere in the line, and the block drew neither its open
+    // nor its close (TASK-174's quirk 2). The directive rule tells exits from
+    // openers, and claims only the lines MARKER_OPEN_RE matches
     const tokenOpen = marker.match(MARKER_OPEN_RE)
-    if (marker.match(MARKER_CLOSE_RE) || !tokenOpen)
-      return (children) => h.fragment(children)
+    if (!tokenOpen) return (children) => h.fragment(children)
 
     const [, type, id, attrs] = tokenOpen
     const attributes = openAttributes(type, attrs, fileName, node.line)

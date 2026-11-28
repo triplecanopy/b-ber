@@ -34,24 +34,11 @@ const render: BlockRender = ({ node, env, h }) => {
   const fileName = `_markdown/${env.document.fileName}.md`
   const marker = node.info.trim()
 
-  // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
-  // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
-  // block with no id, which fails in `htmlId` when the line has no `exit:id`,
-  // and then the block's contents and its close, as it always has
-  const tokenClose = marker.match(MARKER_CLOSE_RE)
-  if (tokenClose) {
-    const stray = blockEndComment(h, tokenClose[2], 'exit')
-    return (children, closedBy) =>
-      h.fragment([
-        h.raw('</section>'),
-        stray,
-        ...children,
-        h.raw('</section>'),
-        blockEndComment(h, node.id, closedBy),
-      ])
-  }
-
-  // The directive rule claims only the lines MARKER_OPEN_RE matches
+  // An opener with `exit` anywhere in its line opens its block. The exit
+  // was matched anywhere in the line (TASK-174's quirk 2), so the opener drew
+  // a stray close, or failed in `htmlId`. The directive rule tells exits
+  // from openers, calls this for openers only, and claims only the lines
+  // MARKER_OPEN_RE matches
   const [, type, id, attr] = marker.match(MARKER_OPEN_RE) as RegExpMatchArray
 
   log.debug(`open directive [${id}]`)

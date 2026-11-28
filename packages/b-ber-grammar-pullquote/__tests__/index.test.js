@@ -91,10 +91,13 @@ describe('b-ber-grammar-pullquote', () => {
       )
     })
 
-    it('draws only the children for an opener with `exit` in its line', () => {
+    // It drew neither its open nor its close (TASK-174's quirk 2)
+    it('builds a pullquote whose opener has `exit` in its line', () => {
       expect(
         build('pullquote', 'pq', ' pullquote:pq citation:"exit:here"')
-      ).toBe('<p>q</p>')
+      ).toContain(
+        '<section class="pullquote"><p>q</p>\n        <footer><cite>&#8212;&#160;exit:here</cite></footer>'
+      )
     })
   })
 })
