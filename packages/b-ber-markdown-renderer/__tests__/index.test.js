@@ -181,6 +181,18 @@ describe('b-ber-markdown-renderer: structural blocks', () => {
     expect(html).toContain('<p>body</p>')
   })
 
+  // A gallery's tokens hold the rest of its range, and a gallery item
+  // anywhere after it used to become an image too (TASK-161)
+  it('leaves a gallery item after the gallery’s exit as text', () => {
+    const html = markdownRenderer.render(
+      'test',
+      '::: gallery:g\n\n:: type:image source:a.png item:1 ::\n\n::: exit:g\n\n:: type:image source:b.png item:2 ::\n'
+    )
+    expect(html).toContain('data-gallery-item="1"')
+    expect(html).not.toContain('data-gallery-item="2"')
+    expect(html).toContain('<p>:: type:image source:b.png item:2 ::</p>')
+  })
+
   it('still throws on a real duplicate id', () => {
     expect(() =>
       markdownRenderer.render(

@@ -103,9 +103,43 @@ export interface TokenLike {
 
 export const isFamily =
   (type: string, family: Family) =>
-  (token: TokenLike): boolean =>
+  (token: TokenLike & { info?: string }): boolean =>
     token.type === type &&
     (token.meta as { family?: Family } | null)?.family === family
+
+const EXIT_ID_RE = /^exit:(\S+)/
+
+// Where a block of `family` is, for the passes that mark lines inside one
+// (speaker lines, gallery items) while the parse is still running. A block's
+// tokens hold the rest of its range, so its span ends at its own `exit` line,
+// or at the end of the range when it has none. The span used to run to the
+// end of the range, so a speaker line or a gallery item anywhere after a
+// dialogue or a gallery was marked (TASK-161).
+//
+// The tests are called in token order, `isOpen` before `isClose` for each
+// token, as both passes call them, and keep the open block's id between
+// calls. Make a new pair for each pass
+export function blockSpan(family: Family): {
+  isOpen: (token: TokenLike & { info?: string }) => boolean
+  isClose: (token: TokenLike & { info?: string }) => boolean
+} {
+  const opens = isFamily(LINE_OPEN, family)
+  const closes = isFamily(LINE_CLOSE, family)
+  let id: string | undefined
+  return {
+    isOpen(token) {
+      if (!opens(token)) return false
+      id = token.info?.trim().split(/\s/)[0].split(':')[1]
+      return true
+    },
+    isClose(token) {
+      if (closes(token)) return true
+      if (token.type !== LINE_OPEN || id === undefined) return false
+      const exit = token.info?.trim().match(EXIT_ID_RE)
+      return exit?.[1] === id
+    },
+  }
+}
 
 const CAPTION_MARKER_LENGTH = 2
 
@@ -249,11 +283,8 @@ export const createRule =
     state.line = endLine
 
     if (family === 'dialogue') {
-      markSpeakers(
-        state.tokens,
-        isFamily(LINE_OPEN, 'dialogue'),
-        isFamily(LINE_CLOSE, 'dialogue')
-      )
+      const { isOpen, isClose } = blockSpan('dialogue')
+      markSpeakers(state.tokens, isOpen, isClose)
     }
     afterBlock[family]?.(state)
     return true

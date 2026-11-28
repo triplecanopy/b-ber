@@ -7,13 +7,11 @@ import type MarkdownIt from 'markdown-it'
 import type { Family, InlineFamily } from './registry'
 import {
   type AfterBlock,
+  blockSpan,
   createRule,
   INLINE_TOKEN,
   type InlineClaim,
-  isFamily,
-  LINE_CLOSE,
   LINE_INVALID,
-  LINE_OPEN,
 } from './rule'
 import { CLOSE, END_MARK, EXIT_MARK, OPEN, structure } from './structure'
 import { liftTree } from './tree'
@@ -37,12 +35,8 @@ export interface LegacyToken {
 
 export type LegacyRender = (tokens: LegacyToken[], index: number) => string
 
-// Whether a token is the opening or closing token of a block of `family`, as
-// the rule makes them during the block parse
-export const isFamilyOpen = (family: Family) => isFamily(LINE_OPEN, family)
-export const isFamilyClose = (family: Family) => isFamily(LINE_CLOSE, family)
-
 export type { AfterBlock, Family, InlineClaim }
+export { blockSpan }
 
 export interface DirectiveOptions {
   host?: DirectiveHost

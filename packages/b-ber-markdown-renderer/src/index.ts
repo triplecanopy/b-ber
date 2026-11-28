@@ -16,12 +16,7 @@ import { markGalleryItems } from '@canopycanopycanopy/b-ber-parser-gallery'
 import hljs from 'highlight.js'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
-import {
-  type DirectiveEnv,
-  directives,
-  isFamilyClose,
-  isFamilyOpen,
-} from './directives'
+import { blockSpan, type DirectiveEnv, directives } from './directives'
 import { legacyHost } from './legacy-host'
 
 const LINE_BREAK = '\n'
@@ -58,14 +53,11 @@ class MarkdownRenderer {
     const reference = { instance: this.markdownIt, context: this }
 
     // b-ber-parser-gallery marked gallery items once a gallery's or a
-    // spread's tokens were complete, between every gallery's tokens
-    const galleryItems = (state: MarkdownIt.StateBlock) =>
-      markGalleryItems(
-        this.markdownIt,
-        state.tokens,
-        isFamilyOpen('gallery'),
-        isFamilyClose('gallery')
-      )
+    // spread's tokens were complete, inside every gallery
+    const galleryItems = (state: MarkdownIt.StateBlock) => {
+      const { isOpen, isClose } = blockSpan('gallery')
+      markGalleryItems(this.markdownIt, state.tokens, isOpen, isClose)
+    }
 
     // The single-line directives, in the order their plugins were registered
     const inline = (
