@@ -5,7 +5,14 @@
 
 import type MarkdownIt from 'markdown-it'
 import type { Family } from './registry'
-import { createRule, LINE_INVALID } from './rule'
+import {
+  type AfterBlock,
+  createRule,
+  isFamily,
+  LINE_CLOSE,
+  LINE_INVALID,
+  LINE_OPEN,
+} from './rule'
 import { CLOSE, END_MARK, EXIT_MARK, OPEN, structure } from './structure'
 import { liftTree } from './tree'
 import type { DirectiveEnv, DirectiveHost } from './types'
@@ -25,8 +32,16 @@ export interface LegacyToken {
 
 export type LegacyRender = (tokens: LegacyToken[], index: number) => string
 
+// Whether a token is the opening or closing token of a block of `family`, as
+// the rule makes them during the block parse
+export const isFamilyOpen = (family: Family) => isFamily(LINE_OPEN, family)
+export const isFamilyClose = (family: Family) => isFamily(LINE_CLOSE, family)
+
+export type { AfterBlock, Family }
+
 export interface DirectiveOptions {
   host?: DirectiveHost
+  afterBlock?: AfterBlock
   // Today's renderer for each family (b-ber-grammar-section's,
   // b-ber-grammar-pullquote's and b-ber-grammar-dialogue's `render`). It is called with tokens shaped as
   // b-ber-parser-section made them, at the places that parser put them, so
@@ -50,9 +65,9 @@ export function directives(
   md: MarkdownIt.MarkdownIt,
   options: DirectiveOptions = {}
 ): void {
-  const { host = pureHost, legacy = {} } = options
+  const { host = pureHost, legacy = {}, afterBlock = {} } = options
 
-  md.block.ruler.before('fence', 'directive', createRule(host), {
+  md.block.ruler.before('fence', 'directive', createRule(host, afterBlock), {
     alt: ['paragraph', 'reference', 'blockquote'],
   })
   md.core.ruler.after('block', 'directive_structure', structure)

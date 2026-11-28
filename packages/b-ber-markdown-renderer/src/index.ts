@@ -12,10 +12,16 @@ import markdownItSection from '@canopycanopycanopy/b-ber-grammar-section'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
 import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
 import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
+import { markGalleryItems } from '@canopycanopycanopy/b-ber-parser-gallery'
 import hljs from 'highlight.js'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
-import { type DirectiveEnv, directives } from './directives'
+import {
+  type DirectiveEnv,
+  directives,
+  isFamilyClose,
+  isFamilyOpen,
+} from './directives'
 import { legacyHost } from './legacy-host'
 
 const LINE_BREAK = '\n'
@@ -51,10 +57,20 @@ class MarkdownRenderer {
 
     const reference = { instance: this.markdownIt, context: this }
 
+    // b-ber-parser-gallery marked gallery items once a gallery's or a
+    // spread's tokens were complete, between every gallery's tokens
+    const galleryItems = (state: MarkdownIt.StateBlock) =>
+      markGalleryItems(
+        this.markdownIt,
+        state.tokens,
+        isFamilyOpen('gallery'),
+        isFamilyClose('gallery')
+      )
+
     // The directive rule takes the structural blocks (TASK-174), pullquote,
-    // blockquote and dialogue (TASK-175) over from their parsers, at the place
-    // in the rule order the first of them had, and renders them with their
-    // grammars as before
+    // blockquote, dialogue, gallery and spread (TASK-175) over from their
+    // parsers, at the place in the rule order the first of them had, and
+    // renders them with their grammars as before
     this.markdownIt
       .use(directives, {
         host: legacyHost(this),
@@ -62,20 +78,13 @@ class MarkdownRenderer {
           section: markdownItSection.renderer(reference).render,
           pullquote: markdownItPullquote.renderer(reference).render,
           dialogue: markdownItDialogue.renderer(reference).render,
+          gallery: markdownItGallery.renderer(reference).render,
+          spread: markdownItSpread.renderer(reference).render,
         },
+        afterBlock: { gallery: galleryItems, spread: galleryItems },
       })
       .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
       .use(markdownItFootnote, markdownItFootnotePlugin(this))
-      .use(
-        markdownItGallery.plugin,
-        markdownItGallery.name,
-        markdownItGallery.renderer(reference)
-      )
-      .use(
-        markdownItSpread.plugin,
-        markdownItSpread.name,
-        markdownItSpread.renderer(reference)
-      )
       .use(
         markdownItImage.plugin,
         markdownItImage.name,

@@ -53,8 +53,10 @@ export const isBlockName = (name: string): boolean =>
 //   id the host says is one of the cursor's (TASK-174);
 // - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`, and
 //   every other `exit`;
-// - `dialogue`: b-ber-grammar-dialogue's `dialogue`
-export type Family = 'section' | 'pullquote' | 'dialogue'
+// - `dialogue`: b-ber-grammar-dialogue's `dialogue`;
+// - `gallery` and `spread`: b-ber-grammar-gallery's and b-ber-grammar-spread's,
+//   both parsed by b-ber-parser-gallery
+export type Family = 'section' | 'pullquote' | 'dialogue' | 'gallery' | 'spread'
 
 export const CLAIM_RE = new RegExp(
   `^(${Array.from(BLOCK_DIRECTIVES).join('|')}|exit)(?::([^\\s]+)(\\s.*)?)?$`
@@ -64,6 +66,8 @@ export const PULLQUOTE_CLAIM_RE =
   /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 
 export const DIALOGUE_CLAIM_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
+export const GALLERY_CLAIM_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
+export const SPREAD_CLAIM_RE = /^(spread)(?::([^\s]+)(\s.*)?)?$/
 
 // The family each block the rule owns belongs to. The structure pass
 // rewrites the tokens of these blocks
@@ -75,6 +79,8 @@ const FAMILY_OF = new Map<string, Family>([
   ['pullquote', 'pullquote'],
   ['blockquote', 'pullquote'],
   ['dialogue', 'dialogue'],
+  ['gallery', 'gallery'],
+  ['spread', 'spread'],
 ])
 
 export const OWNED: ReadonlySet<string> = new Set(FAMILY_OF.keys())
