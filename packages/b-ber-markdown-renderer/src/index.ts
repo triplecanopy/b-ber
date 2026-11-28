@@ -151,7 +151,7 @@ class MarkdownRenderer {
       host: legacyHost(),
       blocks: {
         section: section.render,
-        pullquote: legacyBlock(pullquote.render, pullquote.close, options),
+        pullquote: pullquote.render,
         dialogue: legacyBlock(
           markdownItDialogue.renderer({}).render,
           section.close,
