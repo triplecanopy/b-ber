@@ -43,12 +43,31 @@ export const isKnownName = (name: string): boolean =>
 export const isBlockName = (name: string): boolean =>
   STRUCTURAL.has(name) || MISC_BLOCKS.has(name)
 
-// What `b-ber-grammar-section` matched, kept exactly so that the rule claims
-// the same lines the old parser did. `params` is the line after the fence,
-// trimmed. A structural name or `exit`, then optionally `:id` and the rest.
+// The old plugins whose lines the rule claims, each with the regex that
+// plugin matched, kept exactly so that the rule claims the same lines it did.
+// `params` is the line after the fence, trimmed: a name or `exit`, then
+// optionally `:id` and the rest. They are tried in this order, which was the
+// plugins' order in markdown-it's block rules.
+//
+// - `section`: b-ber-grammar-section's structural blocks, and an `exit` whose
+//   id the host says is one of the cursor's (TASK-174);
+// - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`, and
+//   every other `exit`
+export type Family = 'section' | 'pullquote'
+
 export const CLAIM_RE = new RegExp(
   `^(${Array.from(BLOCK_DIRECTIVES).join('|')}|exit)(?::([^\\s]+)(\\s.*)?)?$`
 )
+
+export const PULLQUOTE_CLAIM_RE =
+  /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
+
+// The blocks whose tokens the rule makes and the structure pass rewrites
+export const OWNED: ReadonlySet<string> = new Set([
+  ...BLOCK_DIRECTIVES,
+  'pullquote',
+  'blockquote',
+])
 
 const distance = (a: string, b: string): number => {
   const row = Array.from({ length: b.length + 1 }, (_, i) => i)

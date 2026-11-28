@@ -22,7 +22,14 @@
 
 import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
-import { EXIT, INLINE, isBlockName, STRUCTURAL } from './registry'
+import {
+  EXIT,
+  type Family,
+  INLINE,
+  isBlockName,
+  OWNED,
+  STRUCTURAL,
+} from './registry'
 import { LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
 import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
@@ -34,7 +41,7 @@ export const END_MARK = 'directive_end'
 
 // Old plugins whose container holds the rest of the enclosing range, as the
 // directive rule's does. Their tokens are transparent to the nesting
-const RANGE_CONTAINER_RE = /^container_(pullQuote|dialogue|gallery|spread)_/
+const RANGE_CONTAINER_RE = /^container_(dialogue|gallery|spread)_/
 // Old plugins whose open and close tokens are adjacent (b-ber-parser-figure)
 const FIGURE_CONTAINER_RE = /^container_(figure|audio-video|vimeo|iframe|logo)_/
 
@@ -47,7 +54,7 @@ const isTransparent = (t: MarkdownIt.Token): boolean =>
 
 interface OpenBlock {
   line: DirectiveLine
-  // Set for a structural block, whose tokens this pass owns
+  // Set for a block the rule owns, whose tokens this pass rewrites
   node: DirectiveNode | null
 }
 
@@ -56,6 +63,9 @@ interface Scope {
   token: MarkdownIt.Token | null
   blocks: OpenBlock[]
 }
+
+const familyOf = (name: string): Family =>
+  name === 'pullquote' || name === 'blockquote' ? 'pullquote' : 'section'
 
 const kindOf = (token: MarkdownIt.Token | null): string => {
   if (!token) return 'the file'
@@ -120,7 +130,7 @@ export function structure(state: MarkdownIt.StateCore): void {
     const token = new state.Token(CLOSE, 'section', -1)
     token.block = true
     token.level = level
-    token.meta = { directive: node }
+    token.meta = { family: familyOf(node.name), directive: node }
     return token
   }
 
@@ -147,7 +157,7 @@ export function structure(state: MarkdownIt.StateCore): void {
     if (!first) blockIds.set(line.id, line)
 
     let node: DirectiveNode | null = null
-    if (token && STRUCTURAL.has(line.name)) {
+    if (token && OWNED.has(line.name)) {
       const attrs: Record<string, string> = {}
       for (const a of line.attributes) attrs[a.key] = a.value
       node = {
@@ -162,7 +172,7 @@ export function structure(state: MarkdownIt.StateCore): void {
         line: token.map ? token.map[0] : 0,
       }
       token.type = OPEN
-      token.meta = { directive: node }
+      token.meta = { ...token.meta, directive: node }
     }
     current().blocks.push({ line, node })
   }
