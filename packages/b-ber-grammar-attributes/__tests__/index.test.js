@@ -2,9 +2,12 @@ import log from '@canopycanopycanopy/b-ber-logger'
 
 import {
   attributes,
+  attributesList,
   attributesObject,
+  attributesQuery,
   attributesQueryString,
   attributesString,
+  commentLines,
   htmlId,
   parseAttrs,
   toAlias,
@@ -192,5 +195,47 @@ describe('b-ber-grammar-attributes', () => {
     expect(attributes('classes:foo', 'chapter')).toEqual(
       ' class="foo bodymatter chapter" epub:type="bodymatter chapter"'
     )
+  })
+})
+
+// For elements built with b-ber-markdown-renderer's builder (TASK-176)
+describe('attributesList, attributesQuery and commentLines', () => {
+  it('gives the attributes attributesString writes, unescaped', () => {
+    const obj = {
+      classes: 'a&b',
+      epubTypes: 'x',
+      source: 's',
+      attrs: 'n',
+      title: '"t"',
+      loop: 'yes',
+      muted: 'no',
+    }
+    expect(attributesList(obj)).toEqual([
+      ['class', 'a&b'],
+      ['epub:type', 'x'],
+      ['src', 's'],
+      ['title', '"t"'],
+      ['loop', 'loop'],
+    ])
+    expect(attributesList(obj, { classes: true })).toEqual([['class', 'a&b']])
+    expect(attributesString(obj)).toBe(
+      ' class="a&amp;b" epub:type="x" src="s" title="&quot;t&quot;" loop="loop"'
+    )
+  })
+
+  it('gives the query string with plain ampersands', () => {
+    expect(attributesQuery({ foo: 1, bar: 2 })).toBe('?foo=1&bar=2')
+    expect(attributesQueryString({ foo: 1, bar: 2 })).toBe('?foo=1&amp;bar=2')
+  })
+
+  it('puts a comment on lines of its own', () => {
+    const h = {
+      comment: (value) => ({ type: 'comment', value }),
+      fragment: (children) => ({ type: 'fragment', children }),
+    }
+    expect(commentLines(h, 'x')).toEqual({
+      type: 'fragment',
+      children: ['\n', { type: 'comment', value: 'x' }, '\n'],
+    })
   })
 })
