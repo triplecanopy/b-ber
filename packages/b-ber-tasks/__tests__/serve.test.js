@@ -1,4 +1,5 @@
 import path from 'node:path'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { create } from 'browser-sync'
 import fs from 'fs-extra'
 import serve from '../src/serve'
@@ -82,6 +83,8 @@ describe('task: serve', () => {
     })
     expect(builds).toHaveLength(1)
     expect(builds[0].build).toBe('reader')
+    // #743: it used to say `b-ber-undefined`
+    expect(log.notice).toHaveBeenCalledWith('Serving [b-ber-reader]')
   })
 
   test('builds the build asked for, for the local server URL', async () => {

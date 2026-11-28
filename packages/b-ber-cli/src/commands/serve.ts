@@ -1,4 +1,3 @@
-import log from '@canopycanopycanopy/b-ber-logger'
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
 import { noExtraArguments } from '../lib/arguments'
@@ -11,8 +10,7 @@ const handler = exitOnFailure(
   (argv: Arguments<{ build?: string; external?: boolean }>) => {
     const { external, build } = argv
 
-    log.notice(`Serving [b-ber-${build}]`)
-
+    // The task announces the build it serves: it knows the default
     return serve({ build, external })
   }
 )

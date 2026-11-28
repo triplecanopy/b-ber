@@ -7,6 +7,7 @@ import {
   type Project,
   runInBuildContext,
 } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { create } from 'browser-sync' // eslint-disable-line import/no-unresolved
 import debounce from 'lodash/debounce'
 import { distDir, srcDir } from '../context'
@@ -113,6 +114,9 @@ const serve = async ({
 }) => {
   const location = external ? 'external' : 'local'
   const target = buildOption || 'reader'
+  // Here, where the default is known. The command printed it from its
+  // argument, so `bber serve` alone said `b-ber-undefined` (#743)
+  log.notice(`Serving [b-ber-${target}]`)
   const project = loadProject(process.cwd())
   const browserSync = create()
 
