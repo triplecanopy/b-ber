@@ -18,7 +18,7 @@
 //
 // `directive_exit` and `directive_end` stay where today's parser put its
 // tokens, so today's renderer can emit exactly what it emits now. The tokens
-// of directives not yet ported (pullquote, figure, …) are left as they are.
+// of directives not yet ported (the figure family) are left as they are.
 
 import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
@@ -39,16 +39,14 @@ export const CLOSE = 'directive_close'
 export const EXIT_MARK = 'directive_exit'
 export const END_MARK = 'directive_end'
 
-// Old plugins whose container holds the rest of the enclosing range, as the
-// directive rule's does. Their tokens are transparent to the nesting
-const RANGE_CONTAINER_RE = /^container_(gallery|spread)_/
 // Old plugins whose open and close tokens are adjacent (b-ber-parser-figure)
 const FIGURE_CONTAINER_RE = /^container_(figure|audio-video|vimeo|iframe|logo)_/
 
 const isRuleToken = (t: MarkdownIt.Token): boolean =>
   t.type === LINE_OPEN || t.type === LINE_CLOSE
-const isRangeContainer = (t: MarkdownIt.Token): boolean =>
-  isRuleToken(t) || RANGE_CONTAINER_RE.test(t.type)
+// Every block's tokens are the rule's now. They hold the rest of the
+// enclosing range, so they are transparent to the nesting
+const isRangeContainer = isRuleToken
 const isTransparent = (t: MarkdownIt.Token): boolean =>
   isRangeContainer(t) || FIGURE_CONTAINER_RE.test(t.type)
 

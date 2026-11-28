@@ -161,6 +161,55 @@ const createMediaElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
   )
 }
 
+// Gallery items (`:: type:image source:… ::`) between a gallery's open and
+// close tokens, turned into images and media. It runs over every token parsed
+// so far each time a gallery's or a spread's tokens are complete. The
+// directive rule calls it too, with its own tokens (TASK-175)
+export function markGalleryItems(
+  md: GalleryHost,
+  tokens: MarkdownToken[],
+  isOpen: (token: MarkdownToken) => boolean,
+  isClose: (token: MarkdownToken) => boolean
+): void {
+  // set a flag so that we don't render other directives' children which may use the same syntax
+  let childOfGallery = false
+  tokens.forEach((tok, i) => {
+    if (isOpen(tok)) childOfGallery = true
+    if (isClose(tok)) childOfGallery = false
+
+    if (tok.type === 'inline' && childOfGallery) {
+      const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
+      if (matchedContent) {
+        const attrs = parseAttrs(matchedContent[1])
+        const prev = tokens[i - 1]
+        const next = tokens[i + 1]
+
+        prev.tag = 'div'
+        prev.attrSet('class', 'gallery__item')
+        prev.attrSet('data-gallery-item', attrs.item)
+
+        next.tag = 'div'
+
+        switch (attrs.type) {
+          case 'image':
+            createImageElement(tok, attrs)
+            addCaption(md, tok, attrs)
+            break
+
+          case 'video':
+          case 'audio':
+            createMediaElement(tok, attrs)
+            addCaption(md, tok, attrs)
+            break
+
+          default:
+            break
+        }
+      }
+    }
+  })
+}
+
 // Every caller passes `options`; the empty default predates these types
 const containerPlugin = (
   md: GalleryHost,
@@ -250,44 +299,12 @@ const containerPlugin = (
     state.lineMax = oldLineMax
     state.line = nextLine + (autoClosed ? 1 : 0)
 
-    // parse child tokens
-    // set a flag so that we don't render other directives' children which may use the same syntax
-    let childOfGallery = false
-    state.tokens.forEach((tok, i) => {
-      if (tok.type === 'container_gallery_open') childOfGallery = true
-      if (tok.type === 'container_gallery_close') childOfGallery = false
-
-      if (tok.type === 'inline' && childOfGallery) {
-        const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
-        if (matchedContent) {
-          const attrs = parseAttrs(matchedContent[1])
-          const prev = state.tokens[i - 1]
-          const next = state.tokens[i + 1]
-
-          prev.tag = 'div'
-          prev.attrSet('class', 'gallery__item')
-          prev.attrSet('data-gallery-item', attrs.item)
-
-          next.tag = 'div'
-
-          switch (attrs.type) {
-            case 'image':
-              createImageElement(tok, attrs)
-              addCaption(md, tok, attrs)
-              break
-
-            case 'video':
-            case 'audio':
-              createMediaElement(tok, attrs)
-              addCaption(md, tok, attrs)
-              break
-
-            default:
-              break
-          }
-        }
-      }
-    })
+    markGalleryItems(
+      md,
+      state.tokens,
+      (tok) => tok.type === 'container_gallery_open',
+      (tok) => tok.type === 'container_gallery_close'
+    )
 
     return true
   }

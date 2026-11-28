@@ -476,6 +476,35 @@ describe('directive structure', () => {
     expect(line.children[0].attrs).toEqual([['class', 'interlocutor']])
   })
 
+  it('makes gallery and spread nodes, and runs their afterBlock hooks (TASK-175)', () => {
+    const seen = []
+    const withHooks = new MarkdownIt().use(directives, {
+      afterBlock: {
+        gallery: (state) => seen.push(['gallery', { ...state.tokens.at(-1) }]),
+        spread: (state) => seen.push(['spread', { ...state.tokens.at(-1) }]),
+      },
+    })
+    const env = { file: 'x.md', diagnostics: [] }
+    const tokens = withHooks.parse(
+      '::: gallery:g\n\n:: type:image source:a.png ::\n\n::: exit:g\n\n::: spread:s\n\nx\n\n::: exit:s\n',
+      env
+    )
+    expect(env.diagnostics).toEqual([])
+    // Paired by their exits, they are siblings in the tree
+    expect(
+      env.tree.children
+        .filter((n) => n.type === 'directive')
+        .map(({ name, id }) => `${name}:${id}`)
+    ).toEqual(['gallery:g', 'spread:s'])
+    // The spread's tokens are inside the gallery's range, as the old parser
+    // shaped them, so its hook runs first, when its own tokens are complete
+    expect(seen.map(([name]) => name)).toEqual(['spread', 'gallery'])
+    for (const [name, last] of seen) {
+      expect(last.type).toBe('directive_line_close')
+      expect(last.meta.family).toBe(name)
+    }
+  })
+
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'

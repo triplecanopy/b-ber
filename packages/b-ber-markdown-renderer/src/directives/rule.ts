@@ -1,8 +1,8 @@
 // The directive block rule. It claims the lines that b-ber-parser-section
-// claimed for b-ber-grammar-section, b-ber-grammar-pullquote and
-// b-ber-grammar-dialogue: a structural opener (`::: chapter:a`), a
-// `pullquote`, `blockquote` or `dialogue` opener, or an `exit` (registry.ts's
-// families). Each token records which family claimed
+// claimed for b-ber-grammar-section, -pullquote, -dialogue, -gallery and
+// -spread: a structural opener (`::: chapter:a`), a `pullquote`,
+// `blockquote`, `dialogue`, `gallery` or `spread` opener, or an `exit`
+// (registry.ts's families). Each token records which family claimed
 // it, which decides how it renders.
 //
 // It deliberately reproduces that parser's token *shape*: each claimed line
@@ -21,7 +21,9 @@ import {
   DIALOGUE_CLAIM_RE,
   EXIT,
   type Family,
+  GALLERY_CLAIM_RE,
   PULLQUOTE_CLAIM_RE,
+  SPREAD_CLAIM_RE,
 } from './registry'
 import { markSpeakers } from './speakers'
 import type { DirectiveEnv, DirectiveHost } from './types'
@@ -51,29 +53,58 @@ const claim = (
     const [, name, id] = pullquote
     return { family: 'pullquote', name, id }
   }
-  const dialogue = params.trim().match(DIALOGUE_CLAIM_RE)
-  if (dialogue) {
-    const [, name, id] = dialogue
-    return { family: 'dialogue', name, id }
+  for (const [family, re] of [
+    ['dialogue', DIALOGUE_CLAIM_RE],
+    ['gallery', GALLERY_CLAIM_RE],
+    ['spread', SPREAD_CLAIM_RE],
+  ] as const) {
+    const match = params.trim().match(re)
+    if (match) {
+      const [, name, id] = match
+      return { family, name, id }
+    }
   }
   return null
 }
+
+// The families whose parser recorded an id in markdown-it's silent mode too
+// (b-ber-grammar-renderer's `validateOpen`)
+const RECORDS_IN_SILENT: ReadonlySet<Family> = new Set([
+  'dialogue',
+  'gallery',
+  'spread',
+])
 
 // The tag each family's old parser gave its tokens
 const TAG: Record<Family, string> = {
   section: 'section',
   pullquote: 'section',
   dialogue: 'div',
+  gallery: 'div',
+  spread: 'div',
 }
 
-const isFamily =
+// Work a family's old parser did once a block's tokens were complete, which
+// needs more than the parse has (b-ber-parser-gallery's items read State)
+export type AfterBlock = Partial<
+  Record<Family, (state: MarkdownIt.StateBlock) => void>
+>
+
+// What a family test reads of a token, so that it takes b-ber-lib's token
+// type as well as markdown-it's
+export interface TokenLike {
+  type: string
+  meta?: unknown
+}
+
+export const isFamily =
   (type: string, family: Family) =>
-  (token: MarkdownIt.Token): boolean =>
+  (token: TokenLike): boolean =>
     token.type === type &&
     (token.meta as { family?: Family } | null)?.family === family
 
 export const createRule =
-  (host: DirectiveHost) =>
+  (host: DirectiveHost, afterBlock: AfterBlock = {}) =>
   (
     state: MarkdownIt.StateBlock,
     startLine: number,
@@ -114,8 +145,7 @@ export const createRule =
       return true
     }
 
-    // b-ber-grammar-dialogue's parser recorded its id in silent mode too
-    if (family === 'dialogue') host.opened(id, name, lineNumber, env)
+    if (RECORDS_IN_SILENT.has(family)) host.opened(id, name, lineNumber, env)
     if (silent) return true
     // b-ber-grammar-pullquote never recorded its ids; it checked them against
     // the cursor when they rendered
@@ -154,5 +184,6 @@ export const createRule =
         isFamily(LINE_CLOSE, 'dialogue')
       )
     }
+    afterBlock[family]?.(state)
     return true
   }
