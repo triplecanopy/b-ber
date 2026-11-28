@@ -43,7 +43,7 @@ describe('task: render', () => {
       markdown: { one: '# One', two: 'Some *text*' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const text = path.join(project.dist, 'OPS', 'text')
@@ -58,7 +58,7 @@ describe('task: render', () => {
       markdown: { one: '# Heading\n\nSome *emphasis*' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const xhtml = await fs.readFile(
@@ -75,11 +75,33 @@ describe('task: render', () => {
       'not markdown'
     )
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const text = path.join(project.dist, 'OPS', 'text')
     expect(await fs.readdir(text)).toEqual(['one.xhtml'])
+  })
+
+  // The grammar plugins still collect these through State, which is this
+  // build's context in a build; render returns them for the steps after it
+  test('returns what the documents collected', async () => {
+    project = await createProject({
+      toc: ['one'],
+      markdown: { one: 'Text.[^1]\n\n[^1]: A note.' },
+    })
+
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
+    await settle()
+
+    expect(output.footnotes).toEqual([
+      expect.objectContaining({ fileName: 'one' }),
+    ])
+    expect(output.footnotes).toBe(project.ctx.settings.footnotes)
+    expect(output.figures).toBe(project.ctx.settings.figures)
+    expect(output.guide).toBe(project.ctx.settings.guide)
+    expect(output.remoteAssets).toBe(project.ctx.settings.remoteAssets)
   })
 
   test('renders files in spine order, not directory order', async () => {
@@ -89,7 +111,7 @@ describe('task: render', () => {
       markdown: { a: 'a', b: 'b', c: 'c' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const rendered = log.info.mock.calls
@@ -102,10 +124,17 @@ describe('task: render', () => {
     ])
   })
 
-  test('resolves with nothing when the Markdown directory is empty', async () => {
+  test('collects nothing when the Markdown directory is empty', async () => {
     project = await createProject()
 
-    await expect(render()).resolves.toBeUndefined()
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).resolves.toEqual({
+      figures: [],
+      footnotes: [],
+      guide: [],
+      remoteAssets: [],
+    })
     expect(fs.existsSync(path.join(project.dist, 'OPS', 'text'))).toBe(false)
   })
 
@@ -114,7 +143,9 @@ describe('task: render', () => {
     await fs.remove(path.join(project.src, '_markdown'))
 
     // The readdir failure is not caught: only the per-file chain is
-    await expect(render()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   test('passes a per-file failure to log.error and stops there', async () => {
@@ -123,7 +154,9 @@ describe('task: render', () => {
     // the TOC, so it sorts first and the files after it are never rendered
     await fs.ensureDir(path.join(project.src, '_markdown', 'broken.md'))
 
-    await expect(render()).rejects.toMatchObject({ code: 'EISDIR' })
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toMatchObject({ code: 'EISDIR' })
     await settle()
 
     expect(log.error).toHaveBeenCalledWith(
@@ -151,7 +184,7 @@ describe('task: render', () => {
       return p
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     expect(writeSettled).toBe(false)
 
     await settle()

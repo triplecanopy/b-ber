@@ -51,7 +51,7 @@ const build = async ({
     )
   )
 
-  await render()
+  await render(project.ctx, { spine: project.ctx.settings.spine })
   await settle()
   await before()
   return loi()

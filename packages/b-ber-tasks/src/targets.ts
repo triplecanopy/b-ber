@@ -47,7 +47,7 @@ async function book(ctx: BuildContext): Promise<void> {
   await step(ctx, 'sass', () => sass())
   await step(ctx, 'copy', () => copy())
   await step(ctx, 'scripts', () => scripts())
-  await step(ctx, 'render', () => render())
+  await step(ctx, 'render', () => render(ctx, { spine: ctx.settings.spine }))
   await step(ctx, 'loi', () => loi())
   await step(ctx, 'footnotes', async () => {
     await footnotes()

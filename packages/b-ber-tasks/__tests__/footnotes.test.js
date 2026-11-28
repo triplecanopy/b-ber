@@ -33,7 +33,7 @@ const withNote = (text, note) => `${text}[^1]\n\n[^1]: ${note}\n`
 // Render the project, then run the footnotes task
 const build = async (options) => {
   project = await createProject(options)
-  await render()
+  await render(project.ctx, { spine: project.ctx.settings.spine })
   await settle()
   return footnotes()
 }
@@ -105,7 +105,7 @@ describe('task: footnotes', () => {
       toc: ['one'],
       markdown: { one: withNote('Text', 'A note') },
     })
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
     await fs.remove(ops('text'))
 

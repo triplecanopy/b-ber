@@ -46,7 +46,7 @@ const build = async ({ images = {}, ...options }) => {
       fs.writeFile(path.join(project.src, '_images', name), png(w, h))
     )
   )
-  await render()
+  await render(project.ctx, { spine: project.ctx.settings.spine })
   await settle()
 }
 
