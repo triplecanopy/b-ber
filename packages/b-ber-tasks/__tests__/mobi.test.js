@@ -170,6 +170,20 @@ describe('task: mobiCSS', () => {
     )
   })
 
+  // An `@page` rule has no selectors to begin with. The first fix for #806
+  // removed it with the rules it had emptied
+  test('keeps an @page rule (#806)', async () => {
+    await setup({
+      'application.css': '@page { margin: 32px } epub|switch { display: none }',
+    })
+
+    await mobiCSS(project.ctx)
+
+    expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
+      '@page {\n  margin: 32px;\n}'
+    )
+  })
+
   test('rewrites every stylesheet in the build', async () => {
     await setup({
       'a.css': 'a { color: red; widows: 2 }',
