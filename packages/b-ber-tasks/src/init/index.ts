@@ -4,7 +4,6 @@ import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import fs from 'fs-extra'
 
@@ -15,7 +14,6 @@ class Initializer {
   // Overrides for the new project's config.yml
   config!: Record<string, unknown>
   path!: string
-  builds!: string[]
 
   constructor({
     name = '',
@@ -26,7 +24,6 @@ class Initializer {
     this.name = name
     this.config = config || {}
     this.path = path.join(name, this.src)
-    this.builds = Object.keys(sequences)
 
     if (fs.existsSync(this.path)) {
       throw log.error(`Project [${name}] already exits, aborting`)
