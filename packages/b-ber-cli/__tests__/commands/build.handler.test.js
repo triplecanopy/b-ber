@@ -4,15 +4,17 @@ import { loadProject, runBuild } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
-import { serialize } from '@canopycanopycanopy/b-ber-tasks'
+import { build as buildTarget } from '@canopycanopycanopy/b-ber-tasks'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import fs from 'fs-extra'
 import build from '../../src/commands/build'
 import { flushPromises, mockProcessExit, spyOnLogger } from '../helpers/cli'
 
+// Each target's steps are stood in for by `clean` and the target's name
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-  serialize: jest.fn(),
+  build: jest.fn(),
+  targetNames: ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml'],
+  targetSteps: jest.fn((name) => ['clean', name]),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
@@ -33,7 +35,7 @@ jest.mock('@canopycanopycanopy/b-ber-templates/Project', () => ({
   stylesheets: jest.fn(() => []),
 }))
 
-// Object.keys order, which is the order `bber build` runs them in.
+// The order `bber build` runs them in
 const FORMATS = ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml']
 
 const mockYargs = () => ({
@@ -61,7 +63,7 @@ beforeEach(() => {
   logger = spyOnLogger(log)
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
   ensure.mockResolvedValue()
-  serialize.mockResolvedValue()
+  buildTarget.mockResolvedValue()
 })
 
 afterEach(() => jest.restoreAllMocks())
@@ -112,13 +114,12 @@ describe('build builder', () => {
 
   it('lists every format in its usage line, xml included', () => {
     // Issue 741: the hand-written command string left out xml. The line is
-    // built from the sequences now, so it lists whatever `bber build` builds.
+    // built from the targets now, so it lists whatever `bber build` builds.
     const yargs = mockYargs()
     build.builder(yargs)
 
     const [[usage]] = yargs.usage.mock.calls
-    expect(usage).toContain(`build [${Object.keys(sequences).join('|')}]`)
-    expect(Object.keys(sequences)).toEqual(FORMATS)
+    expect(usage).toContain(`build [${FORMATS.join('|')}]`)
   })
 
   it('takes no positional, which would hide an unknown format from the check', () => {
@@ -145,17 +146,18 @@ describe('build handler', () => {
       await flushPromises()
     })
 
-    it('serializes only that format’s sequence', () => {
-      expect(serialize).toHaveBeenCalledTimes(1)
-      expect(serialize).toHaveBeenCalledWith(sequences[format])
+    it('builds only that format', () => {
+      expect(buildTarget).toHaveBeenCalledTimes(1)
+      expect(buildTarget.mock.calls[0][0].target.name).toBe(format)
     })
 
-    it('records the sequence, and builds the format in its own context', () => {
-      expect(updatesTo('sequence')).toEqual([sequences[format]])
+    it('builds the format in its own context', () => {
       expect(runBuild).toHaveBeenCalledTimes(1)
       expect(runBuild.mock.calls[0][1]).toEqual([format])
-      // State is no longer reset and switched between builds (TASK-163)
+      // State is no longer reset and switched between builds (TASK-163),
+      // nor given the run's task names (TASK-165)
       expect(updatesTo('build')).toEqual([])
+      expect(updatesTo('sequence')).toEqual([])
       expect(state.reset).not.toHaveBeenCalled()
     })
 
@@ -166,7 +168,7 @@ describe('build handler', () => {
 
     it('registers the sequence with the logger', () => {
       expect(logger.registerSequence).toHaveBeenCalledWith([
-        { name: format, tasks: sequences[format] },
+        { name: format, tasks: ['clean', format] },
       ])
     })
 
@@ -175,19 +177,27 @@ describe('build handler', () => {
     })
   })
 
+  it('builds the formats named in the order they are given', async () => {
+    await build.handler({ _: ['build', 'web', 'epub'], $0: 'bber' })
+    await flushPromises()
+
+    expect(runBuild.mock.calls[0][1]).toEqual(['web', 'epub'])
+    expect(buildTarget.mock.calls.map(([ctx]) => ctx.target.name)).toEqual([
+      'web',
+      'epub',
+    ])
+  })
+
   describe('bber build (no format)', () => {
     it('builds every format, one after another, each in its own context', async () => {
       await build.handler({ _: ['build'], $0: 'bber' })
       await flushPromises()
 
-      expect(serialize.mock.calls.map(([seq]) => seq)).toEqual(
-        FORMATS.map((f) => sequences[f])
+      expect(buildTarget.mock.calls.map(([ctx]) => ctx.target.name)).toEqual(
+        FORMATS
       )
       expect(runBuild.mock.calls[0][1]).toEqual(FORMATS)
       expect(state.reset).not.toHaveBeenCalled()
-      expect(updatesTo('sequence')).toEqual([
-        FORMATS.flatMap((f) => sequences[f]),
-      ])
     })
 
     it('registers each format and its tasks with the logger, in order', async () => {
@@ -196,23 +206,23 @@ describe('build handler', () => {
 
       expect(logger.registerSequence).toHaveBeenCalledTimes(1)
       expect(logger.registerSequence).toHaveBeenCalledWith(
-        FORMATS.map((name) => ({ name, tasks: sequences[name] }))
+        FORMATS.map((name) => ({ name, tasks: ['clean', name] }))
       )
     })
 
     it('waits for each format to finish before starting the next', async () => {
       let finishEpub
-      serialize.mockImplementationOnce(
+      buildTarget.mockImplementationOnce(
         () => new Promise((resolve) => (finishEpub = resolve))
       )
 
       const handled = build.handler({ _: ['build'], $0: 'bber' })
       await flushPromises()
-      expect(serialize).toHaveBeenCalledTimes(1)
+      expect(buildTarget).toHaveBeenCalledTimes(1)
 
       finishEpub()
       await handled
-      expect(serialize).toHaveBeenCalledTimes(FORMATS.length)
+      expect(buildTarget).toHaveBeenCalledTimes(FORMATS.length)
     })
   })
 
@@ -226,12 +236,12 @@ describe('build handler', () => {
       src: '_project',
     })
     expect(ensure.mock.invocationCallOrder[0]).toBeLessThan(
-      serialize.mock.invocationCallOrder[0]
+      buildTarget.mock.invocationCallOrder[0]
     )
   })
 
   it('resolves once the build has run', async () => {
-    // Issue 740: the handler used to resolve before the ensure/serialize
+    // Issue 740: the handler used to resolve before the ensure/buildTarget
     // chain had run, so nothing could see a build failure
     let finishEnsure
     ensure.mockReturnValueOnce(
@@ -244,11 +254,11 @@ describe('build handler', () => {
       .then(() => (resolved = true))
     await flushPromises()
     expect(resolved).toBe(false)
-    expect(serialize).not.toHaveBeenCalled()
+    expect(buildTarget).not.toHaveBeenCalled()
 
     finishEnsure()
     await handled
-    expect(serialize).toHaveBeenCalledTimes(1)
+    expect(buildTarget).toHaveBeenCalledTimes(1)
   })
 
   describe('NODE_ENV', () => {
@@ -410,7 +420,7 @@ describe('build handler', () => {
         ])
         expect(exit).toHaveBeenCalledTimes(1)
         expect(exit).toHaveBeenCalledWith(1)
-        expect(serialize).not.toHaveBeenCalled()
+        expect(buildTarget).not.toHaveBeenCalled()
       })
 
       it('exits 1 through log.error when the file is not JSON or YAML', async () => {
@@ -423,18 +433,18 @@ describe('build handler', () => {
           'Config file must have a .json or .yaml/.yml file extension'
         )
         expect(exit).toHaveBeenCalledWith(1)
-        expect(serialize).not.toHaveBeenCalled()
+        expect(buildTarget).not.toHaveBeenCalled()
       })
     })
   })
 
   describe('when a task fails', () => {
     it('exits 1 when the failure reaches log.error, as every real task failure does', async () => {
-      // b-ber-tasks' serialize ends in a catch that prints the
+      // b-ber-tasks' build ends in a catch that prints the
       // failure and rethrows it: the handler turns it into the exit, without
       // printing it again.
       const error = new Error('render failed')
-      serialize.mockImplementationOnce(() =>
+      buildTarget.mockImplementationOnce(() =>
         Promise.reject(error).catch((err) => {
           throw log.error(err)
         })
@@ -451,14 +461,14 @@ describe('build handler', () => {
 
     it('exits 1 on a rejection the logger has not reported, printing it', async () => {
       // Issue 740: `.catch(console.error)` used to catch a rejection that
-      // reached the handler (from ensure or serialize), so the process ended
+      // reached the handler (from ensure or build), so the process ended
       // with status 0.
-      const error = new Error('serialize rejected')
-      serialize.mockRejectedValueOnce(error)
+      const error = new Error('build rejected')
+      buildTarget.mockRejectedValueOnce(error)
 
       await build.handler({ _: ['build', 'epub'], $0: 'bber' })
 
-      expect(log.errors.map((e) => e.message)).toEqual(['serialize rejected'])
+      expect(log.errors.map((e) => e.message)).toEqual(['build rejected'])
       expect(console.error).not.toHaveBeenCalled()
       expect(exit).toHaveBeenCalledWith(1)
     })
@@ -470,7 +480,7 @@ describe('build handler', () => {
       await build.handler({ _: ['build', 'epub'], $0: 'bber' })
 
       expect(log.errors.map((e) => e.message)).toEqual(['ensure rejected'])
-      expect(serialize).not.toHaveBeenCalled()
+      expect(buildTarget).not.toHaveBeenCalled()
       expect(exit).toHaveBeenCalledWith(1)
     })
 
@@ -480,11 +490,11 @@ describe('build handler', () => {
       // was unhandled: Node crashed with a stack trace, not through the
       // logger.
       const error = new Error('mobi failed')
-      serialize.mockResolvedValueOnce().mockRejectedValueOnce(error)
+      buildTarget.mockResolvedValueOnce().mockRejectedValueOnce(error)
 
       await build.handler({ _: ['build'], $0: 'bber' })
 
-      expect(serialize).toHaveBeenCalledTimes(2)
+      expect(buildTarget).toHaveBeenCalledTimes(2)
       expect(log.errors.map((e) => e.message)).toEqual(['mobi failed'])
       expect(exit).toHaveBeenCalledWith(1)
     })

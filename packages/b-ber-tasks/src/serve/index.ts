@@ -1,30 +1,36 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
+import {
+  type BuildContext,
+  createBuildContext,
+  loadProject,
+  type Project,
+  runInBuildContext,
+} from '@canopycanopycanopy/b-ber-lib'
 import { create } from 'browser-sync' // eslint-disable-line import/no-unresolved
 import debounce from 'lodash/debounce'
-import serialize from '../serialize'
+import { distDir, srcDir } from '../context'
+import { build } from '../targets'
 
-const browserSync = create()
+type BrowserSync = ReturnType<typeof create>
+
 const port = 4000
 const debounceSpeed = 500
 
-const config = (build: string) => (url: string) => () => {
-  state.update('build', build)
-  state.update('footnotes', [])
-  state.update('config.base_url', '/')
-  state.update('config.base_path', '/')
-  state.update('config.remote_url', url)
-  state.update('config.reader_url', url)
+// Each rebuild is a build of its own, with a new context, so that nothing a
+// build collects (figures, footnotes, the spine's additions) carries over to
+// the next. The URLs are the server's
+const rebuild = (project: Project, target: string, url: string) => () => {
+  const ctx = createBuildContext(project, target)
+  Object.assign(ctx.config, {
+    base_url: '/',
+    base_path: '/',
+    remote_url: url,
+    reader_url: url,
+  })
 
-  return serialize(sequences[build])
+  return runInBuildContext(ctx, () => build(ctx))
 }
-
-// Declared below once browserSync has been initialized
-let update = async () => {}
-
-const reload = () => update().then(() => browserSync.reload())
 
 // Browsersync's own `files` option takes exactly this {match, fn} shape, so the
 // watch does not need a plugin. It used to be nested inside bs-html-injector's
@@ -33,14 +39,14 @@ const reload = () => update().then(() => browserSync.reload())
 // `fn` already performs. Removing it drops the abandoned `request` and `xmldom`
 // packages, whose advisories can never be patched.
 //
-// Worked out once the build is set, from the project's source directory: they
-// used to be fixed at `_project/` when the module was imported
-const watchFiles = () => [
+// Worked out from the project's source directory. They used to be fixed at
+// `_project/` when the module was imported
+const watchFiles = (ctx: BuildContext, reload: () => unknown) => [
   {
     match: [
-      path.resolve(state.srcDir, '**', '*.scss'),
-      path.resolve(state.srcDir, '**', '*.js'),
-      path.resolve(state.srcDir, '**', '*.md'),
+      path.resolve(srcDir(ctx), '**', '*.scss'),
+      path.resolve(srcDir(ctx), '**', '*.js'),
+      path.resolve(srcDir(ctx), '**', '*.md'),
     ],
     fn: debounce(() => reload(), debounceSpeed, {
       leading: false,
@@ -64,7 +70,11 @@ const browserSyncMiddleware = (
 
 // Serves the build's own directory, which config.yml's `dist` names. It used to
 // be `project-<build>` whatever `dist` said
-const init = () =>
+const init = (
+  browserSync: BrowserSync,
+  ctx: BuildContext,
+  reload: () => unknown
+) =>
   new Promise<void>((resolve) => {
     const options = {
       port,
@@ -73,10 +83,10 @@ const init = () =>
       // reloadDebounce: 2000
       // reloadThrottle: 2000
       server: {
-        baseDir: path.resolve(state.distDir),
+        baseDir: path.resolve(distDir(ctx)),
         middleware: [browserSyncMiddleware],
       },
-      files: watchFiles(),
+      files: watchFiles(ctx, reload),
     }
 
     browserSync.init(options, () => resolve())
@@ -102,14 +112,20 @@ const serve = async ({
   external?: boolean
 }) => {
   const location = external ? 'external' : 'local'
-  const build = buildOption || 'reader'
+  const target = buildOption || 'reader'
+  const project = loadProject(process.cwd())
+  const browserSync = create()
 
-  state.update('build', build)
-  await init()
+  // The first build needs the server's URL, so the watch starts before there
+  // is anything to rebuild with
+  let update: () => Promise<void> = async () => {}
+  const reload = () => update().then(() => browserSync.reload())
+
+  await init(browserSync, createBuildContext(project, target), reload)
 
   const url = browserSync.getOption('urls').get(location)
 
-  update = config(build)(url) as () => Promise<void>
+  update = rebuild(project, target, url)
 
   await update()
 

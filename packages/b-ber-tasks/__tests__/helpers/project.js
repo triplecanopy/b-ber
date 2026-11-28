@@ -16,7 +16,7 @@
 
 import os from 'node:os'
 import path from 'node:path'
-import { Spine } from '@canopycanopycanopy/b-ber-lib'
+import { getTarget, Spine } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import fs from 'fs-extra'
 
@@ -96,5 +96,53 @@ export async function createProject({
     await fs.remove(root)
   }
 
-  return { root, src, dist, cleanup }
+  return { root, src, dist, ctx: contextOfState(root), cleanup }
 }
+
+// A BuildContext that is a live view of State: each field reads and writes
+// what `createProject` put on State, and what a test changes there later.
+// The tasks read the context; the library code they call reads State, and
+// the two agree, as they do in a build, where State reads the context
+export const contextOfState = (root = process.cwd()) => ({
+  project: {
+    root,
+    overrides: {},
+    get config() {
+      return state.config
+    },
+    get metadata() {
+      return state.metadata
+    },
+    set metadata(value) {
+      state.metadata = value
+    },
+    get media() {
+      return state.media
+    },
+    get theme() {
+      return state.theme
+    },
+    get audio() {
+      return state.audio
+    },
+    get video() {
+      return state.video
+    },
+  },
+  get target() {
+    return getTarget(state.build)
+  },
+  get config() {
+    return state.config
+  },
+  set config(value) {
+    state.config = value
+  },
+  get settings() {
+    return state.builds[state.build]
+  },
+  get hash() {
+    return state.hash
+  },
+  sequence: [],
+})

@@ -1,18 +1,17 @@
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { create } from 'browser-sync'
-import serialize from '../src/serialize'
+import fs from 'fs-extra'
 import serve from '../src/serve'
+import { build } from '../src/targets'
 import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
-// Two boundaries are mocked. browser-sync is the server process. `serialize`
-// runs a build's whole task sequence, which every other test file covers task
-// by task; here it records the build it was asked for and the config that
-// build would see.
-jest.mock('../src/serialize', () => jest.fn())
+// Two boundaries are mocked. browser-sync is the server process. `build`
+// runs a target's whole build, which every other test file covers task by
+// task; here it records the target and the config of the context it was
+// given.
+jest.mock('../src/targets', () => ({ build: jest.fn() }))
 
 // The task creates its server when it is imported, so the fake is built in
 // the factory, and `create` hands every caller the same one
@@ -40,18 +39,18 @@ const URLS = {
 let builds
 let project
 
-// A project for the build the test serves. Its cleanup puts State back
-const setup = async (build, options = {}) => {
-  project = await createProject({ build, ...options })
+// A project for the build the test serves, in the working directory, where
+// serve reads it from. Its cleanup puts the directory back
+const setup = async (target, options = {}) => {
+  project = await createProject({ build: target, chdir: true, ...options })
 }
 
 beforeEach(() => {
   builds = []
-  serialize.mockImplementation((sequence) => {
-    const { base_url, base_path, remote_url, reader_url } = state.config
+  build.mockImplementation((ctx) => {
+    const { base_url, base_path, remote_url, reader_url } = ctx.config
     builds.push({
-      sequence,
-      build: state.build,
+      build: ctx.target.name,
       config: { base_url, base_path, remote_url, reader_url },
     })
     return Promise.resolve()
@@ -79,19 +78,18 @@ describe('task: serve', () => {
     expect(initOptions()).toMatchObject({
       port: 4000,
       open: false,
-      server: { baseDir: project.dist },
+      server: { baseDir: path.resolve(project.dist) },
     })
     expect(builds).toHaveLength(1)
-    expect(builds[0].sequence).toBe(sequences.reader)
+    expect(builds[0].build).toBe('reader')
   })
 
   test('builds the build asked for, for the local server URL', async () => {
     await setup('web')
     await serve({ build: 'web' })
 
-    expect(initOptions().server.baseDir).toBe(project.dist)
+    expect(initOptions().server.baseDir).toBe(path.resolve(project.dist))
     expect(builds[0]).toEqual({
-      sequence: sequences.web,
       build: 'web',
       config: {
         base_url: '/',
@@ -161,6 +159,13 @@ describe('task: serve', () => {
     expect(builds).toHaveLength(2)
     expect(builds[1].build).toBe('web')
     expect(mockBrowserSync.reload).toHaveBeenCalledTimes(1)
+
+    // A new context each time, so that the figures, footnotes and spine
+    // entries a build collects do not carry over into the next. The serve
+    // task used to rebuild in the one State and only emptied the footnotes
+    const [[first], [second]] = build.mock.calls
+    expect(second).not.toBe(first)
+    expect(second.settings).not.toBe(first.settings)
   })
 
   // The server root and the watched files used to be fixed paths,
@@ -168,9 +173,10 @@ describe('task: serve', () => {
   // imported. A project whose config.yml set `src` or `dist` was served
   // from, and watched in, directories that did not exist
   test('serves the build directory and watches the source directory config.yml names', async () => {
-    await setup('web', { dist: 'out' })
+    await setup('web')
+    await fs.move(project.src, path.join(project.root, 'book'))
+    await fs.writeFile('config.yml', 'src: book\ndist: out\n')
     const src = path.join(project.root, 'book')
-    state.config.src = src
 
     await serve({ build: 'web' })
 

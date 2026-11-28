@@ -21,14 +21,31 @@ describe('b-ber-tasks', () => {
     expect(handlers[name]).toBeFunction()
   })
 
-  // `serialize` runs a sequence and `serve` runs `serialize`, so neither is a
-  // step of one
-  test('exports every task, serialize and serve', () => {
-    expect(Object.keys(tasks).sort()).toEqual(
-      [...Object.keys(handlers), 'serialize', 'serve'].sort()
+  // `build` builds a target, `step` runs one of its steps, and `serve`
+  // builds one, so none of them is a step itself
+  test('exports every task, and what runs them', () => {
+    const { targetNames, ...functions } = tasks
+    expect(Object.keys(functions).sort()).toEqual(
+      [
+        ...Object.keys(handlers),
+        'build',
+        'serialize',
+        'serve',
+        'step',
+        'targetSteps',
+      ].sort()
     )
-    for (const task of Object.values(tasks)) {
+    for (const task of Object.values(functions)) {
       expect(task).toBeFunction()
     }
+    expect(targetNames).toEqual([
+      'epub',
+      'mobi',
+      'pdf',
+      'web',
+      'sample',
+      'reader',
+      'xml',
+    ])
   })
 })
