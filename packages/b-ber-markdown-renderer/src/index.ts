@@ -32,10 +32,8 @@ import {
   type Diagnostic,
   type DirectiveEnv,
   directives,
-  type InlineClaim,
 } from './directives'
 import { legacyHost } from './legacy-host'
-import { type LegacyRender, legacyInline } from './legacy-render'
 
 const LINE_BREAK = '\n'
 const SPACE = ' '
@@ -125,22 +123,10 @@ class MarkdownRenderer {
       )
     }
 
-    // What the grammars' string renders were called with
-    const options = this.markdownIt.options
-
-    // A single-line directive whose grammar still renders a string
-    const legacy = <F extends string>(
-      family: F,
-      {
-        validate,
-        render,
-      }: { validate: InlineClaim['validate']; render: LegacyRender }
-    ) => ({ family, validate, render: legacyInline(family, render, options) })
-
     // The single-line directives, in the order their plugins were registered
     const inline = [
       { family: 'figure', ...markdownItImage.renderer(reference) },
-      legacy('audio-video', markdownItAudioVideo.renderer(reference)),
+      { family: 'audio-video', ...markdownItAudioVideo.renderer(reference) },
       { family: 'vimeo', ...markdownItVimeo.renderer(reference) },
       { family: 'iframe', ...markdownItIframe.renderer(reference) },
       { family: 'logo', ...markdownItLogo.renderer() },

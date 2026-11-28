@@ -1,5 +1,8 @@
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import audioVideo from '../src'
+
+const render = (config, node, env) => serialize(config.render({ node, env, h }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -13,6 +16,11 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesString: jest.fn(() => ''),
+  attributesList: jest.fn((obj) =>
+    obj.controls ? [['controls', obj.controls]] : []
+  ),
+  commentLines: jest.requireActual('../../b-ber-grammar-attributes/src')
+    .commentLines,
   attributesObject: jest.fn(() => ({ source: 'media.mp4' })),
   htmlId: jest.fn((id) => id),
   toAlias: jest.fn((s) => s),
@@ -84,88 +92,67 @@ describe('b-ber-grammar-audio-video', () => {
 
   it('render returns empty string when token info does not match DIRECTIVE_RE', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [{ info: 'not-matching', map: [0, 1], children: null }]
-    expect(config.render(tokens, 0, {}, envFor())).toBe('')
+    const node = { info: 'not-matching', line: 0 }
+    expect(render(config, node, envFor())).toBe('')
   })
 
   it('render calls prepare and dispatches to createMedia for video type', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      { info: 'video:my-id source="media.mp4"', map: [0, 1], children: null },
-    ]
-    const result = config.render(tokens, 0, {}, envFor())
+    const node = { info: 'video:my-id source="media.mp4"', line: 0 }
+    const result = render(config, node, envFor())
     expect(typeof result).toBe('string')
     expect(result.length).toBeGreaterThan(0)
   })
 
   it('render dispatches to createMedia for audio type', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      { info: 'audio:my-id source="sound.mp3"', map: [0, 1], children: null },
-    ]
-    const result = config.render(tokens, 0, {}, envFor())
+    const node = { info: 'audio:my-id source="sound.mp3"', line: 0 }
+    const result = render(config, node, envFor())
     expect(typeof result).toBe('string')
   })
 
   it('render dispatches to createMediaInline for video-inline type', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'video-inline:my-id source="media.mp4"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, envFor())
+    const node = { info: 'video-inline:my-id source="media.mp4"', line: 0 }
+    const result = render(config, node, envFor())
     expect(typeof result).toBe('string')
   })
 
   it('render dispatches to createMediaInline for audio-inline type', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'audio-inline:my-id source="sound.mp3"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, envFor())
+    const node = { info: 'audio-inline:my-id source="sound.mp3"', line: 0 }
+    const result = render(config, node, envFor())
     expect(typeof result).toBe('string')
-  })
-
-  it('render handles token with null map', () => {
-    const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      { info: 'video:my-id source="media.mp4"', map: null, children: null },
-    ]
-    expect(() => config.render(tokens, 0, {}, envFor())).not.toThrow()
   })
 
   it('render throws what log.error reports when the media does not exist', () => {
     const config = audioVideo.renderer({ instance, context })
-    const tokens = [
-      { info: 'video:my-id source="media.mp4"', map: [0, 1], children: null },
-    ]
-    expect(() => config.render(tokens, 0, {}, envFor([]))).toThrow(
+    const node = { info: 'video:my-id source="media.mp4"', line: 0 }
+    expect(() => render(config, node, envFor([]))).toThrow(
       'Could not find [video] matching [media.mp4]'
     )
+  })
+
+  // Built as elements (TASK-176)
+  it('builds an inline video with its sources and fallback', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const html = render(
+      config,
+      { info: 'video-inline:w source:media.mp4', line: 0, caption: 'Cap' },
+      envFor()
+    )
+    expect(html).toContain(
+      '<video id="w" controls="controls">\n          <source src="../media/media.mp4" type="video/mp4"/>'
+    )
+    expect(html).toContain('Your device does not support the HTML5 video API.')
+    expect(html).toContain('<p class="caption caption__video">Cap</p>')
   })
 
   it('collects a video figure, and not an inline one', () => {
     const config = audioVideo.renderer({ instance, context })
     const env = envFor()
-    config.render(
-      [{ info: 'video:v source:media.mp4', map: [0, 1] }],
-      0,
-      {},
-      env
-    )
-    config.render(
-      [{ info: 'video-inline:w source:media.mp4', map: [1, 2] }],
-      0,
-      {},
-      env
-    )
+    render(config, { info: 'video:v source:media.mp4', line: 0 }, env)
+    render(config, { info: 'video-inline:w source:media.mp4', line: 1 }, env)
     expect(env.result.figures).toEqual([
       expect.objectContaining({ id: 'v', pageOrder: 0, ref: 'test' }),
     ])

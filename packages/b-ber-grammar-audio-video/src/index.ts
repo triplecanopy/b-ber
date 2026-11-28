@@ -1,5 +1,6 @@
 import path from 'node:path'
 import {
+  attributesList,
   attributesObject,
   attributesString,
   htmlId,
@@ -7,8 +8,9 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
   type DocumentEnv,
-  type FigureToken,
   Html,
+  type InlineDirective,
+  type InlineRender,
   nextFigure,
   type RendererReference,
 } from '@canopycanopycanopy/b-ber-lib'
@@ -29,9 +31,12 @@ import {
   getWebOnlyAttributesString,
   isHostedBySupportedThirdParty,
   isHostedRemotely,
+  localMediaSources,
   type MediaType,
+  remoteMediaSource,
   validateLocalMediaSource,
   validatePosterImage,
+  webOnlyAttributes,
 } from './helpers'
 
 const MARKER_RE = /^(video|audio)/
@@ -40,14 +45,14 @@ const DIRECTIVE_RE =
 
 interface PrepareArgs extends RendererReference {
   env: DocumentEnv
-  token: FigureToken
+  node: InlineDirective
   marker: RegExpMatchArray
   fileName: string
   lineNumber: number | null
 }
 
 function prepare({
-  token,
+  node,
   marker,
   env,
   instance,
@@ -61,12 +66,11 @@ function prepare({
 
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
   const media = [...env.document[mediaType]]
-  const caption = token.children
-    ? instance.renderInline(token.children, env)
-    : ''
+  const caption = node.caption ? instance.renderInline(node.caption, env) : ''
 
   let sources = []
   let sourceElements = ''
+  let sourceList: [string, string][] = []
   let err = null
   let poster = ''
   // let provider = null
@@ -106,12 +110,14 @@ function prepare({
     } else {
       sources = [source]
       sourceElements = createRemoteMediaSource(sources)
+      sourceList = remoteMediaSource(sources)
     }
 
     env.result.remoteAssets.push(source)
   } else if (validateLocalMediaSource(source, mediaType, env)) {
     sources = media.filter((a) => toAlias(a) === source)
     sourceElements = createLocalMediaSources(sources)
+    sourceList = localMediaSources(sources)
   }
 
   if (!sources.length && type !== 'iframe' && type !== 'iframe-inline') {
@@ -144,6 +150,7 @@ function prepare({
 
   const figureId = htmlId(id)
   const attrString = attributesString(attrsObject)
+  const attributes = attributesList(attrsObject)
   const webOnlyAttrString = getWebOnlyAttributesString(env)
   const commentStart = Html.comment(`START: ${mediaType}:${type}#${figureId};`)
   const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
@@ -153,7 +160,10 @@ function prepare({
       ? 'figures-titlepage.xhtml'
       : page
 
-  return {
+  // The figure collected for the list of illustrations, whose template takes
+  // the media element's attributes and sources as markup, and what the inline
+  // element is built with: the same, unescaped, for the serializer to escape
+  const data = {
     id: figureId,
     attrString,
     webOnlyAttrString,
@@ -174,25 +184,26 @@ function prepare({
     type,
     controls: attrsObject.controls,
   }
+  return {
+    data,
+    element: {
+      attributes: [...attributes, ...webOnlyAttributes(env)],
+      sources: sourceList,
+    },
+  }
 }
 
 const render =
-  ({ instance }: RendererReference) =>
-  (
-    tokens: FigureToken[],
-    index: number,
-    _options: unknown,
-    env: DocumentEnv
-  ): string => {
-    const token = tokens[index]
-    const marker = token.info.trim().match(DIRECTIVE_RE)
-    if (!marker) return ''
+  ({ instance }: RendererReference): InlineRender =>
+  ({ node, env, h }) => {
+    const marker = node.info.trim().match(DIRECTIVE_RE)
+    if (!marker) return h.fragment([])
 
     const fileName = `_markdown/${env.document.fileName}.md`
-    const lineNumber = token.map ? token.map[0] : null
+    const lineNumber = node.line
     const type = marker[1]
-    const args = prepare({
-      token,
+    const { data, element } = prepare({
+      node,
       marker,
       env,
       instance,
@@ -205,19 +216,19 @@ const render =
       case 'audio':
       case 'video':
         // Collect it so that it's rendered as a `figure`
-        env.result.figures.push(args)
-        return createMedia(args)
+        env.result.figures.push(data)
+        return createMedia(data, h)
 
       case 'iframe-inline':
-        return createIFrame(args)
+        return createIFrame(data, h)
 
       case 'audio-inline':
       case 'video-inline':
-        return createMediaInline(args)
+        return createMediaInline(data, element, h)
 
       default:
         throw new Error(
-          `Something went wrong parsing [${args.source}] in [${env.document.fileName}]`
+          `Something went wrong parsing [${data.source}] in [${env.document.fileName}]`
         )
     }
   }
