@@ -31,7 +31,10 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn((s) => s) },
+  Html: {
+    comment: jest.fn((s) => s),
+    escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
+  },
   Url: { ensureDecoded: jest.fn((s) => s) },
   utils: jest.requireMock('@canopycanopycanopy/b-ber-lib/utils'),
 }))

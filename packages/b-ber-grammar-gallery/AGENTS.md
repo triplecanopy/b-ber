@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Transforms the `gallery` / `exit` block directive pair into a build-target-aware HTML container. For `reader` and `web` builds emits a full-bleed gallery scaffold; for EPUB/Mobi/PDF emits a plain `<section>`. The exit directive is handled by `b-ber-grammar-section`'s exit logic, which closes the appropriate number of elements based on the stored cursor state. Delegates open/close validation to `b-ber-grammar-renderer` and uses `b-ber-parser-gallery` as the MarkdownIt plugin.
+Transforms the `gallery` / `exit` block directive pair into a build-target-aware HTML container. For `reader` and `web` builds emits a full-bleed gallery scaffold; for EPUB/Mobi/PDF emits a plain `<section>`. Its close is drawn by `b-ber-grammar-section`'s `close`, which closes the full-bleed scaffold where the target has one. Since TASK-175 the build parses it with b-ber-markdown-renderer's directive rule, and `close` takes the block from the rule's node. Delegates open/close validation to `b-ber-grammar-renderer` and uses `b-ber-parser-gallery` as the MarkdownIt plugin.
 
 ## Key Files
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus, no-continue*/
 
 import path from 'node:path'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   ALL_DIRECTIVES,
@@ -74,16 +74,18 @@ export interface AttributesContext {
   lineNumber?: number | null
 }
 
+// Values are text, so they are escaped: they used to be written as they were,
+// and `title:"<b>&"` gave malformed XHTML (TASK-161)
 const _applyTransforms = (k: string, v: AttributeValue): string => {
   switch (k) {
     case 'classes':
-      return ` class="${v}"`
+      return ` class="${Html.escape(v)}"`
     case 'epubTypes':
-      return ` epub:type="${v}"`
+      return ` epub:type="${Html.escape(v)}"`
     case 'attrs':
       return ''
     case 'source':
-      return ` src="${v}"`
+      return ` src="${Html.escape(v)}"`
 
     // Boolean attrs for audio/video elements
     case 'controls':
@@ -94,7 +96,7 @@ const _applyTransforms = (k: string, v: AttributeValue): string => {
       return v === 'yes' ? ` ${k}="${k}"` : ''
 
     default:
-      return ` ${k}="${v}"`
+      return ` ${k}="${Html.escape(v)}"`
   }
 }
 
@@ -130,6 +132,13 @@ const parseAttrs = (s: string): Record<string, string> => {
         i++
         delim = next as number
       }
+      continue
+    }
+
+    if (!open && (char === 32 /*   */ || char === 9) /* \t */) {
+      // Whitespace outside a value ends a word that had no `:`. It is not an
+      // attribute, so it is dropped: it used to become part of the next key
+      str = ''
       continue
     }
 
@@ -192,9 +201,12 @@ const _buildAttrQueryString = (
 
 // Ensure that attributes required for valid XHTML are present, and that system
 // defaults are merged into user settings
+// `family` is the original directive's, for one substituted with `chapter`:
+// `credits` is backmatter
 const _extendWithDefaults = (
   obj: Record<string, string>,
-  genus: string
+  genus: string,
+  family: string = _lookUpFamily(genus)
 ): Record<string, string> => {
   const result = { ...obj }
   const order = _directiveOrder(genus)
@@ -204,19 +216,16 @@ const _extendWithDefaults = (
   switch (order) {
     case 'block':
     case 'misc':
-      taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
+      taxonomy = `${family} ${genus}` // -> `bodymatter chapter`
 
       if (order === 'block') {
         result.epubTypes = taxonomy
       }
 
       if (has(obj, 'classes')) {
-        taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
-
-        if (order === 'block') {
-          result.epubTypes = taxonomy
-        }
-
+        // The family is the directive's. It used to be looked up from the
+        // classes, which usually name none, so `epub:type` lost it
+        // (" chapter")
         result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
       } else {
         result.classes = taxonomy // -> class="bodymatter chapter"
@@ -257,7 +266,10 @@ const attributesObject = (
     )
   }
 
-  if (DRAFT_DIRECTIVES.has(genus)) {
+  // A draft structural semantic renders as `chapter`. pullquote is in the
+  // draft set too, but it is a misc block with an attribute of its own
+  // (`citation`), so it renders as itself (TASK-161)
+  if (DRAFT_DIRECTIVES.has(genus) && !MISC_DIRECTIVES.has(genus)) {
     log.warn(`render [epub:${genus}] is [draft]. substituting with [chapter]`)
     genus = 'chapter'
   }
@@ -298,7 +310,11 @@ const attributesObject = (
     }
   }
 
-  const mergedAttrs = _extendWithDefaults(attrsObject, genus)
+  const mergedAttrs = _extendWithDefaults(
+    attrsObject,
+    genus,
+    _lookUpFamily(origGenus) || _lookUpFamily(genus)
+  )
   return mergedAttrs
 }
 

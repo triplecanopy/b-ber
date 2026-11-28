@@ -38,8 +38,20 @@
   {
     "id": "{id}",
     "title": "",
-    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      : figure:ch-02-gallery-figure-02 source:placeholder-square-02.png alt:\"Gallery image two\"\n\n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
     "url": "/text/figurech-02-gallery-figure-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurech-02-gallery-figure-02.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurech-02-gallery-figure-03.xhtml"
   },
   {
     "id": "{id}",
@@ -98,7 +110,7 @@
   {
     "id": "{id}",
     "title": "Chapter Two",
-    "body": "\n      \n\nChapter Two\n\n\nDialogue\nSpeaker A: Hello, world.\nSpeaker B: Hello back.\n\n\n\n\n\n\nGallery\n\n                \n                \n                \n                \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n            \n            \n\n\n\n\n\nSpread\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\n\n\nIframe\n\n    \n      \n        \n          \n        \n      \n    An embedded iframe.\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "body": "\n      \n\nChapter Two\n\n\nDialogue\nSpeaker A: Hello, world.\nSpeaker B: Hello back.\n\n\n\n\n\n\nGallery\n\n                \n                \n                \n                \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n            \n            \n\n\n\n\n\nSpread\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\n\n\nIframe\n\n    \n      \n        \n          \n        \n      \n    An embedded iframe.\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
     "url": "/text/kitchen-sink-chapter-02.xhtml"
   },
   {

@@ -4,7 +4,6 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
-  type CursorEntry,
   type DirectiveToken,
   Html,
   type RendererContext,
@@ -13,7 +12,6 @@ import {
 import log from '@canopycanopycanopy/b-ber-logger'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
 import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes-directives'
-import find from 'lodash/find'
 
 // This matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
@@ -29,37 +27,30 @@ const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 // Optional so the tests can render without a file
 type Context = Partial<RendererContext>
 
-// `context` must be available in this `render` method and is passed
-// into `createRenderer` below. Default for `context` is set for use
-// during tests
+// How a block's close came about, as b-ber-markdown-renderer's directive rule
+// decides it: at the block's own `exit`, at an outer block's `exit` that
+// crossed it, or at the end of its Markdown container
+export type ClosedBy = 'exit' | 'crossed-exit' | 'end'
 
-function isGallery(directive: CursorEntry | undefined) {
-  return (
-    directive &&
-    directive.type === 'gallery' &&
-    state.target.features.fullbleedContainers
-  )
+// A block being closed, from the directive rule's node
+export interface ClosingBlock {
+  // The directive's name, e.g. `chapter` or `gallery`
+  name: string
+  id: string
+  // The opener's line after the fence, as markdown-it captured it
+  info: string
 }
 
-function isSpread(directive: CursorEntry | undefined) {
-  return (
-    directive &&
-    directive.type === 'spread' &&
-    state.target.features.fullbleedContainers
-  )
-}
+// Gallery and spread open more than a <section> where the target has
+// full-bleed containers, so their close matches
+const isFullbleed = (name: string, kind: 'gallery' | 'spread'): boolean =>
+  name === kind && state.target.features.fullbleedContainers
 
-function handleExitDirective(token: RegExpMatchArray) {
-  const [, type, id] = token
-
-  log.debug(`exit directive [${id}]`)
-
-  const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
-  const directive = find(state.cursor, { id })
-
-  state.remove('cursor', { id })
-
-  if (isGallery(directive)) {
+// The markup that closes a block. The block's name used to be looked up in
+// `state.cursor` (TASK-175). `comment` is the end comment, which says how the
+// block closed, as it always has
+function closeMarkup(name: string, comment: string): string {
+  if (isFullbleed(name, 'gallery')) {
     // prettier-ignore
     return `</div>
             </figure>
@@ -67,7 +58,7 @@ function handleExitDirective(token: RegExpMatchArray) {
             </section>${comment}`
   }
 
-  if (isSpread(directive)) {
+  if (isFullbleed(name, 'spread')) {
     return `</div>
             </div>
 
@@ -82,6 +73,28 @@ function handleExitDirective(token: RegExpMatchArray) {
   }
 
   return `</section>${comment}`
+}
+
+// Closes a block: at its `exit`, or at the outer block's `exit` that crossed
+// it, with `section:exit#id`; at the end of its container with `section:#id`.
+//
+// Every block left open closes at the end of its container (TASK-161). Only a
+// structural block with no attributes used to: the id was read from the
+// opener's line by splitting it on `:`, so `chapter:c classes:x` read
+// `c classes` and matched nothing, and a dialogue, gallery or spread was
+// never closed
+export function close(block: ClosingBlock, closedBy: ClosedBy): string {
+  if (closedBy === 'end') {
+    return closeMarkup(
+      block.name,
+      Html.comment(`END: section:#${htmlId(block.id)}`)
+    )
+  }
+  log.debug(`exit directive [${block.id}]`)
+  return closeMarkup(
+    block.name,
+    Html.comment(`END: section:exit#${htmlId(block.id)}`)
+  )
 }
 
 function openElement(
@@ -103,28 +116,6 @@ function openElement(
   return `${comment}<section id="${htmlId(id)}"${attrs}>`
 }
 
-function closeElement(marker: string) {
-  // tokens `nesting` prop is -1. we should be closing the html element
-  // here, but probably have done so above since we're treating `exit`
-  // directives as openers. check to see if the element has in fact been
-  // closed
-
-  const token = marker.split(':')
-  if (token.length < 2) return ''
-
-  const [, id] = token
-  if (!state.contains('cursor', { id })) return ''
-
-  // its id still exists in state, so it's open. force close here
-  const comment = Html.comment(`END: section:#${htmlId(id)}`)
-  const result = `</section>${comment}`
-
-  // remove the id
-  state.remove('cursor', { id })
-
-  return result
-}
-
 const render =
   ({ context = {} }: { context?: Context }) =>
   (tokens: DirectiveToken[], index: number) => {
@@ -133,27 +124,33 @@ const render =
     const fileName = `_markdown/${context.fileName}.md`
     const marker = token.info.trim()
 
-    if (token.nesting !== 1) return closeElement(marker)
+    // Closes are drawn by `close`, from the directive rule's node
+    if (token.nesting !== 1) return ''
 
-    // token open, we ignore closing tokens and let `exit` handle those
     const tokenClose = marker.match(MARKER_CLOSE_RE)
     const tokenOpen = marker.match(MARKER_OPEN_RE)
 
-    return tokenClose
-      ? handleExitDirective(tokenClose)
-      : // `validateOpen` has already matched this marker against
-        // MARKER_OPEN_RE, so a non-exit token always matches here
-        openElement(tokenOpen!, fileName, lineNumber)
+    // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
+    // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
+    // block with no id, and fails in `htmlId`, as it always has
+    if (tokenClose)
+      return close({ name: '', id: tokenClose[2], info: marker }, 'exit')
+
+    // `validateOpen` has already matched this marker against MARKER_OPEN_RE,
+    // so a non-exit token always matches here
+    return openElement(tokenOpen!, fileName, lineNumber)
   }
 
 export default {
   plugin,
   name: 'section',
-  renderer: (args: { context?: Context }) =>
-    createRenderer({
+  renderer: (args: { context?: Context }) => ({
+    ...createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,
       markerClose: MARKER_CLOSE_RE,
       render: render(args),
     }),
+    close,
+  }),
 }

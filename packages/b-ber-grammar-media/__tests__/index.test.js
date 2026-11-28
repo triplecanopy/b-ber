@@ -1,6 +1,6 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import media from '../src'
+import { resolve } from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -68,65 +68,57 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   },
 }))
 
-describe('b-ber-grammar-media', () => {
-  beforeEach(() => {
-    state.build = 'epub'
+// `resolve` gives exactly the line and caption the pre-pass used to splice
+// into the Markdown for each target (TASK-175)
+describe('b-ber-grammar-media resolve', () => {
+  const resolveFor = (build, id = 'foo', type = 'media') =>
+    resolve({ type, id, build, media: state.media })
+
+  it('resolves to the directive media.yml names for the target, with its caption', () => {
+    expect(resolveFor('epub')).toEqual({
+      params:
+        ' video:foo source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"myfoo"',
+      caption: ' here is a caption\n',
+      source:
+        '::: video:foo source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"myfoo"\n:: here is a caption\n::\n\n',
+    })
   })
 
-  it('processes the Markdown', () => {
-    const input = '# foo'
-    const result = media.render(input)
-
-    expect(result).toEqual(input)
+  it('resolves per target', () => {
+    expect(resolveFor('reader').params).toBe(
+      ' vimeo:foo source:"76979871" color:"f00" controls:"yes" poster:"my-image.jpg" classes:"myfoo"'
+    )
+    expect(resolveFor('mobi')).toEqual({
+      params: ' figure:foo source:"my-image.jpg" classes:"foo bar baz"',
+      source: '::: figure:foo source:"my-image.jpg" classes:"foo bar baz"',
+    })
   })
 
-  it('replaces a directive', () => {
-    const input = `# test\n\n::: media:foo\n`
-    const expected = `# test\n\n::: video:foo source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"myfoo"\n:: here is a caption\n::\n\n\n`
-    const result = media.render(input)
-
-    expect(result).toEqual(expected)
-  })
-
-  it('replaces a directive in a file with no linebreaks', () => {
-    const input = `::: media:foo`
-    const expected = `::: video:foo source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"myfoo"\n:: here is a caption\n::\n\n`
-    const result = media.render(input)
-
-    expect(result).toEqual(expected)
-  })
-
-  it('replaces multiple directives', () => {
-    const input = `# test\n\n::: media:foo\n\n::: media:bar\n`
-    const expected = `# test\n\n::: video:foo source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"myfoo"\n:: here is a caption\n::\n\n\n\n::: video:bar source:"demo-video" controls:"yes" poster:"my-image.jpg" classes:"mybar"\n:: here is a caption\n::\n\n\n`
-    const result = media.render(input)
-
-    expect(result).toEqual(expected)
-  })
-
-  it('replaces directives based on build', () => {
-    state.build = 'reader'
-
-    const input = `# test\n\n::: media:foo\n`
-    const expected = `# test\n\n::: vimeo:foo source:"76979871" color:"f00" controls:"yes" poster:"my-image.jpg" classes:"myfoo"\n:: here is a caption\n::\n\n\n`
-    const result = media.render(input)
-
-    expect(result).toEqual(expected)
+  it('resolves media-inline to the inline form', () => {
+    expect(resolveFor('mobi', 'bar', 'media-inline').params).toBe(
+      ' figure-inline:bar source:"my-image.jpg" classes:"foo bar baz"'
+    )
   })
 
   it('throws a missing ID error', () => {
-    const input = `# test\n\n::: media\n`
     const spy = jest.spyOn(log, 'error')
-
-    expect(() => media.render(input)).toThrow()
+    expect(() =>
+      resolve({
+        type: 'media',
+        id: undefined,
+        build: 'epub',
+        media: state.media,
+      })
+    ).toThrow('Missing ID [undefined]')
     expect(spy).toHaveBeenCalled()
   })
 
   it('throws a missing declaration error', () => {
-    const input = `# test\n\n::: media:xyz\n`
     const spy = jest.spyOn(log, 'error')
-
-    expect(() => media.render(input)).toThrow()
+    expect(() => resolveFor('epub', 'xyz')).toThrow('Missing ID [xyz]')
+    expect(() =>
+      resolve({ type: 'media', id: 'foo', build: 'sample', media: state.media })
+    ).toThrow('Missing build type [sample]')
     expect(spy).toHaveBeenCalled()
   })
 })

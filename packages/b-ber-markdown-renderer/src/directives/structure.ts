@@ -18,36 +18,45 @@
 //
 // `directive_exit` and `directive_end` stay where today's parser put its
 // tokens, so today's renderer can emit exactly what it emits now. The tokens
-// of directives not yet ported (pullquote, figure, …) are left as they are.
+// of directives not yet ported (the figure family) are left as they are.
 
 import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
-import { EXIT, INLINE, isBlockName, STRUCTURAL } from './registry'
-import { LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
+import {
+  EXIT,
+  familyOf,
+  INLINE,
+  isBlockName,
+  OWNED,
+  STRUCTURAL,
+} from './registry'
+import { INLINE_TOKEN, LINE_CLOSE, LINE_INVALID, LINE_OPEN } from './rule'
 import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
+
+// Which family's renderer draws a block's `exit`
+export const exitFamilyOf = (name: string): 'section' | 'pullquote' =>
+  familyOf(name) === 'pullquote' ? 'pullquote' : 'section'
+
+// How a block's `directive_close` came about: at its own `exit`, at an outer
+// block's `exit` that crossed it, or at the end of its Markdown container
+export type ClosedBy = 'exit' | 'crossed-exit' | 'end'
 
 export const OPEN = 'directive_open'
 export const CLOSE = 'directive_close'
 export const EXIT_MARK = 'directive_exit'
 export const END_MARK = 'directive_end'
 
-// Old plugins whose container holds the rest of the enclosing range, as the
-// directive rule's does. Their tokens are transparent to the nesting
-const RANGE_CONTAINER_RE = /^container_(pullQuote|dialogue|gallery|spread)_/
-// Old plugins whose open and close tokens are adjacent (b-ber-parser-figure)
-const FIGURE_CONTAINER_RE = /^container_(figure|audio-video|vimeo|iframe|logo)_/
-
 const isRuleToken = (t: MarkdownIt.Token): boolean =>
   t.type === LINE_OPEN || t.type === LINE_CLOSE
-const isRangeContainer = (t: MarkdownIt.Token): boolean =>
-  isRuleToken(t) || RANGE_CONTAINER_RE.test(t.type)
-const isTransparent = (t: MarkdownIt.Token): boolean =>
-  isRangeContainer(t) || FIGURE_CONTAINER_RE.test(t.type)
+// Every block's tokens are the rule's now. They hold the rest of the
+// enclosing range, so they are transparent to the nesting
+const isRangeContainer = isRuleToken
+const isTransparent = isRuleToken
 
 interface OpenBlock {
   line: DirectiveLine
-  // Set for a structural block, whose tokens this pass owns
+  // Set for a block the rule owns, whose tokens this pass rewrites
   node: DirectiveNode | null
 }
 
@@ -116,11 +125,15 @@ export function structure(state: MarkdownIt.StateCore): void {
     list.push(token)
     inserts.set(at, list)
   }
-  const closeToken = (node: DirectiveNode, level: number) => {
+  const closeToken = (
+    node: DirectiveNode,
+    level: number,
+    closedBy: ClosedBy
+  ) => {
     const token = new state.Token(CLOSE, 'section', -1)
     token.block = true
     token.level = level
-    token.meta = { directive: node }
+    token.meta = { family: familyOf(node.name), directive: node, closedBy }
     return token
   }
 
@@ -147,7 +160,7 @@ export function structure(state: MarkdownIt.StateCore): void {
     if (!first) blockIds.set(line.id, line)
 
     let node: DirectiveNode | null = null
-    if (token && STRUCTURAL.has(line.name)) {
+    if (token && OWNED.has(line.name)) {
       const attrs: Record<string, string> = {}
       for (const a of line.attributes) attrs[a.key] = a.value
       node = {
@@ -162,7 +175,7 @@ export function structure(state: MarkdownIt.StateCore): void {
         line: token.map ? token.map[0] : 0,
       }
       token.type = OPEN
-      token.meta = { directive: node }
+      token.meta = { ...token.meta, directive: node }
     }
     current().blocks.push({ line, node })
   }
@@ -206,8 +219,9 @@ export function structure(state: MarkdownIt.StateCore): void {
         })),
       })
     }
-    for (const b of [...inner.reverse(), named])
-      if (b.node) insert(at, closeToken(b.node, level))
+    for (const b of inner.reverse())
+      if (b.node) insert(at, closeToken(b.node, level, 'crossed-exit'))
+    if (named.node) insert(at, closeToken(named.node, level, 'exit'))
   }
 
   const unmatchedNote = (id: string) => {
@@ -277,7 +291,7 @@ export function structure(state: MarkdownIt.StateCore): void {
       })
     }
     for (const b of [...scope.blocks].reverse())
-      if (b.node) insert(at, closeToken(b.node, level))
+      if (b.node) insert(at, closeToken(b.node, level, 'end'))
   }
 
   // Lines markdown-it left as text, in a paragraph or a setext heading
@@ -294,16 +308,47 @@ export function structure(state: MarkdownIt.StateCore): void {
     })
   }
 
-  // Lines an old figure-family plugin took as its caption
+  // Lines a single-line directive took as its caption
   const visitCaption = (token: MarkdownIt.Token, at: number): void => {
-    if (typeof token.children !== 'string' || !token.map) return
+    const { caption } = token.meta as { caption?: string }
+    if (typeof caption !== 'string' || !token.map) return
     for (let line = token.map[0] + 1; line <= token.map[1]; line++) {
       const text = src.slice(starts[line], lineEnd(line))
       const offset = fenceOffset(text)
       if (offset === -1) continue
       const directive = read(starts[line] + offset, line, 'directive')
-      if (directive) visit(directive, at + 2, token.level, null)
+      if (directive) visit(directive, at + 1, token.level, null)
     }
+  }
+
+  // A single-line directive's own line. It becomes a node when the line is
+  // one by the spec: the old grammars also claim lines that are not
+  // (`::: junk figure:f`, TASK-161 bug 12)
+  const visitInline = (token: MarkdownIt.Token, at: number): void => {
+    if (!token.map) return
+    const line = token.map[0]
+    const fenceStart = lineEnd(line) - token.info.length - token.markup.length
+    const directive = read(fenceStart, line, 'directive')
+    if (directive) visit(directive, at, token.level, null)
+    if (directive?.id && INLINE.has(directive.name)) {
+      const attrs: Record<string, string> = {}
+      for (const a of directive.attributes) attrs[a.key] = a.value
+      const { caption } = token.meta as { caption?: string }
+      const node: DirectiveNode = {
+        type: 'directive',
+        name: directive.name,
+        id: directive.id,
+        inline: true,
+        attrs,
+        position: directive.span,
+        children: [],
+        info: token.info,
+        line,
+        ...(caption === undefined ? {} : { caption }),
+      }
+      token.meta = { ...token.meta, directive: node }
+    }
+    visitCaption(token, at)
   }
 
   // Open tokens, to pair each close token with
@@ -323,7 +368,6 @@ export function structure(state: MarkdownIt.StateCore): void {
       const directive = read(fenceStart, line, 'directive')
       if (directive)
         visit(directive, i, token.level, isRuleToken(token) ? token : null)
-      if (FIGURE_CONTAINER_RE.test(token.type)) visitCaption(token, i)
       return
     }
 
@@ -334,6 +378,11 @@ export function structure(state: MarkdownIt.StateCore): void {
         token.type = END_MARK
         token.nesting = 0
       }
+      return
+    }
+
+    if (token.type === INLINE_TOKEN) {
+      visitInline(token, i)
       return
     }
 

@@ -1,16 +1,17 @@
-// we can't use our nice factory for this because it doesn't support
-// customized closing elements (always outputs `</section>`), so we have to
-// write it long-hand. see comments below
+// pullquote and blockquote. Their closes are drawn by `close`, from
+// b-ber-markdown-renderer's directive rule, which knows which block an exit
+// closes (TASK-175). The citation is read from the opener's line there; it
+// used to be kept in module-level state between the open and the close
 
 import {
   attributesObject,
   attributesString,
+  parseAttrs,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import {
-  type DirectiveToken,
-  type RendererContext,
-  type RendererInstance,
-  State as state,
+import type {
+  DirectiveToken,
+  RendererContext,
+  RendererInstance,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
@@ -27,34 +28,19 @@ const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
 // Optional so the tests can render without a file
 type Context = Partial<RendererContext>
 
-let citation = ''
-const pullquoteIndices: { id: string; type: string }[] = [] // track these separately
-
 function handleOpen(
   token: RegExpMatchArray,
-  context: Context,
   fileName: string,
   lineNumber: number | null
 ) {
   // the pullquote opens
   const [, type, id, attrs] = token
 
-  // we could just state the id in a variable outside of `render`, but
-  // good to keep consistent with the normal handling
-  const index = state.indexOf('cursor', { id })
-  if (index > -1)
-    throw log.error(
-      `Duplicate [id] [${id}]. [id] must be unique at [${context.fileName}.md:${lineNumber}]`
-    )
-
-  pullquoteIndices.push({ id, type })
-
   // parse attrs as normal
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
 
-  // get citation which we'll use below
+  // The citation is drawn by `close`
   if (has(attrsObject, 'citation')) {
-    ;({ citation } = attrsObject)
     // `has` narrows `citation` to a required key, which `delete` rejects
     delete (attrsObject as Record<string, string>).citation
   }
@@ -70,35 +56,34 @@ function cite(text: string) {
   return `<footer><cite>&#8212;&#160;${text}</cite></footer>`
 }
 
-function handleClose(token: string, instance: RendererInstance) {
-  // it's an exit to a pullquote. grab the id from the list of
-  // indices
+// A pullquote or blockquote being closed, from the directive rule's node
+export interface ClosingBlock {
+  name: string
+  id: string
+  // The opener's line after the fence, which holds the citation
+  info: string
+}
 
-  const { id, type } = pullquoteIndices[pullquoteIndices.length - 1]
-  const elementName = type === 'pullquote' ? 'section' : 'blockquote'
+// The markup that closes a pullquote or blockquote, with its citation
+const close =
+  (instance: RendererInstance) =>
+  (block: ClosingBlock): string => {
+    const { name, id, info } = block
+    // An opener with `exit` in its line drew no open (see `render`), so it
+    // draws no close either
+    if (info.trim().match(MARKER_CLOSE_RE)) return ''
+    const elementName = name === 'pullquote' ? 'section' : 'blockquote'
+    const [, , , attrs] = info.trim().match(MARKER_OPEN_RE) ?? []
+    // Read as `attributesObject` read it, without its warnings, which the
+    // opener already gave
+    const { citation } = parseAttrs((attrs ?? '').trim())
+    const comment = `<!-- END: section:${name}#${id} -->`
 
-  // check that the id matches our token
-  if (!id || !token.match(new RegExp(`exit:${id}`))) return ''
-
-  let result = ''
-
-  // it's a match for the exit directive's `id`, output the citation
-  // with the HTML comment and reset the citation to prepare for the
-  // next iteration
-  const comment = `<!-- END: section:${type}#${id} -->`
-
-  result = `
+    return `
         ${citation ? cite(instance.renderInline(citation)) : ''}
         </${elementName}>${comment}
     `
-
-  citation = ''
-
-  // update indices
-  pullquoteIndices.pop()
-
-  return result
-}
+  }
 
 const validateOpen =
   ({ context }: { context: Context }) =>
@@ -117,27 +102,23 @@ const validateOpen =
   }
 
 const render =
-  ({ instance, context }: { instance: RendererInstance; context: Context }) =>
+  ({ context }: { context: Context }) =>
   (tokens: DirectiveToken[], idx: number) => {
     const fileName = `_markdown/${context.fileName}.md`
     const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
     const token = tokens[idx].info.trim()
 
-    // we handle opening and closing render methods on element open, since
-    // we need to append data (citation blocks) from the directive's opening
-    // attributes to the end of the element
+    // Closes are drawn by `close`
     if (tokens[idx].nesting !== 1) return ''
 
-    // either a `pullquote`, `blockquote` or an `exit` directive, we
-    // keep matches for both in `open` and `close` vars below
+    // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
+    // line was taken for an exit, and drew nothing. It still draws nothing
     const tokenOpen = token.match(MARKER_OPEN_RE)
     const tokenClose = token.match(MARKER_CLOSE_RE)
 
-    return tokenClose
-      ? handleClose(token, instance)
-      : tokenOpen
-        ? handleOpen(tokenOpen, context, fileName, lineNumber)
-        : ''
+    return tokenClose || !tokenOpen
+      ? ''
+      : handleOpen(tokenOpen, fileName, lineNumber)
   }
 
 export default {
@@ -155,6 +136,7 @@ export default {
     markerOpen: MARKER_OPEN_RE,
     markerClose: MARKER_CLOSE_RE,
     validateOpen: validateOpen({ context }),
-    render: render({ instance, context }),
+    render: render({ context }),
+    close: close(instance),
   }),
 }

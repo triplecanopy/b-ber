@@ -39,7 +39,7 @@ alongside directive markup.</p>
 <p>A second paragraph follows with <strong>bold</strong> and <em>italic</em> text, plus a
 <a href="https://example.com">link</a>
 .</p>
-<pullquote class="pullquote  chapter"><p><em>The quick brown fox jumps over the lazy dog.</em></p>
+<pullquote class=" pullquote"><p><em>The quick brown fox jumps over the lazy dog.</em></p>
 </pullquote>
 <div class="figure__small figure__small--landscape"><figure><a href="figurech-01-figure-01.xhtml#ch-01-figure-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
 </a>
@@ -47,7 +47,7 @@ alongside directive markup.</p>
 </div>
 <p>Figure one caption text.</p>
 </subchapter>
-<subchapter class="highlighted subchapter  chapter"><h2>Section Two — Attributes</h2>
+<subchapter class="highlighted subchapter bodymatter chapter"><h2>Section Two — Attributes</h2>
 <p>This paragraph uses an inline attribute block to inject a class name.{.callout}</p>
 </subchapter>
 </section>
@@ -59,6 +59,14 @@ alongside directive markup.</p>
 </subchapter>
 <subchapter class="subchapter bodymatter chapter"><h2>Gallery</h2>
 <gallery class=" gallery"><div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-01.xhtml#ch-02-gallery-figure-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-01.png"></img>
+</a>
+</figure>
+</div>
+<div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-02.xhtml#ch-02-gallery-figure-02"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-02.png"></img>
+</a>
+</figure>
+</div>
+<div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-03.xhtml#ch-02-gallery-figure-03"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-03.png"></img>
 </a>
 </figure>
 </div>
@@ -161,8 +169,23 @@ alongside directive markup.</p>
 </section>
 <pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-01"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-01.png"></img>
 </a>
-<figcaption class="figcaption"><p class="small">: figure:ch-02-gallery-figure-02 source:placeholder-square-02.png alt:&quot;Gallery image two&quot;
-</p>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-02"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-02.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-03"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-03.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
 </figcaption>
 </div>
 </figure>

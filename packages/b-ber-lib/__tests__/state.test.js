@@ -127,7 +127,6 @@ describe('State getters and setters', () => {
           guide: [],
           spine: null,
           toc: [],
-          cursor: [],
           figures: [],
           footnotes: [],
           remoteAssets: [],
@@ -161,12 +160,6 @@ describe('State getters and setters', () => {
     state.build = 'epub'
     state.footnotes = [{ id: 'fn-1' }]
     expect(state.footnotes).toEqual([{ id: 'fn-1' }])
-  })
-
-  it('cursor getter/setter round-trips', () => {
-    state.build = 'epub'
-    state.cursor = [{ chapter: 'ch01' }]
-    expect(state.cursor).toEqual([{ chapter: 'ch01' }])
   })
 
   it('toc getter/setter round-trips', () => {

@@ -31,14 +31,14 @@ here.</p>
 <section id="fixture-outer" class="subchapter bodymatter chapter" epub:type="bodymatter chapter"><p>Outer section.</p>
 
 <!-- START: section:subchapter#fixture-inner; _markdown/rendering-fixture.md:43 -->
-<section id="fixture-inner" class="one two subchapter  chapter" epub:type=" chapter"><p>Inner section.</p>
+<section id="fixture-inner" class="one two subchapter bodymatter chapter" epub:type="bodymatter chapter"><p>Inner section.</p>
 </section>
 <!-- END: section:exit#fixture-inner -->
 </section>
 <!-- END: section:exit#fixture-outer -->
-<!-- START: section:pullquote#fixture-pullquote --><section class="pullquote  chapter" epub:type=" chapter"><p>A pull quote.</p>
+<!-- START: section:pullquote#fixture-pullquote --><section class=" pullquote"><p>A pull quote.</p>
 
-        
+        <footer><cite>&#8212;&#160;Someone</cite></footer>
         </section><!-- END: section:pullquote#fixture-pullquote -->
     <!-- START: section:blockquote#fixture-blockquote --><blockquote class=" blockquote"><p>Quoted text with <em>emphasis</em>.</p>
 

@@ -43,12 +43,65 @@ export const isKnownName = (name: string): boolean =>
 export const isBlockName = (name: string): boolean =>
   STRUCTURAL.has(name) || MISC_BLOCKS.has(name)
 
-// What `b-ber-grammar-section` matched, kept exactly so that the rule claims
-// the same lines the old parser did. `params` is the line after the fence,
-// trimmed. A structural name or `exit`, then optionally `:id` and the rest.
+// The old plugins whose lines the rule claims, each with the regex that
+// plugin matched, kept exactly so that the rule claims the same lines it did.
+// `params` is the line after the fence, trimmed: a name or `exit`, then
+// optionally `:id` and the rest. They are tried in this order, which was the
+// plugins' order in markdown-it's block rules.
+//
+// - `section`: b-ber-grammar-section's structural blocks, and every `exit`.
+//   The structure pass decides which block an exit closes;
+// - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`;
+// - `dialogue`: b-ber-grammar-dialogue's `dialogue`;
+// - `gallery` and `spread`: b-ber-grammar-gallery's and b-ber-grammar-spread's,
+//   both parsed by b-ber-parser-gallery.
+//
+// Then the single-line directives b-ber-parser-figure parsed, each claimed by
+// its grammar's own `validate`, which the renderer passes in (`InlineClaim`):
+// `figure` (b-ber-grammar-image), `audio-video`, `vimeo`, `iframe`, `logo`
+export type BlockFamily =
+  | 'section'
+  | 'pullquote'
+  | 'dialogue'
+  | 'gallery'
+  | 'spread'
+export type InlineFamily =
+  | 'figure'
+  | 'audio-video'
+  | 'vimeo'
+  | 'iframe'
+  | 'logo'
+export type Family = BlockFamily | InlineFamily
+
 export const CLAIM_RE = new RegExp(
   `^(${Array.from(BLOCK_DIRECTIVES).join('|')}|exit)(?::([^\\s]+)(\\s.*)?)?$`
 )
+
+export const PULLQUOTE_CLAIM_RE =
+  /^(pullquote|blockquote)(?::([^\s]+)(\s.*)?)?$/
+
+export const DIALOGUE_CLAIM_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
+export const GALLERY_CLAIM_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
+export const SPREAD_CLAIM_RE = /^(spread)(?::([^\s]+)(\s.*)?)?$/
+
+// The family each block the rule owns belongs to. The structure pass
+// rewrites the tokens of these blocks
+const FAMILY_OF = new Map<string, Family>([
+  ...Array.from(BLOCK_DIRECTIVES, (name): [string, Family] => [
+    name,
+    'section',
+  ]),
+  ['pullquote', 'pullquote'],
+  ['blockquote', 'pullquote'],
+  ['dialogue', 'dialogue'],
+  ['gallery', 'gallery'],
+  ['spread', 'spread'],
+])
+
+export const OWNED: ReadonlySet<string> = new Set(FAMILY_OF.keys())
+
+export const familyOf = (name: string): Family =>
+  FAMILY_OF.get(name) ?? 'section'
 
 const distance = (a: string, b: string): number => {
   const row = Array.from({ length: b.length + 1 }, (_, i) => i)

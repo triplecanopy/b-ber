@@ -83,7 +83,6 @@ export async function createProject({
       guide: [],
       spine,
       toc: spine.nested,
-      cursor: [],
       figures: [],
       footnotes: [],
       remoteAssets: [],

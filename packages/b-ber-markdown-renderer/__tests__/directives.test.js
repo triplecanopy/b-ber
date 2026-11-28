@@ -441,6 +441,149 @@ describe('directive structure', () => {
     expect(section.children.map((n) => n.type)).toEqual(['paragraph'])
   })
 
+  it('makes pullquote and blockquote nodes, with their content (TASK-175)', () => {
+    const { env, tokens } = parse(
+      '::: chapter:a\n\n::: pullquote:p citation:"Someone"\n\nquoted\n\n::: exit:p\n\n::: blockquote:q\n\nmore\n\n::: exit:q\n\n::: exit:a\n'
+    )
+    expect(env.diagnostics).toEqual([])
+    const [chapter] = env.tree.children
+    const blocks = chapter.children.filter((n) => n.type === 'directive')
+    expect(blocks).toMatchObject([
+      { name: 'pullquote', id: 'p', attrs: { citation: 'Someone' } },
+      { name: 'blockquote', id: 'q' },
+    ])
+    expect(blocks[0].children.map((n) => n.type)).toEqual(['paragraph'])
+    const families = tokens
+      .filter((t) => t.type === 'directive_open')
+      .map((t) => t.meta.family)
+    expect(families).toEqual(['section', 'pullquote', 'pullquote'])
+  })
+
+  it('makes a dialogue node and marks its speaker lines (TASK-175)', () => {
+    const { env, tokens } = parse(
+      '::: dialogue:d\n\n:: Ann :: Hello.\n\n::: exit:d\n'
+    )
+    expect(env.diagnostics).toEqual([])
+    expect(env.tree.children[0]).toMatchObject({
+      type: 'directive',
+      name: 'dialogue',
+      id: 'd',
+    })
+    const paragraph = tokens.find((t) => t.type === 'paragraph_open')
+    expect(paragraph.attrGet('class')).toBe('interlocutor-parent')
+    const line = tokens.find((t) => t.type === 'inline')
+    expect(line.content).toBe(' Hello.')
+    expect(line.children[0].attrs).toEqual([['class', 'interlocutor']])
+  })
+
+  // The dialogue's tokens hold the rest of its range, and a speaker line
+  // anywhere after it used to be marked too (TASK-161)
+  it('leaves a speaker line after the dialogue’s exit as text', () => {
+    const { tokens } = parse(
+      '::: dialogue:d\n\n:: Ann :: Hello.\n\n::: exit:d\n\n:: Bob :: Not dialogue.\n'
+    )
+    const lines = tokens.filter((t) => t.type === 'inline')
+    expect(lines.map((t) => t.content)).toEqual([
+      ' Hello.',
+      ':: Bob :: Not dialogue.',
+    ])
+    const paragraphs = tokens.filter((t) => t.type === 'paragraph_open')
+    expect(paragraphs.map((t) => t.attrGet('class'))).toEqual([
+      'interlocutor-parent',
+      null,
+    ])
+  })
+
+  it('makes gallery and spread nodes, and runs their afterBlock hooks (TASK-175)', () => {
+    const seen = []
+    const withHooks = new MarkdownIt().use(directives, {
+      afterBlock: {
+        gallery: (state) => seen.push(['gallery', { ...state.tokens.at(-1) }]),
+        spread: (state) => seen.push(['spread', { ...state.tokens.at(-1) }]),
+      },
+    })
+    const env = { file: 'x.md', diagnostics: [] }
+    withHooks.parse(
+      '::: gallery:g\n\n:: type:image source:a.png ::\n\n::: exit:g\n\n::: spread:s\n\nx\n\n::: exit:s\n',
+      env
+    )
+    expect(env.diagnostics).toEqual([])
+    // Paired by their exits, they are siblings in the tree
+    expect(
+      env.tree.children
+        .filter((n) => n.type === 'directive')
+        .map(({ name, id }) => `${name}:${id}`)
+    ).toEqual(['gallery:g', 'spread:s'])
+    // The spread's tokens are inside the gallery's range, as the old parser
+    // shaped them, so its hook runs first, when its own tokens are complete
+    expect(seen.map(([name]) => name)).toEqual(['spread', 'gallery'])
+    for (const [name, last] of seen) {
+      expect(last.type).toBe('directive_line_close')
+      expect(last.meta.family).toBe(name)
+    }
+  })
+
+  describe('single-line directives (TASK-175)', () => {
+    const withFigures = new MarkdownIt().use(directives, {
+      inline: [
+        {
+          family: 'figure',
+          validate: (params) => /^figure:/.test(params.trim()),
+          render: ([token]) => `<figure>${token.children ?? ''}</figure>`,
+        },
+      ],
+    })
+    const parseFigures = (src) => {
+      const env = { file: 'x.md', diagnostics: [] }
+      return { env, tokens: withFigures.parse(src, env) }
+    }
+
+    it('makes an inline node with its caption', () => {
+      const { env } = parseFigures(
+        '::: figure:f source:a.png\n:: A *caption*\n::\n\nAfter.\n'
+      )
+      expect(env.tree.children[0]).toMatchObject({
+        type: 'directive',
+        name: 'figure',
+        id: 'f',
+        inline: true,
+        attrs: { source: 'a.png' },
+        caption: ' A *caption*\n',
+      })
+      expect(env.tree.children[1].type).toBe('paragraph')
+    })
+
+    it('renders with the grammar, from the open token the old parser made', () => {
+      expect(
+        withFigures.render('::: figure:f source:a.png\n:: Cap\n::\n')
+      ).toBe('<figure> Cap\n</figure>')
+    })
+
+    // b-ber-parser-figure took the next line starting `::` as a caption, and a
+    // `:::` line starts with `::` (TASK-161 bug 11): `b` opened a caption and
+    // `c` closed it, so neither rendered
+    it('does not take the next directive lines as a caption', () => {
+      const { tokens } = parseFigures(
+        '::: figure:a source:a.png\n::: figure:b source:b.png\n::: figure:c source:c.png\n'
+      )
+      const inline = tokens.filter((t) => t.type === 'directive_inline')
+      expect(inline.map((t) => t.meta.directive.id)).toEqual(['a', 'b', 'c'])
+      expect(inline.map((t) => t.meta.caption)).toEqual([
+        undefined,
+        undefined,
+        undefined,
+      ])
+    })
+
+    it('still takes a caption between two `::` lines after a directive', () => {
+      const { tokens } = parseFigures(
+        '::: figure:a source:a.png\n:: Cap\n::\n::: figure:b source:b.png\n'
+      )
+      const inline = tokens.filter((t) => t.type === 'directive_inline')
+      expect(inline.map((t) => t.meta.caption)).toEqual([' Cap\n', undefined])
+    })
+  })
+
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'
