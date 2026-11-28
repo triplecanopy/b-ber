@@ -10,7 +10,7 @@
 | `generate` | `bber generate <title> [type]`                      | Create a new chapter (frontmatter, bodymatter, or backmatter) |
 | `build`    | `bber build [epub\|mobi\|pdf\|web\|sample\|reader\|xml]` | Build one or all output formats; several may be named |
 | `serve`    | `bber serve [reader\|web]`                          | Preview a build in the browser                                |
-| `check`    | `bber check [project]`                              | Validate project Markdown                                     |
+| `check`    | `bber check [project] [--strict]`                   | Check the directives; exits 1 on an error, or with `--strict` a warning |
 | `cover`    | `bber cover`                                        | Generate a project cover image                                |
 | `theme`    | `bber theme <set\|list> [name]`                     | Set or list available themes                                  |
 | `deploy`   | `bber deploy [builds...]`                           | Upload builds to Amazon S3                                    |

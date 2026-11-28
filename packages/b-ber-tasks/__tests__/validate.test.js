@@ -113,6 +113,28 @@ describe('task: validate', () => {
     expect(printed()).toContain('_markdown/worse.md:4:1 - warning')
   })
 
+  describe('strict', () => {
+    test('rejects on a warning', async () => {
+      project = await createProject({ markdown: { bad: WARNINGS } })
+
+      await expect(
+        validate({ project: project.root, strict: true })
+      ).rejects.toThrow()
+      expect(log.error).toHaveBeenCalledWith(
+        'Check failed (--strict): %s',
+        '0 errors and 2 warnings in 1 file'
+      )
+    })
+
+    test('resolves when there is nothing to report', async () => {
+      project = await createProject({ markdown: { one: VALID } })
+
+      await expect(
+        validate({ project: project.root, strict: true })
+      ).resolves.toMatchObject({ errors: 0, warnings: 0 })
+    })
+  })
+
   // Defect (#736): the missing-project check tests `fs.pathExists`'s promise,
   // which is always truthy, so it never fires: the task rejects from readdir
   // instead of reporting "Project path does not exist".

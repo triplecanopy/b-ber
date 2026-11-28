@@ -22,8 +22,11 @@ const count = (n: number, noun: string): string =>
 // highlights `[text]`, which would move the carets off the spans they mark
 const validate = async ({
   project,
+  strict = false,
 }: {
   project: string
+  // Fail on warnings too, for CI (`bber check --strict`)
+  strict?: boolean
 }): Promise<ValidateResult> => {
   const markdownPath = path.resolve(
     process.cwd(),
@@ -70,6 +73,7 @@ const validate = async ({
   // An error fails the check, so that `bber check` exits 1 and can gate a CI
   // run. It resolved whatever it found until TASK-178 (#796)
   if (result.errors) throw log.error('Check failed: %s', summary)
+  if (strict) throw log.error('Check failed (--strict): %s', summary)
 
   log.notice(summary)
   return result

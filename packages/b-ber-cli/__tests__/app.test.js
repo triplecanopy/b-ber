@@ -227,7 +227,10 @@ describe('the logger’s flags', () => {
     const { tasks } = quietly(['check', '--verbose', 'book'])
     await flushPromises()
 
-    expect(tasks.validate).toHaveBeenCalledWith({ project: 'book' })
+    expect(tasks.validate).toHaveBeenCalledWith({
+      project: 'book',
+      strict: false,
+    })
   })
 
   it('are not passed to build as configuration options', async () => {

@@ -23,6 +23,7 @@ jest.mock('@canopycanopycanopy/b-ber-templates/Project', () => ({}))
 const mockYargs = () => ({
   check: jest.fn().mockReturnThis(),
   positional: jest.fn().mockReturnThis(),
+  option: jest.fn().mockReturnThis(),
   help: jest.fn().mockReturnThis(),
   alias: jest.fn().mockReturnThis(),
   fail: jest.fn().mockReturnThis(),
@@ -46,6 +47,10 @@ describe('check builder', () => {
     const yargs = mockYargs()
     expect(check.builder(yargs)).toBe(yargs)
     expect(yargs.positional).toHaveBeenCalledWith('project', expect.any(Object))
+    expect(yargs.option).toHaveBeenCalledWith(
+      'strict',
+      expect.objectContaining({ type: 'boolean', default: false })
+    )
     expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
   })
 
@@ -64,19 +69,35 @@ describe('check builder', () => {
 describe('check handler', () => {
   it('validates the given project', () => {
     check.handler({ project: 'my-book' })
-    expect(validate).toHaveBeenCalledWith({ project: 'my-book' })
+    expect(validate).toHaveBeenCalledWith({ project: 'my-book', strict: false })
   })
 
   it('validates the working directory when no project is given', () => {
     check.handler({})
-    expect(validate).toHaveBeenCalledWith({ project: process.cwd() })
+    expect(validate).toHaveBeenCalledWith({
+      project: process.cwd(),
+      strict: false,
+    })
   })
 
   it('is reached through yargs with the positional', () => {
     const { tasks } = runCli(['check', 'my-book'], ({ log }) =>
       spyOnLogger(log)
     )
-    expect(tasks.validate).toHaveBeenCalledWith({ project: 'my-book' })
+    expect(tasks.validate).toHaveBeenCalledWith({
+      project: 'my-book',
+      strict: false,
+    })
+  })
+
+  it('passes --strict to the task', () => {
+    const { tasks } = runCli(['check', 'my-book', '--strict'], ({ log }) =>
+      spyOnLogger(log)
+    )
+    expect(tasks.validate).toHaveBeenCalledWith({
+      project: 'my-book',
+      strict: true,
+    })
   })
 
   describe('when the task fails', () => {
