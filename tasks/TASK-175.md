@@ -24,8 +24,8 @@ golden snapshot regenerated so the PR shows it:
 - speaker lines and gallery items after their block's `exit` are plain text;
 - crossed exits and unclosed pullquotes produce balanced output;
 - an unmatched `exit` is ignored, which fixes `international-art-english-e-book`'s
-  crash and changes `the-world-is-unknown`, whose source typo should be
-  fixed;
+  crash and changes `the-world-is-unknown`'s output, because of a typo in
+  its source;
 - **a directive block inside a list item no longer drops the rest of the
   document.** Added 2026-11-25, after TASK-174 found it (TASK-161's list is
   closed, so this task extends it). Today a block opened in a list item
@@ -170,10 +170,11 @@ close; balancing crossed exits on their own crashed `the-world-is-unknown`,
 whose typo'd exit closed its blockquote by prefix and left the pairing
 thinking it unclosed. Together, every block closes exactly once.
 
-**`the-world-is-unknown` needs a source fix**, as TASK-161 expected: its
+**`the-world-is-unknown`'s output changes**, as TASK-161 expected: its
 `::: exit:affirmations-pullquotes` closes nothing now, so the rest of the
-essay is inside the blockquote `affirmations-pullquote`. The exit should
-read `exit:affirmations-pullquote`.
+essay is inside the blockquote `affirmations-pullquote`. Recorded for the
+book's maintainers only: b-ber doesn't edit project sources, and the
+GitLab projects are read-only test input here.
 
 **The list-item fix is one line, not real pairs.** The rule set
 `state.line` to the end of its range after tokenizing the rest of it. In a
