@@ -48,6 +48,8 @@
 <item id="_figure-ch-03-vimeo-01_xhtml" href="text/figure-ch-03-vimeo-01.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
 <item id="_figurech-01-figure-01_xhtml" href="text/figurech-01-figure-01.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
 <item id="_figurech-02-gallery-figure-01_xhtml" href="text/figurech-02-gallery-figure-01.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_figurech-02-gallery-figure-02_xhtml" href="text/figurech-02-gallery-figure-02.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_figurech-02-gallery-figure-03_xhtml" href="text/figurech-02-gallery-figure-03.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
 <item id="_figurech-02-spread-figure-01_xhtml" href="text/figurech-02-spread-figure-01.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
 <item id="_figures-titlepage_xhtml" href="text/figures-titlepage.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
 <item id="_figurespread-consec-f1_xhtml" href="text/figurespread-consec-f1.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
@@ -92,6 +94,8 @@
 <itemref idref="_figures-titlepage_xhtml" linear="yes"/>
 <itemref idref="_figurech-01-figure-01_xhtml" linear="yes"/>
 <itemref idref="_figurech-02-gallery-figure-01_xhtml" linear="yes"/>
+<itemref idref="_figurech-02-gallery-figure-02_xhtml" linear="yes"/>
+<itemref idref="_figurech-02-gallery-figure-03_xhtml" linear="yes"/>
 <itemref idref="_figurech-02-spread-figure-01_xhtml" linear="yes"/>
 <itemref idref="_figure-ch-02-iframe-01_xhtml" linear="yes"/>
 <itemref idref="_figure-ch-03-audio-01_xhtml" linear="yes"/>

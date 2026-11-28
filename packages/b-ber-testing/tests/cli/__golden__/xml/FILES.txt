@@ -18,6 +18,8 @@ OPS/text/figure-ch-03-video-01.xhtml  text
 OPS/text/figure-ch-03-vimeo-01.xhtml  text
 OPS/text/figurech-01-figure-01.xhtml  text
 OPS/text/figurech-02-gallery-figure-01.xhtml  text
+OPS/text/figurech-02-gallery-figure-02.xhtml  text
+OPS/text/figurech-02-gallery-figure-03.xhtml  text
 OPS/text/figurech-02-spread-figure-01.xhtml  text
 OPS/text/figures-titlepage.xhtml  text
 OPS/text/figurespread-consec-f1.xhtml  text

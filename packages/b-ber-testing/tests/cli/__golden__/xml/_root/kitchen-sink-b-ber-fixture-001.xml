@@ -62,6 +62,14 @@ alongside directive markup.</p>
 </a>
 </figure>
 </div>
+<div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-02.xhtml#ch-02-gallery-figure-02"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-02.png"></img>
+</a>
+</figure>
+</div>
+<div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-03.xhtml#ch-02-gallery-figure-03"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-03.png"></img>
+</a>
+</figure>
+</div>
 </gallery>
 </subchapter>
 <subchapter class="subchapter bodymatter chapter"><h2>Spread</h2>
@@ -161,8 +169,23 @@ alongside directive markup.</p>
 </section>
 <pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-01"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-01.png"></img>
 </a>
-<figcaption class="figcaption"><p class="small">: figure:ch-02-gallery-figure-02 source:placeholder-square-02.png alt:&quot;Gallery image two&quot;
-</p>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-02"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-02.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-03"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-03.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
 </figcaption>
 </div>
 </figure>
