@@ -188,19 +188,39 @@ issue number, and that file is what the check validates against:
 | Node.js modernization | [#474](https://github.com/triplecanopy/b-ber/issues/474) |
 | React 19 (reader-react) — **closed** 2026-11-06, migration complete | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
 | Reader quality (reader-react) | [#713](https://github.com/triplecanopy/b-ber/issues/713) |
-| Dependency health | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
+| Dependency health — **closed** 2026-11-28, every task done; how update work is tracked next is undecided | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
 | EPUB spec compliance | [#619](https://github.com/triplecanopy/b-ber/issues/619) |
 | Build pipeline & directive redesign | [#792](https://github.com/triplecanopy/b-ber/issues/792) |
 
-**Dependency health** is unlike the others: they are bounded (there is a state
-in which the migration is finished), whereas keeping dependencies current and
-vulnerability-free is continuous. It does not "complete" — it reaches a working
-footing and then needs maintaining. Treat a quiet Renovate queue as the
-definition of done for any given task under it, never for the epic.
+**Dependency health** was run as a continuous epic from 2026-09-22 and closed on
+2026-11-28 with all of its tasks done and Renovate on a working footing. The
+strategy for dependency and security update work after it has not been chosen.
+Until it is, the runbook in "Dependency Updates" below still applies, and a
+dependency task that cannot wait is raised with the user rather than filed under
+the closed epic by default. Record the strategy here once it is decided.
 
 Adding an epic means a line in `tasks/EPICS.json`, an issue of type `Epic`, and a
 row in the table above. If a task fits none of them, that is a signal to reframe
 the task or raise a new epic — do not leave it unclassified.
+
+### Closing an epic
+
+**An epic closes when its "Done means" is true of the code, not when its last
+sub-issue closes.** The two drift apart: tasks get filed for the work someone
+thought of, and the definition names the outcome. Before closing an epic:
+
+1. Re-read the **Done means** line in the epic body.
+2. Check each part of it against `main` (grep, a build, a test run) and write
+   down what you measured.
+3. File a task for every gap, under the epic, and keep the epic open. A gap
+   whose fix is designed in another epic can stay there; list it in this epic's
+   body as a dependency, so this check finds it next time.
+4. Close the epic only once nothing is left, with a comment saying what was
+   checked.
+
+This bit us on 2026-11-28: Node.js modernization (#474) had no open tasks, but
+`fs-extra` was still imported in 33 source files and library code still called
+`process.exit`. TASK-187 and TASK-188 were filed instead of closing it.
 
 ### Task ID and file naming
 
@@ -749,7 +769,8 @@ Before marking any task complete:
 3. Changes committed with a conventional commit message
 4. The PR body says `Closes #NNN`, which closes the issue on merge
 5. If the completed task unblocks or re-orders something, update the **epic
-   issue body** — that is where sequencing lives
+   issue body** — that is where sequencing lives. If it was the epic's last
+   open task, do not close the epic yet: follow "Closing an epic"
 6. If the task changes how the monorepo is configured or structured: update this file
 
 `npm run check:tasks:remote` additionally reconciles each open task's title and
