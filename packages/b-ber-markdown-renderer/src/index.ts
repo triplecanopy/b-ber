@@ -34,7 +34,7 @@ import {
   directives,
 } from './directives'
 import { legacyHost } from './legacy-host'
-import { legacyBlock, legacyInline } from './legacy-render'
+import { legacyInline } from './legacy-render'
 
 const LINE_BREAK = '\n'
 const SPACE = ' '
@@ -154,11 +154,7 @@ class MarkdownRenderer {
         pullquote: pullquote.render,
         dialogue: markdownItDialogue.renderer({}).render,
         gallery: markdownItGallery.renderer({}).render,
-        spread: legacyBlock(
-          markdownItSpread.renderer().render,
-          section.close,
-          options
-        ),
+        spread: markdownItSpread.renderer().render,
       },
       // A `media` line is resolved for the target being built when it
       // renders. It used to be spliced into the Markdown before the parse

@@ -1,4 +1,5 @@
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import spread from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -29,25 +30,32 @@ describe('b-ber-grammar-spread', () => {
     expect(config.render).toBeFunction()
   })
 
-  it('render returns empty string for closing token (nesting -1)', () => {
-    const config = spread.renderer({ context })
-    const tokens = [{ nesting: -1, info: 'exit:spread-01', map: [10, 11] }]
-    expect(config.render(tokens, 0, {}, envFor())).toBe('')
+  // Built whole, from the node and its children (TASK-176). Its closing
+  // markup used to be b-ber-grammar-section's
+  const build = (target) => {
+    const config = spread.renderer()
+    const node = { name: 'spread', id: 's-01', info: 'spread:s-01', line: 0 }
+    return serialize(
+      config.render({ node, env: envFor(target), h })(
+        [h('p', null, ['i'])],
+        'exit'
+      )
+    )
+  }
+
+  it('builds a section where the target has no full-bleed containers', () => {
+    expect(build('epub')).toBe(
+      '<section id="s-01" class=" spread"><p>i</p></section>\n<!-- END: section:exit#s-01 -->\n'
+    )
   })
 
-  it('render returns section for epub build', () => {
-    const config = spread.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'spread:spread-01', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, envFor('epub'))
-    expect(result).toContain('<section')
-    expect(result).toContain('spread-01')
-  })
-
-  it('render returns div scaffold for reader build', () => {
-    const config = spread.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'spread:spread-02', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, envFor('reader'))
-    expect(result).toContain('spread__content')
-    expect(result).toContain('spread-02')
+  it('builds the full-bleed scaffold, with the reader’s marker node', () => {
+    const web = build('web')
+    expect(web).toMatch(
+      /^\s+<div class=" spread">\s+<div id="s-01" class="spread__content"><p>i<\/p><\/div>\s+<\/div>\s+\n<!-- END: section:exit#s-01 -->\n$/
+    )
+    expect(build('reader')).toContain(
+      '<!-- Empty node required for spread markers -->\n                   <div></div>'
+    )
   })
 })
