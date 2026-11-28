@@ -14,7 +14,6 @@ graph LR
 
     lib --> log["b-ber-logger"]
     lib --> sdc["shapes-dublin-core"]
-    lib --> sseq["shapes-sequences"]
     lib --> tserif["theme-serif"]
     lib --> tsans["theme-sans"]
 ```

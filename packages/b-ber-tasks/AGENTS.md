@@ -34,7 +34,6 @@
 | `src/serve/`                     | Starts a browser-sync dev server                                      |
 | `src/deploy/`                    | Deploys build output to a remote host                                 |
 | `src/validate/`                  | Validates directive syntax via `b-ber-validator`                      |
-| `src/serialize.ts`               | Serialises the spine/TOC data structure                               |
 
 ## Dev Commands
 

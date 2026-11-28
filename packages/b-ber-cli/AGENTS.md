@@ -89,7 +89,7 @@ from `src/lib/arguments.ts` (issue 741, TASK-159):
   are allowed and build in turn. `build`'s command string has **no
   positional** for this reason: a positional would take the first unknown
   word out of `argv._`, and the handler would build every format. Its usage
-  line lists the formats from `b-ber-shapes-sequences` instead.
+  line lists the formats from b-ber-tasks' `targetNames` instead.
 
 A check that returns a message is a usage error. yargs passes that message to
 the fail handler as the error too, so `fail` treats only an `Error` as a

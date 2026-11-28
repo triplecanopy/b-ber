@@ -40,7 +40,6 @@ jobs:
           command: |
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-directives
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-dublin-core
-            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-sequences
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-logger
       - run:
           name: Build reader-react
@@ -136,7 +135,6 @@ jobs:
           command: |
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-directives
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-dublin-core
-            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-sequences
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-logger
       - run:
           name: Build packages

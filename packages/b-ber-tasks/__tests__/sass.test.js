@@ -283,8 +283,7 @@ describe('task: sass', () => {
   })
 
   describe('$build', () => {
-    // The build names `b-ber-shapes-sequences` defines; `b-ber-cli` sets
-    // `state.build` to each in turn, and every sequence runs `sass`
+    // Every target's name: each target's build runs `sass`
     test.each(['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml'])(
       'declares `$build: "%s"` for the %s build',
       async (build) => {

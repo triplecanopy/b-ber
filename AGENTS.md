@@ -115,7 +115,6 @@ b-ber-extended Markdown into the HTML/XML structures required for EPUB output.
 | -------------------------- | -------------------- | ------------------------------------------ |
 | `b-ber-shapes-directives`  | `shapes-directives`  | Data shapes for custom directive arguments |
 | `b-ber-shapes-dublin-core` | `shapes-dublin-core` | Dublin Core metadata schemas               |
-| `b-ber-shapes-sequences`   | `shapes-sequences`   | Sequence/spine ordering schemas            |
 
 ### Templates and resources
 

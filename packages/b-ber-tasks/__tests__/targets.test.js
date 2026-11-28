@@ -3,7 +3,7 @@
  */
 
 // The target builds (TASK-165): each a plain async function that runs its
-// steps in order, replacing b-ber-shapes-sequences' lists and `serialize`.
+// steps in order. They replaced b-ber-shapes-sequences' lists and `serialize`.
 // Every task is mocked; each task's own test file covers what it does.
 
 import { getTarget } from '@canopycanopycanopy/b-ber-lib'

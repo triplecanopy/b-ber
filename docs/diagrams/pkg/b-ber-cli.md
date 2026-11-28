@@ -15,7 +15,6 @@ graph LR
     cli --> tasks["b-ber-tasks"]
     cli --> lib["b-ber-lib"]
     cli --> log["b-ber-logger"]
-    cli --> sseq["shapes-sequences"]
     cli --> tpl["b-ber-templates"]
 ```
 

@@ -1,6 +1,6 @@
 // How each target builds: a plain async function per target, which reads top
-// to bottom (TASK-160, TASK-165). They replace b-ber-shapes-sequences' lists of
-// task names and `serialize`, which ran them.
+// to bottom (TASK-160, TASK-165). They replaced b-ber-shapes-sequences'
+// lists of task names and `serialize`, which ran them.
 
 import type {
   BuildContext,

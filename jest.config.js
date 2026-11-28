@@ -75,8 +75,6 @@ module.exports = {
       '<rootDir>/packages/b-ber-shapes-directives/src/index.ts',
     '^@canopycanopycanopy/b-ber-shapes-dublin-core$':
       '<rootDir>/packages/b-ber-shapes-dublin-core/src/index.ts',
-    '^@canopycanopycanopy/b-ber-shapes-sequences$':
-      '<rootDir>/packages/b-ber-shapes-sequences/src/index.ts',
     // Grammar packages
     '^@canopycanopycanopy/b-ber-grammar-attributes$':
       '<rootDir>/packages/b-ber-grammar-attributes/src/index.ts',

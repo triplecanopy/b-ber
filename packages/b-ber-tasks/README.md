@@ -29,7 +29,6 @@
 | `serve`     | Starts a browser-sync dev server                           |
 | `deploy`    | Deploys build output to a remote host                      |
 | `validate`  | Validates directive syntax in Markdown source              |
-| `serialize` | Serialises the spine/TOC data structure                    |
 
 ## Dev
 

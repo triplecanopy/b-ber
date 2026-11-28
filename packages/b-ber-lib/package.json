@@ -30,7 +30,6 @@
   "dependencies": {
     "@canopycanopycanopy/b-ber-logger": "4.0.3",
     "@canopycanopycanopy/b-ber-shapes-dublin-core": "4.0.3",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "4.0.3",
     "@canopycanopycanopy/b-ber-theme-sans": "4.0.3",
     "@canopycanopycanopy/b-ber-theme-serif": "4.0.3",
     "command-exists": "^1.2.9",

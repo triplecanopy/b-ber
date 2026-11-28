@@ -55,7 +55,6 @@ graph LR
         log["b-ber-logger"]
         shapes-dir["shapes-directives"]
         shapes-dc["shapes-dublin-core"]
-        shapes-seq["shapes-sequences"]
         theme-serif["theme-serif"]
         theme-sans["theme-sans"]
         res["b-ber-resources"]
@@ -64,8 +63,8 @@ graph LR
     end
 
     %% Entry / orchestration
-    cli --> tasks & lib & log & shapes-seq & tpl
-    tasks --> lib & log & mdr & reader & res & shapes-seq & tpl & val
+    cli --> tasks & lib & log & tpl
+    tasks --> lib & log & mdr & reader & res & tpl & val
 
     %% Rendering pipeline
     mdr --> gr-sec & gr-img & gr-gal & gr-spr & gr-dial
@@ -100,7 +99,7 @@ graph LR
     p-dial --> lib & log & shapes-dir & tpl
 
     %% Core library
-    lib --> log & shapes-dc & shapes-seq & theme-serif & theme-sans
+    lib --> log & shapes-dc & theme-serif & theme-sans
     tpl --> lib & log
     val -.->|"no internal deps"| val
 
@@ -112,14 +111,14 @@ graph LR
 
 | Layer                  | Packages                                                                                                                             |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 0 — leaf               | logger, shapes-directives, shapes-dublin-core, shapes-sequences, theme-serif, theme-sans, resources, reader, reader-react, validator |
+| 0 — leaf               | logger, shapes-directives, shapes-dublin-core, theme-serif, theme-sans, resources, reader, reader-react, validator |
 | 1 — core lib           | b-ber-lib (→ logger, shapes, themes), b-ber-templates (→ lib, logger)                                                                |
 | 2 — grammar primitives | grammar-renderer, grammar-attributes (→ lib, logger, shapes-directives)                                                              |
 | 3 — parsers            | parser-\* (→ lib, logger, shapes-directives, templates)                                                                              |
 | 4 — grammars           | grammar-_ (→ grammar-renderer, grammar-attributes, parser-_, lib, logger, shapes-directives)                                         |
 | 5 — rendering          | b-ber-markdown-renderer (→ all grammar-\*, parser-footnotes, parser-gallery)                                                         |
-| 6 — pipeline           | b-ber-tasks (→ markdown-renderer, lib, logger, templates, validator, resources, reader, shapes-sequences)                            |
-| 7 — entry              | b-ber-cli (→ tasks, lib, logger, templates, shapes-sequences)                                                                        |
+| 6 — pipeline           | b-ber-tasks (→ markdown-renderer, lib, logger, templates, validator, resources, reader)                            |
+| 7 — entry              | b-ber-cli (→ tasks, lib, logger, templates)                                                                        |
 
 ## See also
 

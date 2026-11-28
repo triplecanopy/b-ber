@@ -185,7 +185,7 @@ class Logger extends EventEmitter<LoggerEvents> implements ReporterSource {
 
   // Build progress
   //
-  // b-ber-tasks' `serialize` calls these, through `notify`, around each task
+  // b-ber-tasks' `step` calls these, through `notify`, around each step
   // and once each format has run. Each emits an event, which the reporter
   // draws. The events are the extension point: anything that wants to follow
   // a build's progress can listen for them
