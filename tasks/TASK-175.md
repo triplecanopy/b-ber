@@ -63,7 +63,7 @@ golden snapshot regenerated so the PR shows it:
 - [x] gallery and spread
 - [x] footnotes: nothing to port (Findings, "footnotes and front matter")
 - [x] front matter: nothing to port (same)
-- [ ] `media` as a node
+- [x] `media` as a node
 - [x] Delete `state.cursor`
 - [x] One commit per intended output difference, with the snapshot
 - [x] A test that a block inside a list item loses nothing after it (the example above), with the `exit` inside the item and with none
@@ -200,4 +200,51 @@ TASK-177's. Nothing here needed porting.
 `scripts/parse-corpus.js` after these changes: 263 projects, 2,489 files,
 none that fails to parse, and every count identical to TASK-174's table. No
 project that builds today gains an error.
+
+### 2026-11-28: `media` as a node
+
+grammar-media's pre-pass is gone, with the renderer's `prepare()`. The rule
+parses a `media` or `media-inline` line as written, into an inline node,
+reading the id as the pre-pass did (everything between the first `:` and the
+next). When it renders, b-ber-grammar-media's `resolve` gives the line and
+caption the pre-pass would have written for the target, and the grammar that
+claims that line renders it. A type no grammar claims (7 GitLab entries are
+`soundcloud`) renders as text, as it did. A document now parses the same for
+every target, which TASK-168's parse once needs.
+
+**One addition to TASK-161's spec**, which says `media` "takes no caption of
+its own". Books write a caption under the `media` line for the targets whose
+media.yml entry has none: `i29-benjamin-krusling`'s reader videos, whose epub
+and mobi entries carry a caption and whose reader entries do not. Under the
+pre-pass the written caption was the directive's when media.yml had none, and
+was left as text after it when media.yml had one. Both are kept: the rule
+takes a written caption at parse time, as for any single-line directive, and
+media.yml's caption wins when it renders. Dropping the written caption would
+have left it as stray text in those books' reader builds.
+
+**GitLab:** 66 files change (270 renders), all in the source line numbers
+in comments only. The pre-pass shifted every line after a captioned `media`
+line by the lines it inserted; they are now the author's. In `second-rate`
+an earlier error in the file is thrown before its media.yml one, since the
+`media` line now fails where it is. The survey's counts are unchanged.
+Kitchen-sink's output is unchanged.
+
+**What the pre-pass did that the node does not:** it rewrote a `media` line
+inside fenced code; it needed exactly `::: ` at column 0, so it missed an
+indented line, one in a list item, and the last line of a file without a
+trailing newline; and a `media` entry with no caption could take the
+document's next `::` lines as its caption, differently per target. None of
+these occurs in a GitLab project's output.
+
+### 2026-11-28: verification
+
+- `npm test`: 172 suites, 1,856 tests. `typecheck` passes for 32 projects.
+- Playwright, every project: 51 passed, 7 skipped (TASK-131's six, and Vimeo
+  under `NO_NETWORK`). The reader test that counted chapter 2's gallery
+  figures pinned the swallowing bug; it was updated in its own commit, after
+  the fact, because the browser suite was not run for the commit that fixed
+  it.
+- The golden test passes, with the snapshot regenerated in the commits the
+  differences table names.
+- The GitLab survey: unchanged from TASK-174, no new errors.
 
