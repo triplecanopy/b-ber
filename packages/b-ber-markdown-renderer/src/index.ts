@@ -152,11 +152,7 @@ class MarkdownRenderer {
       blocks: {
         section: section.render,
         pullquote: pullquote.render,
-        dialogue: legacyBlock(
-          markdownItDialogue.renderer({}).render,
-          section.close,
-          options
-        ),
+        dialogue: markdownItDialogue.renderer({}).render,
         gallery: legacyBlock(
           markdownItGallery.renderer({}).render,
           section.close,

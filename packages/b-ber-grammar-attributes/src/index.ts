@@ -2,6 +2,7 @@
 
 import path from 'node:path'
 import {
+  type ClosedBy,
   Html,
   Url,
   type XhtmlBuilder,
@@ -363,6 +364,19 @@ const attributesQuery = (
 const commentLines = (h: XhtmlBuilder, text: string): XhtmlFragment =>
   h.fragment(['\n', h.comment(text), '\n'])
 
+// The comment after a block, which says how it closed: `section:exit#id` at
+// its own `exit` or at the outer block's `exit` that crossed it,
+// `section:#id` at the end of its container. Every block family writes it
+const blockEndComment = (
+  h: XhtmlBuilder,
+  id: string,
+  closedBy: ClosedBy
+): XhtmlFragment => {
+  if (closedBy === 'end') return commentLines(h, `END: section:#${htmlId(id)}`)
+  log.debug(`exit directive [${id}]`)
+  return commentLines(h, `END: section:exit#${htmlId(id)}`)
+}
+
 // Create a query string of attributes for an iframe src
 const attributesQueryString = (
   obj: Record<string, AttributeValue>,
@@ -388,6 +402,7 @@ export {
   attributesQuery,
   attributesQueryString,
   attributesString,
+  blockEndComment,
   commentLines,
   htmlId,
   parseAttrs,

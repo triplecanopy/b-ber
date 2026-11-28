@@ -1,6 +1,7 @@
 import {
   attributesList,
   attributesObject,
+  blockEndComment,
   commentLines,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
@@ -108,13 +109,6 @@ export function close(
   )
 }
 
-// The comment that ends a block, which says how it closed, as it always has
-function endComment(id: string, closedBy: ClosedBy): string {
-  if (closedBy === 'end') return `END: section:#${htmlId(id)}`
-  log.debug(`exit directive [${id}]`)
-  return `END: section:exit#${htmlId(id)}`
-}
-
 // A structural block, built whole: its start comment, the <section> with its
 // children, and its end comment. Called at the opener, it reads and checks
 // the opener's attributes before anything inside the block renders
@@ -151,7 +145,7 @@ const render: BlockRender = ({ node, env, h }) => {
     h.fragment([
       commentLines(h, start),
       h('section', [['id', htmlId(id)], ...attrs], children),
-      commentLines(h, endComment(id, closedBy)),
+      blockEndComment(h, id, closedBy),
     ])
 }
 
