@@ -164,6 +164,20 @@ describe('b-ber-grammar-attributes', () => {
     )
   })
 
+  // Values are text. They used to be written as they were, so this gave
+  // malformed XHTML (TASK-161)
+  it('escapes attribute values', () => {
+    expect(
+      attributesString({
+        title: '<b>Tom & "Jerry"</b>',
+        classes: "it's",
+        source: 'https://a.example/?x=1&y=2',
+      })
+    ).toBe(
+      ' title="&lt;b&gt;Tom &amp; &quot;Jerry&quot;&lt;/b&gt;" class="it&#39;s" src="https://a.example/?x=1&amp;y=2"'
+    )
+  })
+
   it('creates an HTML attributes string from a directive attributes object', () => {
     expect(attributes('classes:foo', 'chapter')).toEqual(
       ' class="foo bodymatter chapter" epub:type="bodymatter chapter"'

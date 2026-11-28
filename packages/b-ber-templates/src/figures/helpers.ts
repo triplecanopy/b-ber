@@ -1,4 +1,4 @@
-import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import uniq from 'lodash/uniq'
 import type {
   FigureTemplateData,
@@ -83,8 +83,8 @@ const linkedImage = (data: FigureTemplateData) =>
     // `FigureTemplateData`) renders `class="null"`, see #734. `replace`
     // converts a non-function replacement with ToString, which is `String`
     .replace(/%IMAGE_CLASS_NAME%/, String(data.imageClassName))
-    .replace(/%IMAGE_ALT%/, data.alt)
-    .replace(/%IMAGE_SRC%/, data.source)
+    .replace(/%IMAGE_ALT%/, Html.escape(data.alt))
+    .replace(/%IMAGE_SRC%/, Html.escape(data.source))
     .replace(/%CAPTION_CONTENT%/, data.caption)
 
 // Inverse of above. the image is wrapped in a span and a back link is added
@@ -102,8 +102,8 @@ const unLinkedImage = (data: FigureTemplateData) =>
       </div>
     </div>
     `
-    .replace(/%IMAGE_ALT%/, data.alt)
-    .replace(/%IMAGE_SRC%/, data.source)
+    .replace(/%IMAGE_ALT%/, Html.escape(data.alt))
+    .replace(/%IMAGE_SRC%/, Html.escape(data.source))
     .replace(/%CAPTION_CONTENT%/, data.caption)
     .replace(
       /%CAPTION_CONTENT_AFTER%/,
@@ -127,7 +127,7 @@ export const figureTemplate = (data: FigureTemplateData) =>
     %SECTION_CLOSE%
 `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
-    .replace(/%FIGURE_CLASS_NAMES%/, data.classes)
+    .replace(/%FIGURE_CLASS_NAMES%/, Html.escape(data.classes))
     .replace(/%ID%/g, data.id)
     .replace(
       /%IMAGE%/g,
@@ -165,7 +165,7 @@ export const media = (data: MediaFigureData) =>
     `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     // TODO: `figure__inline--square` class should be replaced with media aspect ratio
-    .replace(/%FIGURE_CLASS_NAMES%/, getMediaInlineClasses(data))
+    .replace(/%FIGURE_CLASS_NAMES%/, Html.escape(getMediaInlineClasses(data)))
     .replace(/%ID%/g, data.id)
     .replace(/%MEDIA_TYPE%/g, data.mediaType)
     .replace(/%ELEMENT_ATTRIBUTES%/g, data.attrString)
@@ -209,8 +209,8 @@ export const iframe = (data: IframeFigureData) =>
     `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     .replace(/%ID%/g, data.id)
-    .replace(/%SRC%/g, data.source)
-    .replace(/%TITLE%/g, data.title)
+    .replace(/%SRC%/g, Html.escape(data.source))
+    .replace(/%TITLE%/g, Html.escape(data.title))
     // `replace` converts a non-function replacement with ToString, which is
     // what `String` does to a numeric width or height
     .replace(/%WIDTH%/g, String(data.width))

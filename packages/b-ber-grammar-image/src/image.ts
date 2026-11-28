@@ -1,4 +1,4 @@
-import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import mimeTypes from 'mime-types'
 
@@ -58,12 +58,12 @@ export function createFigure({
 
   const result = `
         ${comment}
-        <div class="${classes_}">
+        <div class="${Html.escape(classes_)}">
         <figure id="ref${id}">
         <a href="${href}#${id}">
-        <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${
+        <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${Html.escape(
           attrsObject.alt
-        }"/>
+        )}"/>
         </a>
         </figure>
         </div>`
