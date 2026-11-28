@@ -1,4 +1,5 @@
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import gallery from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -29,25 +30,30 @@ describe('b-ber-grammar-gallery', () => {
     expect(config.render).toBeFunction()
   })
 
-  it('render returns empty string for closing token (nesting -1)', () => {
+  // Built whole, from the node and its children (TASK-176). Its closing
+  // markup used to be b-ber-grammar-section's
+  const build = (target, closedBy = 'exit') => {
     const config = gallery.renderer({ context })
-    const tokens = [{ nesting: -1, info: 'exit:gallery-01', map: [10, 11] }]
-    expect(config.render(tokens, 0, {}, envFor())).toBe('')
+    const node = { name: 'gallery', id: 'g-01', info: 'gallery:g-01', line: 0 }
+    return serialize(
+      config.render({ node, env: envFor(target), h })(
+        [h('p', null, ['i'])],
+        closedBy
+      )
+    )
+  }
+
+  it('builds a section where the target has no full-bleed containers', () => {
+    expect(build('epub')).toBe(
+      '<section id="g-01" class=" gallery"><p>i</p></section>\n<!-- END: section:exit#g-01 -->\n'
+    )
   })
 
-  it('render returns section for epub build', () => {
-    const config = gallery.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'gallery:gallery-01', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, envFor('epub'))
-    expect(result).toContain('<section')
-    expect(result).toContain('gallery-01')
-  })
-
-  it('render returns div figure structure for web build', () => {
-    const config = gallery.renderer({ context })
-    const tokens = [{ nesting: 1, info: 'gallery:gallery-02', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, envFor('web'))
-    expect(result).toContain('<figure')
-    expect(result).toContain('figure__gallery')
+  it('builds the full-bleed figure where the target has them', () => {
+    const built = build('web', 'end')
+    expect(built).toMatch(
+      /^\s+<section id="g-01" class=" gallery">\s+<div class="figure__large figure__inline figure__fullbleed figure__gallery">\s+<figure>\s+<div class="figure__items"><p>i<\/p><\/div>\s+<\/figure>\s+<\/div>\s+<\/section>/
+    )
+    expect(built).toMatch(/<!-- END: section:#g-01 -->\n$/)
   })
 })
