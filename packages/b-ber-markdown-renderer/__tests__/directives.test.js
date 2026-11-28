@@ -505,6 +505,56 @@ describe('directive structure', () => {
     }
   })
 
+  describe('single-line directives (TASK-175)', () => {
+    const withFigures = new MarkdownIt().use(directives, {
+      inline: [
+        {
+          family: 'figure',
+          validate: (params) => /^figure:/.test(params.trim()),
+          render: ([token]) => `<figure>${token.children ?? ''}</figure>`,
+        },
+      ],
+    })
+    const parseFigures = (src) => {
+      const env = { file: 'x.md', diagnostics: [] }
+      return { env, tokens: withFigures.parse(src, env) }
+    }
+
+    it('makes an inline node with its caption', () => {
+      const { env } = parseFigures(
+        '::: figure:f source:a.png\n:: A *caption*\n::\n\nAfter.\n'
+      )
+      expect(env.tree.children[0]).toMatchObject({
+        type: 'directive',
+        name: 'figure',
+        id: 'f',
+        inline: true,
+        attrs: { source: 'a.png' },
+        caption: ' A *caption*\n',
+      })
+      expect(env.tree.children[1].type).toBe('paragraph')
+    })
+
+    it('renders with the grammar, from the open token the old parser made', () => {
+      expect(
+        withFigures.render('::: figure:f source:a.png\n:: Cap\n::\n')
+      ).toBe('<figure> Cap\n</figure>')
+    })
+
+    // b-ber-parser-figure takes the next line starting `::` as a caption, and
+    // a `:::` line starts with `::` (TASK-161 bug 11): `b` opens a caption and
+    // `c` closes it, so neither renders
+    it('still takes the next directive lines as a caption', () => {
+      const { tokens } = parseFigures(
+        '::: figure:a source:a.png\n::: figure:b source:b.png\n::: figure:c source:c.png\n'
+      )
+      const inline = tokens.filter((t) => t.type === 'directive_inline')
+      expect(inline).toHaveLength(1)
+      expect(inline[0].meta.caption).toBe(': figure:b source:b.png\n')
+      expect(inline[0].map).toEqual([0, 2])
+    })
+  })
+
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'

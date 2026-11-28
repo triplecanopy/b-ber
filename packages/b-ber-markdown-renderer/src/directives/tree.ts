@@ -2,16 +2,12 @@
 // `DirectiveNode`; other open/close pairs become a node of their token's type
 // (`paragraph`, `list_item`, …); everything else is a leaf.
 //
-// The containers of the directives not yet ported (`container_*`, TASK-175)
-// run to the end of their range, so their pairs do not nest with the rest.
-// Until they are ported their tokens are leaves.
+// A single-line directive becomes a `DirectiveNode` with `inline: true`.
 
 import type MarkdownIt from 'markdown-it'
+import { INLINE_TOKEN } from './rule'
 import { OPEN } from './structure'
 import type { DirectiveNode, TokenNode, TreeNode, TreeRoot } from './types'
-
-const isLegacy = (token: MarkdownIt.Token): boolean =>
-  token.type.startsWith('container_')
 
 export function liftTree(tokens: MarkdownIt.Token[]): TreeRoot {
   const root: TreeRoot = { type: 'root', children: [] }
@@ -19,7 +15,12 @@ export function liftTree(tokens: MarkdownIt.Token[]): TreeRoot {
   const top = () => stack[stack.length - 1]
 
   for (const token of tokens) {
-    if (isLegacy(token) || token.nesting === 0) {
+    if (token.type === INLINE_TOKEN) {
+      const node = (token.meta as { directive?: DirectiveNode }).directive
+      top().push(node ?? { type: token.type, token })
+      continue
+    }
+    if (token.nesting === 0) {
       top().push({ type: token.type, token })
       continue
     }

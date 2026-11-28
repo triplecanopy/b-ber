@@ -67,10 +67,23 @@ class MarkdownRenderer {
         isFamilyClose('gallery')
       )
 
-    // The directive rule takes the structural blocks (TASK-174), pullquote,
-    // blockquote, dialogue, gallery and spread (TASK-175) over from their
-    // parsers, at the place in the rule order the first of them had, and
-    // renders them with their grammars as before
+    // The single-line directives, in the order their plugins were registered
+    const inline = (
+      [
+        ['figure', markdownItImage],
+        ['audio-video', markdownItAudioVideo],
+        ['vimeo', markdownItVimeo],
+        ['iframe', markdownItIframe],
+        ['logo', markdownItLogo],
+      ] as const
+    ).map(([family, grammar]) => {
+      const { validate, render } = grammar.renderer(reference)
+      return { family, validate, render }
+    })
+
+    // The directive rule takes every directive over from its parser
+    // (TASK-174 and TASK-175), at the place in the rule order the first of
+    // them had, and renders each with its grammar as before
     this.markdownIt
       .use(directives, {
         host: legacyHost(this),
@@ -82,34 +95,10 @@ class MarkdownRenderer {
           spread: markdownItSpread.renderer(reference).render,
         },
         afterBlock: { gallery: galleryItems, spread: galleryItems },
+        inline,
       })
       .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
       .use(markdownItFootnote, markdownItFootnotePlugin(this))
-      .use(
-        markdownItImage.plugin,
-        markdownItImage.name,
-        markdownItImage.renderer(reference)
-      )
-      .use(
-        markdownItAudioVideo.plugin,
-        markdownItAudioVideo.name,
-        markdownItAudioVideo.renderer(reference)
-      )
-      .use(
-        markdownItVimeo.plugin,
-        markdownItVimeo.name,
-        markdownItVimeo.renderer(reference)
-      )
-      .use(
-        markdownItIframe.plugin,
-        markdownItIframe.name,
-        markdownItIframe.renderer(reference)
-      )
-      .use(
-        markdownItLogo.plugin,
-        markdownItLogo.name,
-        markdownItLogo.renderer(reference)
-      )
   }
 
   template(meta: string): string {

@@ -4,10 +4,12 @@
 // family at a time. The rest keep their own plugins until then.
 
 import type MarkdownIt from 'markdown-it'
-import type { Family } from './registry'
+import type { Family, InlineFamily } from './registry'
 import {
   type AfterBlock,
   createRule,
+  INLINE_TOKEN,
+  type InlineClaim,
   isFamily,
   LINE_CLOSE,
   LINE_INVALID,
@@ -28,6 +30,9 @@ export interface LegacyToken {
   info: string
   nesting: number
   map: [number, number] | null
+  // A single-line directive's caption source, as b-ber-parser-figure stored
+  // it on its open token
+  children?: string
 }
 
 export type LegacyRender = (tokens: LegacyToken[], index: number) => string
@@ -37,11 +42,15 @@ export type LegacyRender = (tokens: LegacyToken[], index: number) => string
 export const isFamilyOpen = (family: Family) => isFamily(LINE_OPEN, family)
 export const isFamilyClose = (family: Family) => isFamily(LINE_CLOSE, family)
 
-export type { AfterBlock, Family }
+export type { AfterBlock, Family, InlineClaim }
 
 export interface DirectiveOptions {
   host?: DirectiveHost
   afterBlock?: AfterBlock
+  // The single-line directives, in the order their plugins were registered:
+  // how each grammar claims a line, and how it renders. Without them those
+  // lines are text, as they are without the plugins
+  inline?: readonly (InlineClaim & { render: LegacyRender })[]
   // Today's renderer for each family (b-ber-grammar-section's,
   // b-ber-grammar-pullquote's and b-ber-grammar-dialogue's `render`). It is called with tokens shaped as
   // b-ber-parser-section made them, at the places that parser put them, so
@@ -65,11 +74,16 @@ export function directives(
   md: MarkdownIt.MarkdownIt,
   options: DirectiveOptions = {}
 ): void {
-  const { host = pureHost, legacy = {}, afterBlock = {} } = options
+  const { host = pureHost, legacy = {}, afterBlock = {}, inline = [] } = options
 
-  md.block.ruler.before('fence', 'directive', createRule(host, afterBlock), {
-    alt: ['paragraph', 'reference', 'blockquote'],
-  })
+  md.block.ruler.before(
+    'fence',
+    'directive',
+    createRule(host, afterBlock, inline),
+    {
+      alt: ['paragraph', 'reference', 'blockquote'],
+    }
+  )
   md.core.ruler.after('block', 'directive_structure', structure)
   md.core.ruler.push('directive_tree', (state) => {
     const env = state.env as DirectiveEnv | undefined
@@ -98,4 +112,20 @@ export function directives(
   md.renderer.rules[CLOSE] = (tokens, idx) =>
     legacyOf(tokens[idx]) ? '' : '</section>'
   md.renderer.rules[LINE_INVALID] = () => ''
+
+  // Rendered by its grammar from the open token b-ber-parser-figure made. Its
+  // close token always rendered nothing
+  const inlineRender = new Map(inline.map((c) => [c.family, c.render]))
+  md.renderer.rules[INLINE_TOKEN] = (tokens, idx) => {
+    const { info, map, meta } = tokens[idx]
+    const { family, caption } = meta as {
+      family: InlineFamily
+      caption?: string
+    }
+    const render = inlineRender.get(family)
+    const type = `container_${family}_open`
+    return render
+      ? render([{ type, info, nesting: 1, map, children: caption }], 0)
+      : ''
+  }
 }

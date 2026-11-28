@@ -56,7 +56,8 @@ export interface DirectiveNode {
   type: 'directive'
   name: string
   id: string
-  inline: false
+  // A single-line directive (`figure`, …), which has no children
+  inline: boolean
   // The last value of each attribute, as the spec parses them
   attrs: Record<string, string>
   // The opener line, from the fence to its last non-blank character
@@ -67,6 +68,9 @@ export interface DirectiveNode {
   info: string
   // 0-based source line of the opener
   line: number
+  // A single-line directive's caption, the Markdown source between its `::`
+  // lines
+  caption?: string
 }
 
 export type TreeNode = DirectiveNode | TokenNode
