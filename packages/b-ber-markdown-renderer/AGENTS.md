@@ -48,7 +48,7 @@ npm run build # compile src/ → dist/ with tsdown (CJS)
 This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
-- The `MarkdownRenderer` class is a singleton (`export default markdownRenderer`). Do not instantiate it directly in other packages.
+- The `MarkdownRenderer` class is a singleton (`export default markdownRenderer`). Do not instantiate it directly in other packages. The one other instance is `src/parse.ts`'s, with `pureHost`; the class is exported for it.
 - Grammar plugins are registered in the constructor and cannot be reconfigured at runtime. To add a new directive type, add the grammar package as a dependency and register it in `src/index.ts`.
 - `markdownIt` is configured with `xhtmlOut: true` to produce valid XHTML. Do not change this — EPUB requires XHTML.
 - Nothing rewrites the Markdown before it is parsed. A directive that depends on the target is resolved when it renders, as `media` is, so that a document parses the same for every target (TASK-160's parse once).
