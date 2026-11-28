@@ -1,3 +1,4 @@
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import dialogue from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
@@ -27,18 +28,21 @@ describe('b-ber-grammar-dialogue', () => {
     expect(config.render).toBeFunction()
   })
 
-  it('render() produces section open tag for a dialogue directive', () => {
+  // Built whole, from the node and its children (TASK-176)
+  it('builds a dialogue section with its children', () => {
     const config = dialogue.renderer({ context: { fileName: 'test' } })
-    const tokens = [{ nesting: 1, info: 'dialogue:ch-01', map: [0, 1] }]
-    const result = config.render(tokens, 0)
-    expect(result).toContain('<section')
-    expect(result).toContain('ch-01')
-  })
-
-  it('render() returns empty string for closing token', () => {
-    const config = dialogue.renderer({ context: { fileName: 'test' } })
-    const tokens = [{ nesting: -1, info: 'exit:ch-01', map: [10, 11] }]
-    const result = config.render(tokens, 0)
-    expect(result).toBe('')
+    const node = {
+      name: 'dialogue',
+      id: 'ch-01',
+      info: 'dialogue:ch-01',
+      line: 0,
+    }
+    const build = config.render({ node, env: {}, h })
+    expect(serialize(build([h('p', null, ['Hi'])], 'exit'))).toBe(
+      '<section id="ch-01" class=" dialogue"><p>Hi</p></section>\n<!-- END: section:exit#ch-01 -->\n'
+    )
+    expect(serialize(build([], 'end'))).toBe(
+      '<section id="ch-01" class=" dialogue"></section>\n<!-- END: section:#ch-01 -->\n'
+    )
   })
 })

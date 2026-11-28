@@ -1,6 +1,7 @@
 import { utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
+import { h } from '../../b-ber-markdown-renderer/src/xhtml'
 import image from '../src'
 import { createFigure, createFigureInline } from '../src/image'
 
@@ -85,19 +86,6 @@ describe('b-ber-grammar-image', () => {
     )
   })
 
-  it('render returns empty string for close token', () => {
-    const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_close',
-        info: 'figure:test-id source="img.jpg"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    expect(config.render(tokens, 0, {}, env)).toBe('')
-  })
-
   it('renderer config includes markerOpen', () => {
     const config = image.renderer({ instance, context })
     expect(config.markerOpen).toBeDefined()
@@ -105,15 +93,8 @@ describe('b-ber-grammar-image', () => {
 
   it('render calls prepare and createFigure for figure type token', () => {
     const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure:test-id source="test.jpg"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'figure:test-id source="test.jpg"', line: 0 }
+    const result = config.render({ node, env, h })
     expect(createFigure).toHaveBeenCalled()
     expect(result).toBe('<div class="figure">test figure</div>')
   })
@@ -121,48 +102,32 @@ describe('b-ber-grammar-image', () => {
   it('passes the image dimensions from b-ber-lib to the figure', () => {
     createFigure.mockClear()
     const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure:dims-id source="test.jpg"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    config.render(tokens, 0, {}, env)
+    const node = { info: 'figure:dims-id source="test.jpg"', line: 0 }
+    config.render({ node, env, h })
     // attributesObject is mocked to resolve every source to test.jpg
     expect(utils.getImageDimensions).toHaveBeenCalledWith('test.jpg')
     expect(createFigure).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 100, height: 150 })
+      expect.objectContaining({ width: 100, height: 150 }),
+      h
     )
   })
 
   it('render calls createFigureInline for figure-inline type token', () => {
     const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure-inline:test-id source="test.jpg"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'figure-inline:test-id source="test.jpg"', line: 0 }
+    const result = config.render({ node, env, h })
     expect(createFigureInline).toHaveBeenCalled()
     expect(result).toBe('<div class="figure-inline">test inline</div>')
   })
 
   it('render passes caption to prepare via renderInline when children are present', () => {
     const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure:cap-id source="test.jpg"',
-        map: [0, 1],
-        children: 'caption text',
-      },
-    ]
-    config.render(tokens, 0, {}, env)
+    const node = {
+      info: 'figure:cap-id source="test.jpg"',
+      line: 0,
+      caption: 'caption text',
+    }
+    config.render({ node, env, h })
     expect(instance.renderInline).toHaveBeenCalledWith('caption text', env)
   })
 
@@ -176,31 +141,10 @@ describe('b-ber-grammar-image', () => {
   it('logs an error when the referenced image is missing', () => {
     fs.existsSync.mockReturnValueOnce(false)
     const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure:missing-id source="missing.jpg"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    expect(() => config.render(tokens, 0, {}, env)).toThrow('Image not found')
+    const node = { info: 'figure:missing-id source="missing.jpg"', line: 0 }
+    expect(() => config.render({ node, env, h })).toThrow('Image not found')
     expect(log.error).toHaveBeenCalledWith(
       expect.stringContaining('Image not found')
     )
-  })
-
-  it('falls back to a null line number when the token has no map', () => {
-    const config = image.renderer({ instance, context })
-    const tokens = [
-      {
-        type: 'container_figure_open',
-        info: 'figure:no-map-id source="test.jpg"',
-        map: null,
-        children: null,
-      },
-    ]
-    expect(() => config.render(tokens, 0, {}, env)).not.toThrow()
-    expect(createFigure).toHaveBeenCalled()
   })
 })

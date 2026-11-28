@@ -529,7 +529,8 @@ describe('directive structure', () => {
         {
           family: 'figure',
           validate: (params) => /^figure:/.test(params.trim()),
-          render: ([token]) => `<figure>${token.children ?? ''}</figure>`,
+          render: ({ node, h }) =>
+            h.raw(`<figure>${node.caption ?? ''}</figure>`),
         },
       ],
     })
@@ -582,6 +583,33 @@ describe('directive structure', () => {
       const inline = tokens.filter((t) => t.type === 'directive_inline')
       expect(inline.map((t) => t.meta.caption)).toEqual([' Cap\n', undefined])
     })
+  })
+
+  // A block is one element, built by its family's render from its node and
+  // its rendered children. The render is called at the opener, and builds
+  // once the children have rendered, so what it does comes in source order
+  it('builds each block whole, at its node (TASK-176)', () => {
+    const calls = []
+    const withBlocks = new MarkdownIt().use(directives, {
+      blocks: {
+        section: ({ node, h }) => {
+          calls.push(`open ${node.id}`)
+          return (children, closedBy) => {
+            calls.push(`build ${node.id} ${closedBy}`)
+            return h('div', { id: node.id }, children)
+          }
+        },
+      },
+    })
+    expect(
+      withBlocks.render('::: chapter:a\n\n::: section:b\n\nx\n\n::: exit:a\n')
+    ).toBe('<div id="a"><div id="b"><p>x</p>\n</div></div>')
+    expect(calls).toEqual([
+      'open a',
+      'open b',
+      'build b crossed-exit',
+      'build a exit',
+    ])
   })
 
   it('renders plain sections without a legacy renderer', () => {

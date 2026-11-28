@@ -1,10 +1,11 @@
 import {
+  attributesList,
   attributesObject,
-  attributesString,
+  blockEndComment,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
-import type { DirectiveToken, DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
+import type { BlockRender } from '@canopycanopycanopy/b-ber-lib'
 import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -12,40 +13,61 @@ import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 const MARKER_OPEN_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
-// a simple `render` function that gets passed into our `createRenderer` is
-// responsible for the HTML output.
-const render = (
-  tokens: DirectiveToken[],
-  idx: number,
-  _options: unknown,
-  env: DocumentEnv
-) => {
-  const token = tokens[idx].info.trim().match(MARKER_OPEN_RE)
+// A gallery, built whole, differently per target:
+//
+//  fullbleedContainers (web, reader): all assets (images, videos, etc) go in
+//      a `fullscreen` container, so that they can be positioned with CSS
+//
+//  otherwise (epub, mobi, pdf): all assets go in a section.gallery, which is
+//      made a slider by JS if available, and otherwise is a sequence of images
+//
+// The closing markup used to be b-ber-grammar-section's, drawn at the exit
+const render: BlockRender = ({ node, env, h }) => {
+  // The directive rule claims only the lines MARKER_OPEN_RE matches
+  const [, type, id, attrs] = node.info
+    .trim()
+    .match(MARKER_OPEN_RE) as RegExpMatchArray
+  const attributes: [string, string][] = [
+    ['id', htmlId(id)],
+    ...attributesList(attributesObject(attrs, type)),
+  ]
 
-  if (tokens[idx].nesting !== 1 || !token) return ''
-
-  const [, type, id, attrs] = token
-  const attrsObject = attributesObject(attrs, type)
-  const attrsString = attributesString(attrsObject)
-
-  // gallery directive is handled differentenly based on build:
-
-  //  fullbleedContainers (web, reader): drop all assets (images, videos,
-  //      etc) into a `fullscreen` container so that they can be positioned
-  //      using custom CSS
-
-  //  otherwise (epub, mobi, pdf): drop all assets into a section.gallery
-  //      container that is initialized as a slider via JS if available.
-  //      defaults to a simple sequence of images
-
-  if (env.document.target.features.fullbleedContainers) {
-    return `
-                <section id="${htmlId(id)}" ${attrsString}>
-                <div class="figure__large figure__inline figure__fullbleed figure__gallery">
-                <figure>
-                <div class="figure__items">`
+  if (!env.document.target.features.fullbleedContainers) {
+    return (children, closedBy) =>
+      h.fragment([
+        h('section', attributes, children),
+        blockEndComment(h, node.id, closedBy),
+      ])
   }
-  return `<section id="${htmlId(id)}" ${attrsString}>`
+
+  // The markup's own line breaks and indentation, as it was written
+  const line = '\n                '
+  const closingLine = '\n            '
+  return (children, closedBy) =>
+    h.fragment([
+      line,
+      h('section', attributes, [
+        line,
+        h(
+          'div',
+          {
+            class:
+              'figure__large figure__inline figure__fullbleed figure__gallery',
+          },
+          [
+            line,
+            h('figure', null, [
+              line,
+              h('div', { class: 'figure__items' }, children),
+              closingLine,
+            ]),
+            closingLine,
+          ]
+        ),
+        closingLine,
+      ]),
+      blockEndComment(h, node.id, closedBy),
+    ])
 }
 
 export default {

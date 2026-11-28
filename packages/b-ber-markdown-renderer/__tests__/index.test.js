@@ -297,6 +297,26 @@ describe('b-ber-markdown-renderer: blocks', () => {
       expect(count(html, /<\/section>/g)).toBe(1)
       expect(html).toContain('<cite>&#8212;&#160;Someone</cite>')
     })
+
+    // TASK-174's quirk 2: `exit` was matched anywhere in an opener's line. A
+    // structural block drew a stray close and its contents (or failed with a
+    // TypeError), and a pullquote drew neither its open nor its close
+    it.each([
+      ['a chapter', '::: chapter:c title:"exit:here"', '<section id="c"'],
+      ['a pullquote', '::: pullquote:c citation:"the exit"', '<section'],
+    ])(
+      'opens %s whose opener has `exit` in its line',
+      (_label, opener, open) => {
+        const html = markdownRenderer.render(
+          'test',
+          `${opener}\n\nText.\n\n::: exit:c\n`
+        )
+        expect(html).toContain(open)
+        expect(count(html, /<section/g)).toBe(1)
+        expect(count(html, /<\/section>/g)).toBe(1)
+        expect(html.indexOf('<section')).toBeLessThan(html.indexOf('Text.'))
+      }
+    )
   })
 
   // TASK-175: a block opened in a list item used to take the rest of the

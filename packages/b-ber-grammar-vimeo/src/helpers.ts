@@ -1,4 +1,9 @@
-import type { DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
+import { commentLines } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import type {
+  DocumentEnv,
+  XhtmlBuilder,
+  XhtmlNode,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isUndefined from 'lodash/isUndefined'
@@ -83,15 +88,34 @@ export const validatePosterImage = (
   return asset
 }
 
-export const renderPosterImage = (poster: string): string =>
-  poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
-
-export const renderCaption = (caption: string, mediaType: string): string =>
-  caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
-
 export const getMediaType = (type: string): string => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
+}
+
+// A line break and the indentation the markup was written with
+const nl = (indent: number): string => `\n${' '.repeat(indent)}`
+
+const posterImage = (h: XhtmlBuilder, poster: string): XhtmlNode | null =>
+  poster ? h('img', { src: poster, alt: 'Poster Image' }) : null
+
+interface Commented {
+  mediaType: string
+  type: string
+  id: string
+}
+
+const startComment = (h: XhtmlBuilder, { mediaType, type, id }: Commented) =>
+  commentLines(h, `START: ${mediaType}:${type}#${id};`)
+
+const endComment = (h: XhtmlBuilder, { mediaType, type, id }: Commented) =>
+  commentLines(h, `END: ${mediaType}:${type}#${id};`)
+
+// What an inline embed's elements are built with besides the figure's data:
+// the container's attributes and the player's query string, unescaped
+export interface VimeoElement {
+  attributes: [string, string][]
+  query: string
 }
 
 export interface VimeoFigureArgs {
@@ -100,24 +124,30 @@ export interface VimeoFigureArgs {
   poster: string
 }
 
-export function createVimeo({ id, href, poster }: VimeoFigureArgs): string {
-  return `
-    <div class="figure__small figure__small--landscape">
-      <figure id="ref${id}">
-        <a href="${href}#${id}">
-          ${renderPosterImage(poster)}
-        </a>
-      </figure>
-    </div>`
+// The video's thumbnail, linking to its page in the list of illustrations
+export function createVimeo(
+  { id, href, poster }: VimeoFigureArgs,
+  h: XhtmlBuilder
+): XhtmlNode {
+  return h.fragment([
+    nl(4),
+    h('div', { class: 'figure__small figure__small--landscape' }, [
+      nl(6),
+      h('figure', { id: `ref${id}` }, [
+        nl(8),
+        h('a', { href: `${href}#${id}` }, [
+          nl(10),
+          posterImage(h, poster),
+          nl(8),
+        ]),
+        nl(6),
+      ]),
+      nl(4),
+    ]),
+  ])
 }
 
-export interface VimeoInlineArgs {
-  id: string
-  commentStart: string
-  commentEnd: string
-  mediaType: string
-  attrString: string
-  attrQuery: string
+export interface VimeoInlineArgs extends Commented {
   aspectRatio: string
   aspectRatioClassName: string
   source: string
@@ -125,49 +155,67 @@ export interface VimeoInlineArgs {
   caption: string
 }
 
+// The player, where the target has live embeds
 export function createVimeoInline(
-  {
-    id,
-    commentStart,
-    commentEnd,
-    mediaType,
-    attrString,
-    attrQuery,
-    aspectRatio,
-    aspectRatioClassName,
-    source,
-    poster,
-    caption,
-  }: VimeoInlineArgs,
-  env: DocumentEnv
-): string {
-  return `
-    ${commentStart}
-      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
-        <div id="${id}"${attrString}>
-          ${env.document.target.features.readerRuntime ? '' : renderPosterImage(poster)}
-          <iframe
-            data-vimeo="true"
-            data-vimeo-poster="${poster}"
-            data-aspect-ratio="${aspectRatio}"
-            src="https://player.vimeo.com/video/${source}${attrQuery}"
-            webkitallowfullscreen="webkitallowfullscreen"
-            mozallowfullscreen="mozallowfullscreen"
-            allowfullscreen="allowfullscreen"
-            frameborder="0">
-          </iframe>
-        </div>
-        ${renderCaption(caption, mediaType)}
-      </section>
-    ${commentEnd}`
+  data: VimeoInlineArgs,
+  { attributes, query }: VimeoElement,
+  env: DocumentEnv,
+  h: XhtmlBuilder
+): XhtmlNode {
+  const { id, mediaType, aspectRatio, aspectRatioClassName, source, poster } =
+    data
+  return h.fragment([
+    nl(4),
+    startComment(h, data),
+    nl(6),
+    h(
+      'section',
+      {
+        class: `${mediaType} ${aspectRatioClassName} figure__large figure__inline`,
+      },
+      [
+        nl(8),
+        h(
+          'div',
+          [['id', id], ...attributes],
+          [
+            nl(10),
+            env.document.target.features.readerRuntime
+              ? null
+              : posterImage(h, poster),
+            nl(10),
+            h(
+              'iframe',
+              {
+                'data-vimeo': 'true',
+                'data-vimeo-poster': poster,
+                'data-aspect-ratio': aspectRatio,
+                src: `https://player.vimeo.com/video/${source}${query}`,
+                webkitallowfullscreen: 'webkitallowfullscreen',
+                mozallowfullscreen: 'mozallowfullscreen',
+                allowfullscreen: 'allowfullscreen',
+                frameborder: '0',
+              },
+              [nl(10)]
+            ),
+            nl(8),
+          ]
+        ),
+        nl(8),
+        data.caption
+          ? h('p', { class: `caption caption__${mediaType}` }, [
+              h.raw(data.caption),
+            ])
+          : null,
+        nl(6),
+      ]
+    ),
+    nl(4),
+    endComment(h, data),
+  ])
 }
 
-export interface UnsupportedInlineArgs {
-  id: string
-  commentStart: string
-  commentEnd: string
-  attrString: string
-  mediaType: string
+export interface UnsupportedInlineArgs extends Commented {
   poster: string
 }
 
@@ -175,25 +223,39 @@ export interface UnsupportedInlineArgs {
 // in the LOI is handled by b-ber-templates. Not great UI to have to click to
 // the LOI to see that something is unsupported, but vimeo directives should
 // mostly be managed by media.yml which supports fallbacks.
-export function createUnsupportedInline({
-  id,
-  commentStart,
-  commentEnd,
-  attrString,
-  mediaType,
-  poster,
-}: UnsupportedInlineArgs): string {
-  return `
-    ${commentStart}
-      <section class="${mediaType} figure__large figure__inline">
-        <div id="${id}" ${attrString}>
-          <div class="media__fallback media__fallback__${mediaType} media__fallback--image">
-            <figure>
-              ${renderPosterImage(poster)}
-            </figure>
-          </div>
-          <p class="media__fallback media__fallback__${mediaType} media__fallback--text">Your device does not support embedded media.</p>
-        </div>
-      </section>
-    ${commentEnd}`
+export function createUnsupportedInline(
+  data: UnsupportedInlineArgs,
+  { attributes }: Pick<VimeoElement, 'attributes'>,
+  h: XhtmlBuilder
+): XhtmlNode {
+  const { id, mediaType, poster } = data
+  const fallback = `media__fallback media__fallback__${mediaType}`
+  return h.fragment([
+    nl(4),
+    startComment(h, data),
+    nl(6),
+    h('section', { class: `${mediaType} figure__large figure__inline` }, [
+      nl(8),
+      h(
+        'div',
+        [['id', id], ...attributes],
+        [
+          nl(10),
+          h('div', { class: `${fallback} media__fallback--image` }, [
+            nl(12),
+            h('figure', null, [nl(14), posterImage(h, poster), nl(12)]),
+            nl(10),
+          ]),
+          nl(10),
+          h('p', { class: `${fallback} media__fallback--text` }, [
+            'Your device does not support embedded media.',
+          ]),
+          nl(8),
+        ]
+      ),
+      nl(6),
+    ]),
+    nl(4),
+    endComment(h, data),
+  ])
 }

@@ -1,6 +1,9 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import logo from '../src'
+
+const render = (config, node) => serialize(config.render({ node, env, h }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -59,8 +62,8 @@ describe('b-ber-grammar-logo', () => {
   it('render returns figure element with image when source exists', () => {
     fs.existsSync.mockReturnValue(true)
     const config = logo.renderer({ context })
-    const tokens = [{ info: 'logo:my-logo source:logo.png', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'logo:my-logo source:logo.png', line: 0 }
+    const result = render(config, node)
     expect(result).toContain('<figure')
     expect(result).toContain('class="logo"')
     expect(result).toContain('<img')
@@ -69,18 +72,16 @@ describe('b-ber-grammar-logo', () => {
 
   it('render throws what log.error reports when source attribute is missing', () => {
     const config = logo.renderer({ context })
-    const tokens = [{ info: 'logo:my-logo', map: [0, 1] }]
-    expect(() => config.render(tokens, 0, {}, env)).toThrow(
-      '[source] attribute is required'
-    )
+    const node = { info: 'logo:my-logo', line: 0 }
+    expect(() => render(config, node)).toThrow('[source] attribute is required')
     expect(log.error).toHaveBeenCalled()
   })
 
   it('render logs warning when image file does not exist', () => {
     fs.existsSync.mockReturnValue(false)
     const config = logo.renderer({ context })
-    const tokens = [{ info: 'logo:my-logo source:missing.png', map: [0, 1] }]
-    config.render(tokens, 0, {}, env)
+    const node = { info: 'logo:my-logo source:missing.png', line: 0 }
+    render(config, node)
     expect(log.warn).toHaveBeenCalled()
   })
 })

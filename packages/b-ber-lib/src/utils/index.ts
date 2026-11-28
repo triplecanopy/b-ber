@@ -336,7 +336,7 @@ export function createUnsupportedInline({
   return `
     ${commentStart}
     <section class="${mediaType} figure__large figure__inline">
-      <div id="${id}" ${attrString}>
+      <div id="${id}"${attrString}>
         <div class="media__fallback media__fallback__${mediaType} media__fallback--image">
           <figure>
             ${renderPosterImage(poster)}

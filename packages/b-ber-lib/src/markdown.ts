@@ -109,6 +109,121 @@ export interface RendererInstance {
   renderInline(src: string, env: DocumentEnv): string
 }
 
+// The XHTML a document renders to, built as a tree and serialized once
+// (TASK-176), so that every element b-ber writes is closed where it is
+// opened. b-ber-markdown-renderer's `xhtml` builds and serializes these. They
+// are declared here, with the rest of what the grammars and the renderer
+// share, because the grammars cannot depend on the renderer
+export type XhtmlNode =
+  | XhtmlElement
+  | XhtmlText
+  | XhtmlRaw
+  | XhtmlComment
+  | XhtmlFragment
+
+export interface XhtmlElement {
+  type: 'element'
+  tag: string
+  // In the order they are written
+  attrs: [string, string][]
+  children: XhtmlNode[]
+}
+
+// Text, escaped when it is written
+export interface XhtmlText {
+  type: 'text'
+  value: string
+}
+
+// Markup written as it is: what markdown-it renders (the document's Markdown,
+// a caption), and markup b-ber-templates and b-ber-lib still write as strings
+export interface XhtmlRaw {
+  type: 'raw'
+  html: string
+}
+
+export interface XhtmlComment {
+  type: 'comment'
+  value: string
+}
+
+// Nodes written one after another, with nothing around them
+export interface XhtmlFragment {
+  type: 'fragment'
+  children: XhtmlNode[]
+}
+
+// What the builder takes as a child: a string is text, and nothing is written
+// for null, undefined or false, so that a child can be conditional
+export type XhtmlChild = XhtmlNode | string | null | undefined | false
+
+// An element's attributes, in the order they are written. One whose value is
+// null, undefined or false is left out
+export type XhtmlAttributes =
+  | Record<string, string | number | null | undefined | false>
+  | [string, string | number][]
+
+// `h(tag, attrs, children)`, TASK-161's element builder, with the other kinds
+// of node
+export interface XhtmlBuilder {
+  (
+    tag: string,
+    attrs?: XhtmlAttributes | null,
+    children?: XhtmlChild[]
+  ): XhtmlElement
+  text(value: string): XhtmlText
+  raw(html: string): XhtmlRaw
+  comment(value: string): XhtmlComment
+  fragment(children: XhtmlChild[]): XhtmlFragment
+}
+
+// How a block closed, as b-ber-markdown-renderer's directive rule decides it:
+// at its own `exit`, at an outer block's `exit` that crossed it, or at the end
+// of its Markdown container
+export type ClosedBy = 'exit' | 'crossed-exit' | 'end'
+
+// A block directive, as its grammar renders it: the directive rule's node
+export interface BlockDirective {
+  // e.g. `chapter` or `gallery`
+  name: string
+  id: string
+  // The opener's line after the fence, exactly as markdown-it captured it.
+  // The grammars parse it themselves, as they always have
+  info: string
+  // 0-based source line of the opener
+  line: number
+}
+
+// A single-line directive, as its grammar renders it
+export interface InlineDirective {
+  // The line after the fence
+  info: string
+  // 0-based source line
+  line: number
+  // The caption's Markdown source, between its `::` lines
+  caption?: string
+}
+
+export interface DirectiveRenderArgs<Node> {
+  node: Node
+  env: DocumentEnv
+  h: XhtmlBuilder
+}
+
+// Renders a block directive. It is called at the block's opener, before
+// anything inside the block renders, and returns what builds the block once
+// its children have. So a grammar warns about an opener's attributes, or
+// rejects them, before anything inside renders, as it did when the opener
+// rendered on its own, and the build's messages keep their order
+export type BlockRender = (
+  args: DirectiveRenderArgs<BlockDirective>
+) => (children: XhtmlNode[], closedBy: ClosedBy) => XhtmlNode
+
+// Renders a single-line directive
+export type InlineRender = (
+  args: DirectiveRenderArgs<InlineDirective>
+) => XhtmlNode
+
 // What b-ber-markdown-renderer passes to each grammar's `renderer` factory
 export interface RendererReference {
   instance: RendererInstance

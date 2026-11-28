@@ -1,38 +1,33 @@
-import {
-  type DocumentEnv,
-  type FigureToken,
-  type RendererReference,
-  utils,
+import type {
+  InlineRender,
+  RendererReference,
 } from '@canopycanopycanopy/b-ber-lib'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import { createIframe, createIframeInline, prepare } from './helpers'
-
-const { createUnsupportedInline } = utils
+import {
+  createIframe,
+  createIframeInline,
+  createUnsupportedInline,
+  prepare,
+} from './helpers'
 
 const MARKER_RE = /^(iframe)/
 const DIRECTIVE_RE = /(iframe(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 const render =
-  ({ instance }: RendererReference) =>
-  (
-    tokens: FigureToken[],
-    index: number,
-    _options: unknown,
-    env: DocumentEnv
-  ): string => {
-    const token = tokens[index]
-    const marker = token.info.trim().match(DIRECTIVE_RE)
-    if (!marker) return ''
+  ({ instance }: RendererReference): InlineRender =>
+  ({ node, env, h }) => {
+    const marker = node.info.trim().match(DIRECTIVE_RE)
+    if (!marker) return h.fragment([])
 
     const fileName = `_markdown/${env.document.fileName}.md`
-    const lineNumber = token.map ? token.map[0] : null
+    const lineNumber = node.line
     const type = marker[1]
     const args = prepare({
-      token,
+      node,
       marker,
       env,
       instance,
@@ -45,14 +40,14 @@ const render =
       // in the LOI
       case 'iframe':
         env.result.figures.push(args)
-        return createIframe(args)
+        return createIframe(args, h)
 
       // Render an inline iframe embed, or an unsupported message where the
       // target has no live embeds
       case 'iframe-inline':
         return env.document.target.features.liveEmbeds
-          ? createIframeInline(args)
-          : createUnsupportedInline(args)
+          ? createIframeInline(args, h)
+          : createUnsupportedInline(args, h)
 
       default:
         throw new Error(

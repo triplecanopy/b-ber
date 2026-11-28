@@ -1,17 +1,21 @@
 import path from 'node:path'
 import {
+  attributesList,
   attributesObject,
   attributesString,
+  commentLines,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
   type DocumentEnv,
-  type FigureToken,
   Html,
+  type InlineDirective,
   nextFigure,
   type RendererReference,
   Url,
   utils,
+  type XhtmlBuilder,
+  type XhtmlNode,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { htmlIframeAttributes } from '@canopycanopycanopy/b-ber-shapes-directives'
@@ -20,7 +24,7 @@ import fs from 'fs-extra'
 // Read from the package root rather than the `b-ber-lib/utils` subpath: that
 // subpath is a bare `utils.js` shim with no declaration file, and it re-exports
 // this same `utils` object.
-const { ensureSource, getMediaType, renderCaption, renderPosterImage } = utils
+const { ensureSource, getMediaType } = utils
 
 // b-ber-lib's `ensurePoster` and `ensureSupportedClassNames`, which read the
 // project's images and the target from `State`, taking them from the
@@ -51,14 +55,14 @@ function ensureSupportedClassNames(
 
 interface PrepareArgs extends RendererReference {
   env: DocumentEnv
-  token: FigureToken
+  node: InlineDirective
   marker: RegExpMatchArray
   fileName: string
   lineNumber: number | null
 }
 
 export function prepare({
-  token,
+  node,
   marker,
   env,
   instance,
@@ -95,7 +99,7 @@ export function prepare({
         ? 'figures-titlepage.xhtml'
         : page,
     ref: env.document.fileName,
-    caption: token.children ? instance.renderInline(token.children, env) : '',
+    caption: node.caption ? instance.renderInline(node.caption, env) : '',
     page,
     type,
     mediaType,
@@ -108,28 +112,52 @@ export function prepare({
 
 export type IframeArgs = ReturnType<typeof prepare>
 
-export function createIframe({
-  id,
-  href,
-  poster,
-}: Pick<IframeArgs, 'id' | 'href' | 'poster'>): string {
-  return `
-    <div class="figure__small figure__small--landscape">
-      <figure id="ref${id}">
-        <a href="${href}#${id}">
-          ${renderPosterImage(poster)}
-        </a>
-      </figure>
-    </div>`
+// A line break and the indentation the markup was written with
+const nl = (indent: number): string => `\n${' '.repeat(indent)}`
+
+const posterImage = (h: XhtmlBuilder, poster: string): XhtmlNode | null =>
+  poster ? h('img', { src: poster, alt: 'Poster Image' }) : null
+
+const startComment = (h: XhtmlBuilder, { mediaType, type, id }: IframeArgs) =>
+  commentLines(h, `START: ${mediaType}:${type}#${id};`)
+
+const endComment = (h: XhtmlBuilder, { mediaType, type, id }: IframeArgs) =>
+  commentLines(h, `END: ${mediaType}:${type}#${id};`)
+
+// The embed's thumbnail, linking to its page in the list of illustrations
+export function createIframe(
+  { id, href, poster }: Pick<IframeArgs, 'id' | 'href' | 'poster'>,
+  h: XhtmlBuilder
+): XhtmlNode {
+  return h.fragment([
+    nl(4),
+    h('div', { class: 'figure__small figure__small--landscape' }, [
+      nl(6),
+      h('figure', { id: `ref${id}` }, [
+        nl(8),
+        h('a', { href: `${href}#${id}` }, [
+          nl(10),
+          posterImage(h, poster),
+          nl(8),
+        ]),
+        nl(6),
+      ]),
+      nl(4),
+    ]),
+  ])
 }
 
-export function createIframeInline(data: IframeArgs): string {
+// The embed, where the target has live embeds
+export function createIframeInline(
+  data: IframeArgs,
+  h: XhtmlBuilder
+): XhtmlNode {
   const {
     id,
     commentStart,
     commentEnd,
     mediaType,
-    attrString: containerAttrsString,
+    attrString,
     source,
     caption,
     ...rest
@@ -139,23 +167,71 @@ export function createIframeInline(data: IframeArgs): string {
   // EPUBCheck errors. Remove once the iframe template is EPUB 3 compliant.
   // const defaults = { allow: 'fullscreen autoplay', frameborder: '0' }
   const defaults = { allow: 'fullscreen autoplay' }
-  const iframeAttrs = Object.entries({ ...defaults, ...rest }).reduce<string[]>(
-    (acc, [key, val]) => {
-      if (!htmlIframeAttributes.has(key) || val === '') return acc
-      return acc.concat(`${key}="${Html.escape(val)}"`)
-    },
-    []
+  const iframeAttrs = Object.entries({ ...defaults, ...rest }).flatMap(
+    ([key, val]): [string, string][] =>
+      !htmlIframeAttributes.has(key) || val === '' ? [] : [[key, String(val)]]
   )
-  const iframeAttrsString = iframeAttrs.join(' ')
 
-  return `
-    ${commentStart}
-      <section class="${mediaType} figure__large figure__inline">
-        <div id="${id}"${containerAttrsString}>
-          <iframe src="${Html.escape(source)}" ${iframeAttrsString}>
-          </iframe>
-        </div>
-        ${renderCaption(caption, mediaType)}
-      </section>
-    ${commentEnd}`
+  return h.fragment([
+    nl(4),
+    startComment(h, data),
+    nl(6),
+    h('section', { class: `${mediaType} figure__large figure__inline` }, [
+      nl(8),
+      h(
+        'div',
+        [['id', id], ...attributesList({ classes: rest.classes })],
+        [
+          nl(10),
+          h('iframe', [['src', source], ...iframeAttrs], [nl(10)]),
+          nl(8),
+        ]
+      ),
+      nl(8),
+      caption
+        ? h('p', { class: `caption caption__${mediaType}` }, [h.raw(caption)])
+        : null,
+      nl(6),
+    ]),
+    nl(4),
+    endComment(h, data),
+  ])
+}
+
+// Where the target has no live embeds: the poster and a message. The figure
+// in the list of illustrations says so too, from b-ber-templates
+export function createUnsupportedInline(
+  data: IframeArgs,
+  h: XhtmlBuilder
+): XhtmlNode {
+  const { id, mediaType, poster } = data
+  const fallback = `media__fallback media__fallback__${mediaType}`
+  return h.fragment([
+    nl(4),
+    startComment(h, data),
+    nl(4),
+    h('section', { class: `${mediaType} figure__large figure__inline` }, [
+      nl(6),
+      h(
+        'div',
+        [['id', id], ...attributesList({ classes: data.classes })],
+        [
+          nl(8),
+          h('div', { class: `${fallback} media__fallback--image` }, [
+            nl(10),
+            h('figure', null, [nl(12), posterImage(h, poster), nl(10)]),
+            nl(8),
+          ]),
+          nl(8),
+          h('p', { class: `${fallback} media__fallback--text` }, [
+            'Your device does not support embedded media.',
+          ]),
+          nl(6),
+        ]
+      ),
+      nl(4),
+    ]),
+    nl(4),
+    endComment(h, data),
+  ])
 }

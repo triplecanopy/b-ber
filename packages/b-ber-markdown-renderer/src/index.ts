@@ -145,14 +145,13 @@ class MarkdownRenderer {
     // them had, and renders each with its grammar as before
     this.markdownIt.use(directives, {
       host: legacyHost(),
-      legacy: {
+      blocks: {
         section: section.render,
         pullquote: pullquote.render,
         dialogue: markdownItDialogue.renderer({}).render,
         gallery: markdownItGallery.renderer({}).render,
         spread: markdownItSpread.renderer().render,
       },
-      close: { section: section.close, pullquote: pullquote.close },
       // A `media` line is resolved for the target being built when it
       // renders. It used to be spliced into the Markdown before the parse
       media: (type, id, env: RenderEnv) =>

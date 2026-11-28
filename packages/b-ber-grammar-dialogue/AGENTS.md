@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Transforms the `dialogue` / `exit` block directive pair into a `<section>` wrapper. Opening marker produces `<section id="..." class="...">` with EPUB-compliant attributes; exit marker closes it. Delegates the open/close state-tracking and MarkdownIt container validation to `b-ber-grammar-renderer`. The content between markers is rendered as normal Markdown.
+Transforms the `dialogue` / `exit` block directive pair into a `<section>` wrapper. `render` builds the `<section id="..." class="...">` with EPUB-compliant attributes, its rendered content and the end comment, where the directive rule closes it (TASK-176). Delegates the open/close state-tracking and MarkdownIt container validation to `b-ber-grammar-renderer`. The content between markers is rendered as normal Markdown.
 
 ## Key Files
 

@@ -1,3 +1,4 @@
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import pullquote from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -16,11 +17,8 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
       ? { citation: 'Jane Doe', classes: 'pullquote' }
       : { classes: 'pullquote' }
   ),
-  attributesString: jest.fn((obj) =>
-    Object.entries(obj)
-      .map(([key, value]) => ` ${key}="${value}"`)
-      .join('')
-  ),
+  attributesList: jest.requireActual('../../b-ber-grammar-attributes/src')
+    .attributesList,
   parseAttrs: jest.requireActual('../../b-ber-grammar-attributes/src')
     .parseAttrs,
 }))
@@ -50,85 +48,56 @@ describe('b-ber-grammar-pullquote', () => {
     expect(() => config.validateOpen('pullquote', 1)).toThrow('Missing [id]')
   })
 
-  it('render returns empty string for closing token (nesting -1)', () => {
-    const config = pullquote.renderer({ instance, context })
-    const tokens = [{ nesting: -1, info: 'exit:pq-01', map: [10, 11] }]
-    expect(config.render(tokens, 0, {}, env)).toBe('')
-  })
-
-  it('render handleOpen produces section open tag for pullquote directive', () => {
-    const config = pullquote.renderer({ instance, context })
-    const tokens = [{ nesting: 1, info: 'pullquote:pq-01', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, env)
-    expect(result).toContain('<section')
-    expect(result).toContain('pq-01')
-  })
-
-  it('render handleOpen produces blockquote open tag for blockquote directive', () => {
-    const config = pullquote.renderer({ instance, context })
-    const tokens = [{ nesting: 1, info: 'blockquote:bq-01', map: [0, 1] }]
-    const result = config.render(tokens, 0, {}, env)
-    expect(result).toContain('<blockquote')
-    expect(result).toContain('bq-01')
-  })
-
   it('validateOpen returns true for a valid pullquote directive', () => {
     const config = pullquote.renderer({ instance, context })
     expect(config.validateOpen('pullquote:pq-02', 1)).toBe(true)
   })
 
-  // The directive rule draws every close, from the block's node, and checks
-  // its id against the file's other blocks (TASK-175). The citation used to
-  // be kept in module-level state from the open to the exit
-  describe('close', () => {
-    it('draws the citation from the opener’s line', () => {
+  // Built whole, from the block's node and its rendered children, where the
+  // directive rule closes it (TASK-175, TASK-176). The citation used to be
+  // kept in module-level state from the open to the exit
+  describe('render', () => {
+    const build = (name, id, info, children = [h('p', null, ['q'])]) => {
       const config = pullquote.renderer({ instance, context })
-      const closed = config.close(
-        {
-          name: 'pullquote',
-          id: 'cited-01',
-          info: ' pullquote:cited-01 citation:"Jane Doe"',
-        },
-        'exit',
-        env
-      )
+      const node = { name, id, info, line: 0 }
+      return serialize(config.render({ node, env, h })(children, 'exit'))
+    }
 
-      expect(closed).toContain(
-        '<footer><cite>&#8212;&#160;Jane Doe</cite></footer>'
-      )
-      expect(closed).toContain(
-        '</section><!-- END: section:pullquote#cited-01 -->'
+    it('builds a pullquote with the citation from the opener’s line', () => {
+      expect(
+        build(
+          'pullquote',
+          'cited-01',
+          ' pullquote:cited-01 citation:"Jane Doe"'
+        )
+      ).toBe(
+        '<!-- START: section:pullquote#cited-01 --><section class="pullquote"><p>q</p>\n        ' +
+          '<footer><cite>&#8212;&#160;Jane Doe</cite></footer>\n        ' +
+          '</section><!-- END: section:pullquote#cited-01 -->\n    '
       )
       expect(instance.renderInline).toHaveBeenCalledWith('Jane Doe', env)
     })
 
-    it('closes a blockquote, without a footer when there is no citation', () => {
-      const config = pullquote.renderer({ instance, context })
-      const closed = config.close(
-        {
-          name: 'blockquote',
-          id: 'plain-01',
-          info: ' blockquote:plain-01 classes:x',
-        },
-        'exit',
-        env
+    it('builds a blockquote, without a footer when there is no citation', () => {
+      const built = build(
+        'blockquote',
+        'plain-01',
+        ' blockquote:plain-01 classes:x'
       )
-
-      expect(closed).not.toContain('<footer>')
-      expect(closed).toContain(
+      expect(built).not.toContain('<footer>')
+      expect(built).toContain('<blockquote class="pullquote"><p>q</p>')
+      expect(built).toContain(
         '</blockquote><!-- END: section:blockquote#plain-01 -->'
       )
     })
 
-    it('draws nothing for an opener with `exit` in its line, which drew no open', () => {
-      const config = pullquote.renderer({ instance, context })
-      const info = ' pullquote:pq citation:"exit:here"'
+    // It drew neither its open nor its close (TASK-174's quirk 2)
+    it('builds a pullquote whose opener has `exit` in its line', () => {
       expect(
-        config.render([{ nesting: 1, info, map: [0, 1] }], 0, {}, env)
-      ).toBe('')
-      expect(
-        config.close({ name: 'pullquote', id: 'pq', info }, 'exit', env)
-      ).toBe('')
+        build('pullquote', 'pq', ' pullquote:pq citation:"exit:here"')
+      ).toContain(
+        '<section class="pullquote"><p>q</p>\n        <footer><cite>&#8212;&#160;exit:here</cite></footer>'
+      )
     })
   })
 })

@@ -1,7 +1,13 @@
 /* eslint-disable no-plusplus, no-continue*/
 
 import path from 'node:path'
-import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type ClosedBy,
+  Html,
+  Url,
+  type XhtmlBuilder,
+  type XhtmlFragment,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   ALL_DIRECTIVES,
@@ -74,18 +80,18 @@ export interface AttributesContext {
   lineNumber?: number | null
 }
 
-// Values are text, so they are escaped: they used to be written as they were,
-// and `title:"<b>&"` gave malformed XHTML (TASK-161)
-const _applyTransforms = (k: string, v: AttributeValue): string => {
+// The XHTML attribute a directive's attribute becomes, if any: `classes` is
+// `class`, `source` is `src`, and so on
+const _transform = (k: string, v: AttributeValue): [string, string] | null => {
   switch (k) {
     case 'classes':
-      return ` class="${Html.escape(v)}"`
+      return ['class', String(v)]
     case 'epubTypes':
-      return ` epub:type="${Html.escape(v)}"`
+      return ['epub:type', String(v)]
     case 'attrs':
-      return ''
+      return null
     case 'source':
-      return ` src="${Html.escape(v)}"`
+      return ['src', String(v)]
 
     // Boolean attrs for audio/video elements
     case 'controls':
@@ -93,11 +99,18 @@ const _applyTransforms = (k: string, v: AttributeValue): string => {
     case 'muted':
     case 'autobuffer':
     case 'loop':
-      return v === 'yes' ? ` ${k}="${k}"` : ''
+      return v === 'yes' ? [k, k] : null
 
     default:
-      return ` ${k}="${Html.escape(v)}"`
+      return [k, String(v)]
   }
+}
+
+// Values are text, so they are escaped: they used to be written as they were,
+// and `title:"<b>&"` gave malformed XHTML (TASK-161)
+const _applyTransforms = (k: string, v: AttributeValue): string => {
+  const attribute = _transform(k, v)
+  return attribute ? ` ${attribute[0]}="${Html.escape(attribute[1])}"` : ''
 }
 
 // MarkdownIt returns a trimmed string of the directive's attributes, which
@@ -187,10 +200,12 @@ const _buildAttrString = (
 // Pass reference object in to only add keys/values that exist on reference
 const _buildAttrQueryString = (
   obj: Record<string, AttributeValue>,
-  reference?: Record<string, unknown>
+  reference?: Record<string, unknown>,
+  // `&amp;` where the string is written into markup as it is
+  separator = '&amp;'
 ): string =>
   Object.entries(obj).reduce((acc: string, [key, val]) => {
-    const prefix = acc.length ? '&amp;' : '?'
+    const prefix = acc.length ? separator : '?'
     // `String` is what `ensureDecoded`'s `decodeURIComponent` already did to a
     // number or boolean, so the result is unchanged
     const encodedVal = encodeURIComponent(Url.ensureDecoded(String(val)))
@@ -324,6 +339,44 @@ const attributesString = (
   reference?: Record<string, unknown>
 ): string => _buildAttrString(obj, reference)
 
+// The attributes for an element built with b-ber-markdown-renderer's builder,
+// in order, unescaped: the serializer escapes them (TASK-176). They are the
+// ones `attributesString` writes
+const attributesList = (
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
+): [string, string][] =>
+  Object.entries(obj).flatMap(([key, val]) => {
+    if (reference && !has(reference, key)) return []
+    const attribute = _transform(key, val)
+    return attribute ? [attribute] : []
+  })
+
+// The query string `attributesQueryString` writes, unescaped, for an
+// attribute value the serializer escapes
+const attributesQuery = (
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
+): string => _buildAttrQueryString(obj, reference, '&')
+
+// A comment on lines of its own, as b-ber-lib's `Html.comment` writes it:
+// `\n<!-- text -->\n`
+const commentLines = (h: XhtmlBuilder, text: string): XhtmlFragment =>
+  h.fragment(['\n', h.comment(text), '\n'])
+
+// The comment after a block, which says how it closed: `section:exit#id` at
+// its own `exit` or at the outer block's `exit` that crossed it,
+// `section:#id` at the end of its container. Every block family writes it
+const blockEndComment = (
+  h: XhtmlBuilder,
+  id: string,
+  closedBy: ClosedBy
+): XhtmlFragment => {
+  if (closedBy === 'end') return commentLines(h, `END: section:#${htmlId(id)}`)
+  log.debug(`exit directive [${id}]`)
+  return commentLines(h, `END: section:exit#${htmlId(id)}`)
+}
+
 // Create a query string of attributes for an iframe src
 const attributesQueryString = (
   obj: Record<string, AttributeValue>,
@@ -344,9 +397,13 @@ const toAlias = (fpath: string): string =>
 
 export {
   attributes,
+  attributesList,
   attributesObject,
+  attributesQuery,
   attributesQueryString,
   attributesString,
+  blockEndComment,
+  commentLines,
   htmlId,
   parseAttrs,
   toAlias,

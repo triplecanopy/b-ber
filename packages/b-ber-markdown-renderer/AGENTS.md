@@ -10,20 +10,32 @@
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `src/index.ts`     | Defines and exports the `markdownRenderer` singleton; configures `markdown-it` and registers all grammar plugins |
 | `src/directives/`  | TASK-161's directive grammar (TASK-174): the block rule (`rule.ts`), the structure pass that pairs blocks and reports diagnostics (`structure.ts`), the line grammar (`syntax.ts`), diagnostics and the reporter (`diagnostics.ts`), the tree (`tree.ts`). Built as a second entry, `dist/directives`, which imports no `State` |
+| `src/xhtml.ts` | TASK-161's element builder (`h`) and the XHTML serializer (TASK-176). Imports nothing; the node types are b-ber-lib's (`XhtmlNode`) |
+| `src/directives/render.ts` | Renders a document from its tree: each directive is built as elements by its grammar, the Markdown by markdown-it's rules |
 | `src/legacy-host.ts` | The two errors the build throws on a directive (`Duplicate [id]`, `Missing [id]`), word for word; block ids are checked per file |
 | `scripts/parse-corpus.js` | Runs the parse over a directory of b-ber projects (TASK-161's test 9). By hand only: the projects are private |
 
 ## The directive rule
 
-Every directive is parsed by `src/directives` (TASK-174, TASK-175); the `b-ber-parser-*` plugins are no longer registered. Each grammar still draws its own markup: the renderer passes in each block family's opener `render`, b-ber-grammar-section's and b-ber-grammar-pullquote's `close`, and each single-line directive's `validate` and `render`.
+Every directive is parsed by `src/directives` (TASK-174, TASK-175); the `b-ber-parser-*` plugins are no longer registered. Each grammar builds its own markup, as elements (TASK-176): the renderer passes in each block family's `render` (b-ber-lib's `BlockRender`) and each single-line directive's `validate` and `render` (`InlineRender`).
 
 - **The rule claims the lines the old plugins claimed**, in their old order (`registry.ts`'s families, then `InlineClaim`s). A single-line directive becomes one `directive_inline` token, with its caption.
-- **Blocks keep the old parsers' token shape** (each claimed line opens a container that runs to the end of its Markdown container: the file, a blockquote, a list item, a footnote), because the parse decides tight lists and markdown-it's `maxNesting` from token levels. The structure pass pairs every block and inserts one `directive_close` where it closes: at its `exit`, at an outer block's `exit` that crossed it, or at the end of its Markdown container. **Every close is drawn there**; the exit line and the range end draw nothing. An exit that closes nothing is ignored.
+- **Blocks keep the old parsers' token shape** (each claimed line opens a container that runs to the end of its Markdown container: the file, a blockquote, a list item, a footnote), because the parse decides tight lists and markdown-it's `maxNesting` from token levels. The structure pass pairs every block and inserts one `directive_close` where it closes: at its `exit`, at an outer block's `exit` that crossed it, or at the end of its Markdown container. So the final token list is balanced, and the tree (`tree.ts`) holds each block with everything up to its close as its children. The exit line and the range end render nothing. An exit that closes nothing is ignored.
 - **Passes that need a block's span during the parse** (speaker lines, gallery items) use `blockSpan`, which ends a block at its own `exit`.
 - **Diagnostics go to `env.diagnostics`**; `render(fileName, data, env)` takes the env, and `renderDocument` returns them. `legacy-host.ts` throws the two errors the build has always thrown (`Duplicate [id]`, `Missing [id]`), word for word. Block ids are checked per file; `state.cursor` is gone (TASK-175).
 - **Silent mode records nothing.** That is the TASK-153 fix: a block straight after a paragraph line no longer reports its own id as a duplicate.
 - Diagnostic positions are offsets into the author's source: nothing rewrites the Markdown before the parse.
 - **`media` is a node resolved when it renders** (b-ber-grammar-media's `resolve`, passed in as `media`), so the parse is the same for every target. It becomes the directive media.yml names for the target, rendered by that directive's grammar. Its caption is media.yml's, or else the one written under the line. There is no `prepare()` pre-pass any more (TASK-175).
+
+## The XHTML is built as a tree
+
+Every render, a nested one included, renders from the tree (`directives/render.ts`, which replaces markdown-it's `renderer.render`). TASK-176.
+
+- **A block is one element, built in one place.** Its family's `render` is called at the opener with `{ node, env, h }`, and returns what builds the block from its rendered children and how it closed (`closedBy`). Calling it at the opener keeps the grammars' warnings, errors and what they collect in source order. No render call writes a `<section>` that another closes.
+- **A single-line directive** is built by its grammar's `render` from its node (`info`, `line`, `caption`). A `media` line is resolved first, as before.
+- **Markdown is markdown-it's.** Each token is rendered by markdown-it's own rule, with the whole token list and its index, since rules look at their neighbours (`renderToken`'s line breaks, the footnote rules). A pair's open and close are rendered together, around its children. The tree holds every token once, in order, so the Markdown renders exactly as markdown-it renders it.
+- **`xhtml.ts` writes each thing one way** (see its header): `name="value"` attributes escaped as `Html.escape` does, `<img …/>` for void elements, every other element opened and closed, `--` kept out of comments. Markup a directive does not build is a `raw` node: markdown-it's output (a caption), the figure templates' strings (b-ber-templates), and an entity such as the citation's `&#8212;`.
+- **The grammars are handed `h`**, since they cannot depend on this package. Their tests import it from `../../b-ber-markdown-renderer/src/xhtml`.
 
 ## Per-document state is in `env`
 

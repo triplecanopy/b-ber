@@ -1,7 +1,11 @@
 import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import mimeTypes from 'mime-types'
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import { createFigure, createFigureInline } from '../src/image'
+
+const figure = (a) => serialize(createFigure(a, h))
+const figureInline = (a) => serialize(createFigureInline(a, h))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   ...jest.requireActual('../../b-ber-lib/src/markdown'),
@@ -36,7 +40,7 @@ let env
 const baseArgs = {
   width: 100,
   height: 150,
-  comment: '<!-- comment -->',
+  comment: 'comment',
   id: 'fig1',
   attrsObject: { source: 'image one.jpg', alt: 'an image' },
   caption: 'a caption',
@@ -52,7 +56,7 @@ describe('b-ber-grammar-image / image', () => {
 
   describe('createFigure', () => {
     it('collects a figure entry into the document’s figures', () => {
-      createFigure(args())
+      figure(args())
 
       expect(env.result.figures).toEqual([
         expect.objectContaining({
@@ -74,7 +78,7 @@ describe('b-ber-grammar-image / image', () => {
       env = envFor('epub', 2)
       env.result.figures.push({ id: 'existing' })
 
-      createFigure(args())
+      figure(args())
 
       expect(env.result.figures[1]).toEqual(
         expect.objectContaining({ pageOrder: 3 })
@@ -82,13 +86,13 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('appends the orientation class when no classes are provided', () => {
-      const result = createFigure(args())
+      const result = figure(args())
 
       expect(result).toContain('figure__small figure__small--landscape')
     })
 
     it('appends the orientation class to existing classes', () => {
-      const result = createFigure({
+      const result = figure({
         ...args(),
         attrsObject: { ...baseArgs.attrsObject, classes: 'custom-class' },
       })
@@ -99,7 +103,7 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('links to the figure page for non-reader builds', () => {
-      const result = createFigure(args())
+      const result = figure(args())
 
       expect(result).toContain('href="figurefig1.xhtml#fig1"')
     })
@@ -107,13 +111,13 @@ describe('b-ber-grammar-image / image', () => {
     it('links to the titlepage for reader builds', () => {
       env = envFor('reader')
 
-      const result = createFigure(args())
+      const result = figure(args())
 
       expect(result).toContain('href="figures-titlepage.xhtml#fig1"')
     })
 
     it('encodes the image source in the img src attribute', () => {
-      const result = createFigure(args())
+      const result = figure(args())
 
       expect(result).toContain(
         `src="../images/${encodeURIComponent('image one.jpg')}"`
@@ -121,14 +125,14 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('includes the alt text and the comment', () => {
-      const result = createFigure(args())
+      const result = figure(args())
 
       expect(result).toContain('alt="an image"')
       expect(result).toContain('<!-- comment -->')
     })
 
     it('escapes the alt text and the classes (TASK-161)', () => {
-      const result = createFigure({
+      const result = figure({
         ...args(),
         attrsObject: {
           ...baseArgs.attrsObject,
@@ -144,7 +148,7 @@ describe('b-ber-grammar-image / image', () => {
 
   describe('createFigureInline', () => {
     it('renders via the figures template with classes defaulted to empty string', () => {
-      const result = createFigureInline({
+      const result = figureInline({
         env,
         attrsObject: { source: 'image.jpg', alt: 'an image' },
         id: 'fig1',
@@ -171,7 +175,7 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('preserves provided classes', () => {
-      createFigureInline({
+      figureInline({
         env,
         attrsObject: {
           source: 'image.jpg',
@@ -191,7 +195,7 @@ describe('b-ber-grammar-image / image', () => {
     })
 
     it('looks up the mime type from the image source', () => {
-      createFigureInline({
+      figureInline({
         env,
         attrsObject: { source: 'image.png', alt: '' },
         id: 'fig2',
