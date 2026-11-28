@@ -6,8 +6,8 @@
 // it, which decides how it renders.
 //
 // It deliberately reproduces that parser's token *shape*: each claimed line
-// opens a container holding the rest of the enclosing range, which closes at
-// the range's end. The parse decides tight-list paragraphs and markdown-it's
+// opens a container holding the rest of the enclosing Markdown container,
+// which closes at its end. The parse decides tight-list paragraphs and markdown-it's
 // `maxNesting` cut-off from token levels, so any other shape would change
 // output. The structure pass (structure.ts) then rewrites these tokens into
 // real open/close pairs. See TASK-174's Findings.
@@ -267,6 +267,15 @@ export const createRule =
 
     state.md.block.tokenize(state, startLine + 1, endLine)
 
+    // The tokenizer stops where the enclosing container ends: at the end of
+    // the range, or, in a list item or a footnote, where the indentation
+    // drops. Everything up to there is the block's; the line itself is the
+    // container's. This took every line to the end of the range, so a block
+    // in a list item took the rest of the document with it (TASK-175). When
+    // the opener is the range's last line the tokenizer does not move
+    const end = Math.max(state.line, startLine + 1)
+    open.map = [startLine, end]
+
     const close = state.push(LINE_CLOSE, TAG[family], -1)
     close.meta = { family }
     close.info = params
@@ -274,7 +283,7 @@ export const createRule =
 
     state.parentType = oldParent
     state.lineMax = oldLineMax
-    state.line = endLine
+    state.line = end
 
     if (family === 'dialogue') {
       const { isOpen, isClose } = blockSpan('dialogue')

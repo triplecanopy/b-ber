@@ -262,6 +262,34 @@ describe('b-ber-markdown-renderer: blocks', () => {
     })
   })
 
+  // TASK-175: a block opened in a list item used to take the rest of the
+  // document with it. markdown-it ends the item where the indentation drops,
+  // but the rule reported every line to the end of the file as consumed, so
+  // the later items, the text after the list and the rest of the file
+  // vanished, even with the exit inside the item
+  describe('a block inside a list item', () => {
+    const after = ['Second item.', 'After the list.', 'The last paragraph.']
+
+    it.each([
+      ['with its exit inside the item', '    ::: exit:q1\n'],
+      ['with no exit', ''],
+    ])('loses nothing after it, %s', (_label, exit) => {
+      const html = markdownRenderer.render(
+        'test',
+        `::: chapter:c1\n- First item.\n\n  ::: pullquote:q1\n  A quote inside the list item.\n${exit.replace(/^ {4}/, '  ')}\n- Second item.\n\nAfter the list.\n::: exit:c1\nThe last paragraph.\n`
+      )
+      for (const text of after) expect(html).toContain(text)
+      expect(html.indexOf('A quote inside the list item.')).toBeLessThan(
+        html.indexOf('Second item.')
+      )
+      // The pullquote closes inside the first item, at its exit or at the
+      // item's end
+      expect(html.indexOf('END: section:pullquote#q1')).toBeLessThan(
+        html.indexOf('Second item.')
+      )
+    })
+  })
+
   it('still throws on a real duplicate id', () => {
     expect(() =>
       markdownRenderer.render(
