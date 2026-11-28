@@ -55,7 +55,7 @@ describe('task: pdf', () => {
     await pdf(project.ctx)
 
     const book = path.resolve(process.cwd(), 'book-id.pdf')
-    expect(command()).toBe(`ebook-convert ${ops('content.opf')} "${book}" `)
+    expect(command()).toBe(`ebook-convert "${ops('content.opf')}" "${book}" `)
   })
 
   // ebook-convert has no option to leave the TOC page out

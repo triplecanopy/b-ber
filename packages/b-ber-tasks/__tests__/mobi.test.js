@@ -43,7 +43,7 @@ describe('task: mobi', () => {
     expect(exec).toHaveBeenCalledTimes(1)
     const opf = path.join(project.dist, 'OPS', 'content.opf')
     const book = path.resolve(process.cwd(), 'book-id.mobi')
-    expect(command()).toStartWith(`ebook-convert ${opf} "${book}" `)
+    expect(command()).toStartWith(`ebook-convert "${opf}" "${book}" `)
     expect(exec.mock.calls[0][1]).toEqual({ cwd: process.cwd() })
   })
 
@@ -98,10 +98,10 @@ describe('task: mobi', () => {
     expect(log.error).toHaveBeenCalledWith(err)
   })
 
-  // Defect, in b-ber-lib's EbookConvert (src/EbookConvert.ts:51): the output
-  // path is quoted and the input path is not, so a project under a directory
-  // whose name has a space hands ebook-convert a broken command line.
-  test('does not quote the input path (defect)', async () => {
+  // #802, in b-ber-lib's EbookConvert: the output path was quoted and the
+  // input path was not, so a project under a directory whose name has a
+  // space handed ebook-convert a broken command line
+  test('quotes the input path (#802)', async () => {
     project = await createProject({
       build: 'mobi',
       metadata: METADATA,
@@ -112,8 +112,7 @@ describe('task: mobi', () => {
 
     const opf = path.join(project.dist, 'OPS', 'content.opf')
     expect(opf).toContain('my book')
-    expect(command()).toContain(`ebook-convert ${opf} `)
-    expect(command()).not.toContain(`"${opf}"`)
+    expect(command()).toContain(`ebook-convert "${opf}" `)
   })
 })
 
