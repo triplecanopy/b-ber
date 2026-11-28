@@ -6,10 +6,11 @@ import {
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
+  type DocumentEnv,
   type FigureToken,
   Html,
+  nextFigure,
   type RendererReference,
-  State as state,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
@@ -38,6 +39,7 @@ const DIRECTIVE_RE =
   /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 interface PrepareArgs extends RendererReference {
+  env: DocumentEnv
   token: FigureToken
   marker: RegExpMatchArray
   fileName: string
@@ -47,7 +49,7 @@ interface PrepareArgs extends RendererReference {
 function prepare({
   token,
   marker,
-  context,
+  env,
   instance,
   fileName,
   lineNumber,
@@ -58,8 +60,10 @@ function prepare({
   const mediaType = getMediaType(type) as MediaType
 
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
-  const media = [...state[mediaType]]
-  const caption = token.children ? instance.renderInline(token.children) : ''
+  const media = [...env.document[mediaType]]
+  const caption = token.children
+    ? instance.renderInline(token.children, env)
+    : ''
 
   let sources = []
   let sourceElements = ''
@@ -70,7 +74,7 @@ function prepare({
   let aspectRatioClassName = ''
 
   if (attrsObject.poster) {
-    poster = validatePosterImage(attrsObject.poster, type)
+    poster = validatePosterImage(attrsObject.poster, type, env)
     poster = `../images/${encodeURIComponent(path.basename(poster))}`
     attrsObject.poster = poster
   }
@@ -89,7 +93,7 @@ function prepare({
   // Allow for custom controls where the target has live embeds and the value
   // is a string. Everything else gets `controls=controls` for epub validation.
   // The value `controls=no` gets stripped out in b-ber-grammar-attributes.
-  if (!state.target.features.liveEmbeds) {
+  if (!env.document.target.features.liveEmbeds) {
     attrsObject.controls =
       attrsObject.controls === 'no' ? attrsObject.controls : 'controls'
   }
@@ -104,8 +108,8 @@ function prepare({
       sourceElements = createRemoteMediaSource(sources)
     }
 
-    state.add('remoteAssets', source)
-  } else if (validateLocalMediaSource(source, mediaType)) {
+    env.result.remoteAssets.push(source)
+  } else if (validateLocalMediaSource(source, mediaType, env)) {
     sources = media.filter((a) => toAlias(a) === source)
     sourceElements = createLocalMediaSources(sources)
   }
@@ -140,12 +144,12 @@ function prepare({
 
   const figureId = htmlId(id)
   const attrString = attributesString(attrsObject)
-  const webOnlyAttrString = getWebOnlyAttributesString()
+  const webOnlyAttrString = getWebOnlyAttributesString(env)
   const commentStart = Html.comment(`START: ${mediaType}:${type}#${figureId};`)
   const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
   const page = `figure-${figureId}.xhtml`
   const href =
-    state.target.features.figuresOn === 'titlepage'
+    env.document.target.features.figuresOn === 'titlepage'
       ? 'figures-titlepage.xhtml'
       : page
 
@@ -161,10 +165,10 @@ function prepare({
     sourceElements,
     aspectRatio,
     aspectRatioClassName,
-    ref: context.fileName,
+    ref: env.document.fileName,
     mediaType,
     mime: mediaType,
-    pageOrder: state.figures.length,
+    pageOrder: nextFigure(env),
     poster,
     source,
     type,
@@ -173,19 +177,24 @@ function prepare({
 }
 
 const render =
-  ({ instance, context }: RendererReference) =>
-  (tokens: FigureToken[], index: number): string => {
+  ({ instance }: RendererReference) =>
+  (
+    tokens: FigureToken[],
+    index: number,
+    _options: unknown,
+    env: DocumentEnv
+  ): string => {
     const token = tokens[index]
     const marker = token.info.trim().match(DIRECTIVE_RE)
     if (!marker) return ''
 
-    const fileName = `_markdown/${context.fileName}.md`
+    const fileName = `_markdown/${env.document.fileName}.md`
     const lineNumber = token.map ? token.map[0] : null
     const type = marker[1]
     const args = prepare({
       token,
       marker,
-      context,
+      env,
       instance,
       fileName,
       lineNumber,
@@ -195,8 +204,8 @@ const render =
       case 'iframe':
       case 'audio':
       case 'video':
-        // Add it to state so that it's rendered as a `figure`
-        state.add('figures', args)
+        // Collect it so that it's rendered as a `figure`
+        env.result.figures.push(args)
         return createMedia(args)
 
       case 'iframe-inline':
@@ -208,7 +217,7 @@ const render =
 
       default:
         throw new Error(
-          `Something went wrong parsing [${args.source}] in [${context.fileName}]`
+          `Something went wrong parsing [${args.source}] in [${env.document.fileName}]`
         )
     }
   }
@@ -216,10 +225,10 @@ const render =
 export default {
   plugin: figure,
   name: 'audio-video',
-  renderer: ({ instance, context }: RendererReference) => ({
+  renderer: ({ instance }: RendererReference) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     validate: (params: string) => params.trim().match(MARKER_RE),
-    render: render({ instance, context }),
+    render: render({ instance }),
   }),
 }

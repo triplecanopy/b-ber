@@ -1,4 +1,3 @@
-import type { RendererContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVE_MARKER,
@@ -17,8 +16,9 @@ const renderer = <R>({
   markerOpen,
   markerClose,
 }: {
-  // Optional so the tests can render without a file
-  context?: Partial<RendererContext>
+  // The file `validateOpen` names. Only the old parser plugins call it, which
+  // the build no longer registers (TASK-175)
+  context?: { fileName?: string }
   render: R
   markerOpen: RegExp
   markerClose: RegExp

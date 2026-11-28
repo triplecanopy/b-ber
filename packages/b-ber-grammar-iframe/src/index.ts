@@ -1,7 +1,7 @@
 import {
+  type DocumentEnv,
   type FigureToken,
   type RendererReference,
-  State as state,
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
@@ -17,41 +17,46 @@ const MARKER_RE = /^(iframe)/
 const DIRECTIVE_RE = /(iframe(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 const render =
-  ({ instance, context }: RendererReference) =>
-  (tokens: FigureToken[], index: number): string => {
+  ({ instance }: RendererReference) =>
+  (
+    tokens: FigureToken[],
+    index: number,
+    _options: unknown,
+    env: DocumentEnv
+  ): string => {
     const token = tokens[index]
     const marker = token.info.trim().match(DIRECTIVE_RE)
     if (!marker) return ''
 
-    const fileName = `_markdown/${context.fileName}.md`
+    const fileName = `_markdown/${env.document.fileName}.md`
     const lineNumber = token.map ? token.map[0] : null
     const type = marker[1]
     const args = prepare({
       token,
       marker,
-      context,
+      env,
       instance,
       fileName,
       lineNumber,
     })
 
     switch (type) {
-      // Render the linked image and add the figure to state so that it's rendered
+      // Render the linked image and collect the figure so that it's rendered
       // in the LOI
       case 'iframe':
-        state.add('figures', args)
+        env.result.figures.push(args)
         return createIframe(args)
 
       // Render an inline iframe embed, or an unsupported message where the
       // target has no live embeds
       case 'iframe-inline':
-        return state.target.features.liveEmbeds
+        return env.document.target.features.liveEmbeds
           ? createIframeInline(args)
           : createUnsupportedInline(args)
 
       default:
         throw new Error(
-          `Something went wrong parsing [${args.type}] in [${context.fileName}]`
+          `Something went wrong parsing [${args.type}] in [${env.document.fileName}]`
         )
     }
   }
@@ -59,10 +64,10 @@ const render =
 export default {
   plugin: figure,
   name: 'iframe',
-  renderer: ({ instance, context }: RendererReference) => ({
+  renderer: ({ instance }: RendererReference) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     validate: (params: string) => params.trim().match(MARKER_RE),
-    render: render({ instance, context }),
+    render: render({ instance }),
   }),
 }

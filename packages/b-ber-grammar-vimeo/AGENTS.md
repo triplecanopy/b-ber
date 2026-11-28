@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Transforms `vimeo` and `vimeo-inline` directives into Vimeo embed HTML. The `vimeo` form adds a figure entry to state and emits a thumbnail; `vimeo-inline` emits a full `<iframe>` pointing to the Vimeo player with validated query-string parameters for `reader`/`web` builds. Unsupported builds receive a poster-image fallback block. Vimeo player parameters are validated against known types (boolean coercion, regex validation for color, quality, texttrack, and time codes) via `vimeoAttributesTransformer`. The `bBerAttributes` filter separates b-ber-internal attributes (classes, aspectratio) from Vimeo player parameters.
+Transforms `vimeo` and `vimeo-inline` directives into Vimeo embed HTML. The `vimeo` form collects a figure entry in `env.result.figures` and emits a thumbnail; `vimeo-inline` emits a full `<iframe>` pointing to the Vimeo player with validated query-string parameters for `reader`/`web` builds. Unsupported builds receive a poster-image fallback block. Vimeo player parameters are validated against known types (boolean coercion, regex validation for color, quality, texttrack, and time codes) via `vimeoAttributesTransformer`. The `bBerAttributes` filter separates b-ber-internal attributes (classes, aspectratio) from Vimeo player parameters.
 
 ## Key Files
 

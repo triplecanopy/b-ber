@@ -5,9 +5,8 @@ import {
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
   type DirectiveToken,
+  type DocumentEnv,
   Html,
-  type RendererContext,
-  State as state,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
@@ -24,8 +23,9 @@ const MARKER_OPEN_RE = new RegExp(
 
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
-// Optional so the tests can render without a file
-type Context = Partial<RendererContext>
+// The file `validateOpen` names. Only b-ber-parser-section's plugin calls
+// it, which the build no longer registers (TASK-175)
+type Context = { fileName?: string }
 
 // How a block's close came about, as b-ber-markdown-renderer's directive rule
 // decides it: at the block's own `exit`, at an outer block's `exit` that
@@ -43,14 +43,17 @@ export interface ClosingBlock {
 
 // Gallery and spread open more than a <section> where the target has
 // full-bleed containers, so their close matches
-const isFullbleed = (name: string, kind: 'gallery' | 'spread'): boolean =>
-  name === kind && state.target.features.fullbleedContainers
+const isFullbleed = (
+  name: string,
+  kind: 'gallery' | 'spread',
+  env: DocumentEnv
+): boolean => name === kind && env.document.target.features.fullbleedContainers
 
 // The markup that closes a block. The block's name used to be looked up in
 // `state.cursor` (TASK-175). `comment` is the end comment, which says how the
 // block closed, as it always has
-function closeMarkup(name: string, comment: string): string {
-  if (isFullbleed(name, 'gallery')) {
+function closeMarkup(name: string, comment: string, env: DocumentEnv): string {
+  if (isFullbleed(name, 'gallery', env)) {
     // prettier-ignore
     return `</div>
             </figure>
@@ -58,12 +61,12 @@ function closeMarkup(name: string, comment: string): string {
             </section>${comment}`
   }
 
-  if (isFullbleed(name, 'spread')) {
+  if (isFullbleed(name, 'spread', env)) {
     return `</div>
             </div>
 
             ${
-              state.target.features.readerRuntime
+              env.document.target.features.readerRuntime
                 ? `<!-- Empty node required for spread markers -->
                    <div></div>`
                 : ''
@@ -83,17 +86,23 @@ function closeMarkup(name: string, comment: string): string {
 // opener's line by splitting it on `:`, so `chapter:c classes:x` read
 // `c classes` and matched nothing, and a dialogue, gallery or spread was
 // never closed
-export function close(block: ClosingBlock, closedBy: ClosedBy): string {
+export function close(
+  block: ClosingBlock,
+  closedBy: ClosedBy,
+  env: DocumentEnv
+): string {
   if (closedBy === 'end') {
     return closeMarkup(
       block.name,
-      Html.comment(`END: section:#${htmlId(block.id)}`)
+      Html.comment(`END: section:#${htmlId(block.id)}`),
+      env
     )
   }
   log.debug(`exit directive [${block.id}]`)
   return closeMarkup(
     block.name,
-    Html.comment(`END: section:exit#${htmlId(block.id)}`)
+    Html.comment(`END: section:exit#${htmlId(block.id)}`),
+    env
   )
 }
 
@@ -116,40 +125,43 @@ function openElement(
   return `${comment}<section id="${htmlId(id)}"${attrs}>`
 }
 
-const render =
-  ({ context = {} }: { context?: Context }) =>
-  (tokens: DirectiveToken[], index: number) => {
-    const token = tokens[index]
-    const lineNumber = token.map ? token.map[0] : null
-    const fileName = `_markdown/${context.fileName}.md`
-    const marker = token.info.trim()
+const render = (
+  tokens: DirectiveToken[],
+  index: number,
+  _options: unknown,
+  env: DocumentEnv
+) => {
+  const token = tokens[index]
+  const lineNumber = token.map ? token.map[0] : null
+  const fileName = `_markdown/${env.document.fileName}.md`
+  const marker = token.info.trim()
 
-    // Closes are drawn by `close`, from the directive rule's node
-    if (token.nesting !== 1) return ''
+  // Closes are drawn by `close`, from the directive rule's node
+  if (token.nesting !== 1) return ''
 
-    const tokenClose = marker.match(MARKER_CLOSE_RE)
-    const tokenOpen = marker.match(MARKER_OPEN_RE)
+  const tokenClose = marker.match(MARKER_CLOSE_RE)
+  const tokenOpen = marker.match(MARKER_OPEN_RE)
 
-    // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
-    // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
-    // block with no id, and fails in `htmlId`, as it always has
-    if (tokenClose)
-      return close({ name: '', id: tokenClose[2], info: marker }, 'exit')
+  // MARKER_CLOSE_RE is unanchored, so an opener with `exit` anywhere in its
+  // line is taken for an exit (TASK-174's quirk 2). It draws the close of a
+  // block with no id, and fails in `htmlId`, as it always has
+  if (tokenClose)
+    return close({ name: '', id: tokenClose[2], info: marker }, 'exit', env)
 
-    // `validateOpen` has already matched this marker against MARKER_OPEN_RE,
-    // so a non-exit token always matches here
-    return openElement(tokenOpen!, fileName, lineNumber)
-  }
+  // `validateOpen` has already matched this marker against MARKER_OPEN_RE,
+  // so a non-exit token always matches here
+  return openElement(tokenOpen!, fileName, lineNumber)
+}
 
 export default {
   plugin,
   name: 'section',
-  renderer: (args: { context?: Context }) => ({
+  renderer: (args: { context?: Context } = {}) => ({
     ...createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,
       markerClose: MARKER_CLOSE_RE,
-      render: render(args),
+      render,
     }),
     close,
   }),

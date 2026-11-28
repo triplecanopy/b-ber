@@ -1,9 +1,11 @@
 import path from 'node:path'
 import fs from 'fs-extra'
+import { getTarget } from '../../b-ber-lib/src/Target'
 
 // State singleton initialises in its constructor and checks for the media dir.
 // Create the required directories before any module is imported.
 let markdownRenderer
+let createFootnoteNumbering
 
 beforeAll(async () => {
   // State initialises in its constructor and tries to load _project/toc.yml
@@ -13,6 +15,7 @@ beforeAll(async () => {
   // Defer import so State initialises after the directories exist
   // eslint-disable-next-line global-require
   markdownRenderer = require('../src').default
+  ;({ createFootnoteNumbering } = require('../src'))
 })
 
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
@@ -37,15 +40,17 @@ describe('b-ber-markdown-renderer', () => {
   })
 
   it('template() formats YAML front matter with two-space indent', () => {
-    const result = markdownRenderer.template('title: Hello\nauthor: World')
+    const result = markdownRenderer.template(
+      'title: Hello\nauthor: World',
+      'chapter-01'
+    )
     expect(result).toContain('  title: Hello')
     expect(result).toContain('  author: World')
     expect(result.startsWith('-\n')).toBe(true)
   })
 
   it('template() includes the fileName in the output', () => {
-    markdownRenderer.fileName = 'chapter-01'
-    const result = markdownRenderer.template('title: Test')
+    const result = markdownRenderer.template('title: Test', 'chapter-01')
     expect(result).toContain('fileName: chapter-01')
   })
 
@@ -55,9 +60,31 @@ describe('b-ber-markdown-renderer', () => {
     expect(result).toContain('<p>')
   })
 
-  it('render() sets fileName on the instance', () => {
-    markdownRenderer.render('my-chapter.md', 'Some text.\n')
-    expect(markdownRenderer.fileName).toBe('my-chapter.md')
+  // The file was kept on the instance until TASK-177, and every grammar read
+  // it from there
+  it('render() keeps nothing of the document on the instance', () => {
+    markdownRenderer.render('my-chapter', 'Some text.\n')
+    expect(markdownRenderer.fileName).toBeUndefined()
+  })
+
+  it('render() gives the document to the grammars in env', () => {
+    const env = {}
+    markdownRenderer.render(
+      'my-chapter',
+      '::: chapter:c\n\nx\n\n::: exit:c\n',
+      env
+    )
+    expect(env.document).toMatchObject({
+      fileName: 'my-chapter',
+      title: 'my-chapter',
+    })
+    expect(env.result).toEqual({
+      figures: [],
+      footnotes: [],
+      guide: [],
+      frontMatter: [],
+      remoteAssets: [],
+    })
   })
 
   it('render() handles a heading', () => {
@@ -77,6 +104,21 @@ describe('b-ber-markdown-renderer', () => {
   })
 })
 
+// A document of an epub, the first of its book, as the build describes it
+const documentFor = (fileName) => ({
+  fileName,
+  title: fileName,
+  target: getTarget('epub'),
+  images: (name) => path.join('_project', '_images', name),
+  audio: [],
+  video: [],
+  media: {},
+  groupFootnotes: true,
+  figuresBefore: 0,
+  footnotesBefore: 0,
+  footnotes: createFootnoteNumbering(),
+})
+
 // Footnote refs carry a random 16-hex-digit suffix (parser-footnotes Counter)
 const stableIds = (html) => html.replace(/-[0-9a-f]{16}\b/g, '-<ID>')
 
@@ -88,20 +130,6 @@ describe('b-ber-markdown-renderer output', () => {
     path.join(__dirname, 'fixtures/document.md'),
     'utf8'
   )
-  let state
-
-  beforeAll(() => {
-    // A real build fills this in from the project (State#loadBuilds). The
-    // fixture needs only what front matter, sections and footnotes write to.
-    state = require('@canopycanopycanopy/b-ber-lib').State
-    state.update('builds.epub', {
-      guide: [],
-      spine: { frontMatter: new Map(), flattened: [] },
-      figures: [],
-      footnotes: [],
-    })
-  })
-
   it('renders the fixture document', () => {
     const html = markdownRenderer.render('rendering-fixture', source)
     expect(stableIds(html)).toMatchSnapshot()
@@ -122,11 +150,29 @@ describe('b-ber-markdown-renderer output', () => {
   })
 
   it('collects the fixture document footnotes', () => {
-    markdownRenderer.render('rendering-fixture', source)
-    const entry = state.footnotes.findLast(
-      (f) => f.fileName === 'rendering-fixture'
+    const { footnotes } = markdownRenderer.renderDocument(
+      { ...documentFor('rendering-fixture') },
+      source
     )
-    expect(stableIds(entry.notes)).toMatchSnapshot()
+    expect(footnotes).toHaveLength(1)
+    expect(stableIds(footnotes[0].notes)).toMatchSnapshot()
+  })
+
+  // What the build reads back from a document's render, which it kept in
+  // State as each grammar met it until TASK-177
+  it('returns what the fixture document collects', () => {
+    const rendered = markdownRenderer.renderDocument(
+      documentFor('rendering-fixture'),
+      source
+    )
+    expect(stableIds(rendered.html)).toBe(
+      stableIds(markdownRenderer.render('rendering-fixture', source))
+    )
+    expect(rendered.guide).toEqual([
+      expect.objectContaining({ fileName: 'rendering-fixture' }),
+    ])
+    expect(rendered.frontMatter).toHaveLength(1)
+    expect(rendered.diagnostics).toEqual(expect.any(Array))
   })
 })
 
@@ -285,38 +331,22 @@ describe('b-ber-markdown-renderer: blocks', () => {
   // used to splice the replacement into the Markdown before the parse, per
   // target, and rewrote it inside fenced code too (TASK-175)
   describe('media', () => {
-    let state
-    let saved
-
-    beforeEach(() => {
-      state = require('@canopycanopycanopy/b-ber-lib').State
-      saved = { build: state.build, media: state.media }
-      // What the media resolves to adds to the build's figures
-      for (const build of ['epub', 'web']) {
-        state.update(`builds.${build}`, {
-          guide: [],
-          spine: { frontMatter: new Map(), flattened: [] },
-          figures: [],
-          footnotes: [],
-        })
-      }
-      state.update('media', {
-        m: {
-          epub: {
-            type: 'iframe',
-            source: 'https://example.com/e',
-            caption: 'Cap',
-          },
-          web: { type: 'iframe', source: 'https://example.com/w' },
+    const media = {
+      m: {
+        epub: {
+          type: 'iframe',
+          source: 'https://example.com/e',
+          caption: 'Cap',
         },
-        s: { epub: { type: 'soundcloud', source: 'x' } },
+        web: { type: 'iframe', source: 'https://example.com/w' },
+      },
+      s: { epub: { type: 'soundcloud', source: 'x' } },
+    }
+    // media.yml, and the target being built
+    const renderFor = (build, src) =>
+      markdownRenderer.render('test', src, {
+        document: { target: getTarget(build), media },
       })
-    })
-
-    afterEach(() => {
-      state.update('build', saved.build)
-      state.update('media', saved.media)
-    })
 
     it.each([
       [
@@ -325,21 +355,17 @@ describe('b-ber-markdown-renderer: blocks', () => {
       ],
       ['web', '::: iframe-inline:m source:"https://example.com/w"\n'],
     ])('renders as the directive media.yml names for %s', (build, written) => {
-      state.update('build', build)
-      expect(markdownRenderer.render('test', '::: media-inline:m\n')).toBe(
-        markdownRenderer.render('test', written)
+      expect(renderFor(build, '::: media-inline:m\n')).toBe(
+        renderFor(build, written)
       )
     })
 
     // Books write the caption under the line for the targets whose media.yml
     // entry has none
     it('takes the caption written under the line when media.yml has none', () => {
-      state.update('build', 'web')
-      expect(
-        markdownRenderer.render('test', '::: media-inline:m\n:: Written\n::\n')
-      ).toBe(
-        markdownRenderer.render(
-          'test',
+      expect(renderFor('web', '::: media-inline:m\n:: Written\n::\n')).toBe(
+        renderFor(
+          'web',
           '::: iframe-inline:m source:"https://example.com/w"\n:: Written\n::\n'
         )
       )
@@ -348,14 +374,10 @@ describe('b-ber-markdown-renderer: blocks', () => {
     // The pre-pass wrote media.yml's caption into the Markdown, which left the
     // written one as text after the directive
     it('uses media.yml’s caption when it has one, leaving the written one as text', () => {
-      state.update('build', 'epub')
-      const html = markdownRenderer.render(
-        'test',
-        '::: media-inline:m\n:: Written\n::\n'
-      )
+      const html = renderFor('epub', '::: media-inline:m\n:: Written\n::\n')
       expect(html).toBe(
-        markdownRenderer.render(
-          'test',
+        renderFor(
+          'epub',
           '::: iframe-inline:m source:"https://example.com/e"\n:: Cap\n::\n\n:: Written\n::\n'
         )
       )
@@ -363,20 +385,19 @@ describe('b-ber-markdown-renderer: blocks', () => {
     })
 
     it('is code inside fenced code', () => {
-      expect(
-        markdownRenderer.render('test', '```\n::: media-inline:m\n```\n')
-      ).toBe('<pre><code>::: media-inline:m\n</code></pre>\n')
+      expect(renderFor('epub', '```\n::: media-inline:m\n```\n')).toBe(
+        '<pre><code>::: media-inline:m\n</code></pre>\n'
+      )
     })
 
     it('renders a type no grammar claims as text, as it did', () => {
-      state.update('build', 'epub')
-      expect(markdownRenderer.render('test', '::: media:s\n')).toBe(
+      expect(renderFor('epub', '::: media:s\n')).toBe(
         '<p>::: soundcloud:s source:&quot;x&quot;</p>\n'
       )
     })
 
     it('throws for an id media.yml lacks', () => {
-      expect(() => markdownRenderer.render('test', '::: media:zzz\n')).toThrow(
+      expect(() => renderFor('epub', '::: media:zzz\n')).toThrow(
         'Missing ID [zzz] in media.yml.'
       )
     })

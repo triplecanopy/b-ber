@@ -6,10 +6,11 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
+  type DocumentEnv,
   type FigureToken,
   Html,
+  nextFigure,
   type RendererReference,
-  State as state,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
@@ -32,6 +33,7 @@ const MARKER_RE = /^(vimeo)/
 const DIRECTIVE_RE = /(vimeo(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 interface PrepareArgs extends RendererReference {
+  env: DocumentEnv
   token: FigureToken
   marker: RegExpMatchArray
   fileName: string
@@ -41,7 +43,7 @@ interface PrepareArgs extends RendererReference {
 function prepare({
   token,
   marker,
-  context,
+  env,
   instance,
   fileName,
   lineNumber,
@@ -49,7 +51,9 @@ function prepare({
   const [, type, id, attrs] = marker
   const mediaType = getMediaType(type)
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
-  const caption = token.children ? instance.renderInline(token.children) : ''
+  const caption = token.children
+    ? instance.renderInline(token.children, env)
+    : ''
 
   if (!attrsObject.source)
     throw log.error(
@@ -58,7 +62,7 @@ function prepare({
 
   // Set update poster image path or set to empty string if one wasn't specified
   if (attrsObject.poster) {
-    validatePosterImage(attrsObject.poster, type)
+    validatePosterImage(attrsObject.poster, type, env)
     attrsObject.poster = `../images/${encodeURIComponent(
       path.basename(attrsObject.poster)
     )}`
@@ -68,7 +72,7 @@ function prepare({
 
   // Add mediaType to classes
   if (!attrsObject.classes) attrsObject.classes = ''
-  const supportedPrefix = state.target.features.liveEmbeds ? '' : 'un'
+  const supportedPrefix = env.document.target.features.liveEmbeds ? '' : 'un'
   attrsObject.classes += ` embed ${supportedPrefix}supported`
 
   // Ensure an aspect ratio is set, default to 16:9
@@ -91,7 +95,7 @@ function prepare({
 
   const page = `figure-${figureId}.xhtml`
   const href =
-    state.target.features.figuresOn === 'titlepage'
+    env.document.target.features.figuresOn === 'titlepage'
       ? 'figures-titlepage.xhtml'
       : page
 
@@ -104,10 +108,10 @@ function prepare({
     page,
     href,
     caption,
-    ref: context.fileName,
+    ref: env.document.fileName,
     mediaType,
     mime: null,
-    pageOrder: state.figures.length,
+    pageOrder: nextFigure(env),
     poster: attrsObject.poster,
     source: attrsObject.source,
     aspectRatio,
@@ -117,41 +121,46 @@ function prepare({
 }
 
 const render =
-  ({ instance, context }: RendererReference) =>
-  (tokens: FigureToken[], index: number): string => {
+  ({ instance }: RendererReference) =>
+  (
+    tokens: FigureToken[],
+    index: number,
+    _options: unknown,
+    env: DocumentEnv
+  ): string => {
     const token = tokens[index]
     const marker = token.info.trim().match(DIRECTIVE_RE)
     if (!marker) return ''
 
-    const fileName = `_markdown/${context.fileName}.md`
+    const fileName = `_markdown/${env.document.fileName}.md`
     const lineNumber = token.map ? token.map[0] : null
     const type = marker[1]
     const args = prepare({
       token,
       marker,
-      context,
+      env,
       instance,
       fileName,
       lineNumber,
     })
 
     switch (type) {
-      // Render the linked image and add the figure to state so that it's rendered
+      // Render the linked image and collect the figure so that it's rendered
       // in the LOI
       case 'vimeo':
-        state.add('figures', args)
+        env.result.figures.push(args)
         return createVimeo(args)
 
       // Render an inline Vimeo embed, or an unsupported message where the
       // target has no live embeds
       case 'vimeo-inline':
-        return state.target.features.liveEmbeds
-          ? createVimeoInline(args)
+        return env.document.target.features.liveEmbeds
+          ? createVimeoInline(args, env)
           : createUnsupportedInline(args)
 
       default:
         throw new Error(
-          `Something went wrong parsing [${args.source}] in [${context.fileName}]`
+          `Something went wrong parsing [${args.source}] in [${env.document.fileName}]`
         )
     }
   }
@@ -159,10 +168,10 @@ const render =
 export default {
   plugin: figure,
   name: 'vimeo',
-  renderer: ({ instance, context }: RendererReference) => ({
+  renderer: ({ instance }: RendererReference) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     validate: (params: string) => params.trim().match(MARKER_RE),
-    render: render({ instance, context }),
+    render: render({ instance }),
   }),
 }

@@ -1,31 +1,56 @@
+import path from 'node:path'
 import {
   attributesObject,
   attributesString,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
+  type DocumentEnv,
   type FigureToken,
   Html,
+  nextFigure,
   type RendererReference,
-  State as state,
   Url,
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { htmlIframeAttributes } from '@canopycanopycanopy/b-ber-shapes-directives'
+import fs from 'fs-extra'
 
 // Read from the package root rather than the `b-ber-lib/utils` subpath: that
 // subpath is a bare `utils.js` shim with no declaration file, and it re-exports
 // this same `utils` object.
-const {
-  ensurePoster,
-  ensureSource,
-  ensureSupportedClassNames,
-  getMediaType,
-  renderCaption,
-  renderPosterImage,
-} = utils
+const { ensureSource, getMediaType, renderCaption, renderPosterImage } = utils
+
+// b-ber-lib's `ensurePoster` and `ensureSupportedClassNames`, which read the
+// project's images and the target from `State`, taking them from the
+// document instead (TASK-177)
+function ensurePoster(
+  obj: { poster?: string },
+  type: string,
+  env: DocumentEnv
+): void {
+  if (!obj.poster) return
+
+  if (!fs.existsSync(env.document.images(obj.poster))) {
+    throw log.error(
+      `bber-directives: Poster image for [${type}] does not exist`
+    )
+  }
+  obj.poster = `../images/${encodeURIComponent(path.basename(obj.poster))}`
+}
+
+// Marks an embed as live or not in the target being built
+function ensureSupportedClassNames(
+  obj: { classes?: string },
+  env: DocumentEnv
+): void {
+  const { liveEmbeds } = env.document.target.features
+  obj.classes += ` embed ${liveEmbeds ? '' : 'un'}supported`
+}
 
 interface PrepareArgs extends RendererReference {
+  env: DocumentEnv
   token: FigureToken
   marker: RegExpMatchArray
   fileName: string
@@ -35,7 +60,7 @@ interface PrepareArgs extends RendererReference {
 export function prepare({
   token,
   marker,
-  context,
+  env,
   instance,
   fileName,
   lineNumber,
@@ -56,8 +81,8 @@ export function prepare({
   }
 
   ensureSource(attrsObject, type, fileName, lineNumber)
-  ensurePoster(attrsObject, type)
-  ensureSupportedClassNames(attrsObject)
+  ensurePoster(attrsObject, type, env)
+  ensureSupportedClassNames(attrsObject, env)
 
   return {
     ...attrsObject,
@@ -66,16 +91,16 @@ export function prepare({
     commentStart: Html.comment(`START: ${mediaType}:${type}#${figureId};`),
     commentEnd: Html.comment(`END: ${mediaType}:${type}#${figureId};`),
     href:
-      state.target.features.figuresOn === 'titlepage'
+      env.document.target.features.figuresOn === 'titlepage'
         ? 'figures-titlepage.xhtml'
         : page,
-    ref: context.fileName,
-    caption: token.children ? instance.renderInline(token.children) : '',
+    ref: env.document.fileName,
+    caption: token.children ? instance.renderInline(token.children, env) : '',
     page,
     type,
     mediaType,
     mime: null,
-    pageOrder: state.figures.length,
+    pageOrder: nextFigure(env),
     source: Url.ensureDecoded(attrsObject.source),
     poster: attrsObject.poster,
   }

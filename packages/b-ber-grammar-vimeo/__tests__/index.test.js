@@ -1,19 +1,5 @@
+import { getTarget } from '../../b-ber-lib/src/Target'
 import vimeo from '../src'
-
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  build: 'epub',
-  // The real target of `build`, as State gives it
-  get target() {
-    return jest
-      .requireActual('../../b-ber-lib/src/Target')
-      .getTarget(this.build)
-  },
-  figures: [],
-  add: jest.fn(),
-  src: {
-    images: (p) => p,
-  },
-}))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -33,7 +19,7 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
+  ...jest.requireActual('../../b-ber-lib/src/markdown'),
   Html: {
     comment: jest.fn((s) => s),
     escape: jest.requireActual('../../b-ber-lib/src/Html').default.escape,
@@ -42,6 +28,21 @@ jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
 
 const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
+
+// The render's env, as the renderer passes it
+const envFor = (target = 'epub') => ({
+  document: {
+    fileName: 'test',
+    target: getTarget(target),
+    images: (p) => p,
+    figuresBefore: 0,
+  },
+  result: { figures: [] },
+})
+let env
+beforeEach(() => {
+  env = envFor()
+})
 
 describe('b-ber-grammar-vimeo', () => {
   it('exports plugin, name, and renderer', () => {
@@ -76,7 +77,7 @@ describe('b-ber-grammar-vimeo', () => {
   it('render returns empty string when token info does not match DIRECTIVE_RE', () => {
     const config = vimeo.renderer({ instance, context })
     const tokens = [{ info: 'not-matching', map: [0, 1], children: null }]
-    expect(config.render(tokens, 0)).toBe('')
+    expect(config.render(tokens, 0, {}, env)).toBe('')
   })
 
   it('validate returns truthy for vimeo-inline directive', () => {
@@ -89,7 +90,7 @@ describe('b-ber-grammar-vimeo', () => {
     const tokens = [
       { info: 'vimeo:my-id source="12345"', map: [0, 1], children: null },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(typeof result).toBe('string')
     expect(result.length).toBeGreaterThan(0)
   })
@@ -99,8 +100,11 @@ describe('b-ber-grammar-vimeo', () => {
     const tokens = [
       { info: 'vimeo:my-id source="12345"', map: [0, 1], children: null },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(result).toContain('refmy-id')
+    expect(env.result.figures).toEqual([
+      expect.objectContaining({ id: 'my-id', pageOrder: 0, ref: 'test' }),
+    ])
   })
 
   it('render dispatches to createUnsupportedInline for vimeo-inline on non-reader build', () => {
@@ -112,7 +116,7 @@ describe('b-ber-grammar-vimeo', () => {
         children: null,
       },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(typeof result).toBe('string')
     expect(result).toContain('media__fallback')
   })
@@ -122,7 +126,7 @@ describe('b-ber-grammar-vimeo', () => {
     const tokens = [
       { info: 'vimeo:no-map source="12345"', map: null, children: null },
     ]
-    expect(() => config.render(tokens, 0)).not.toThrow()
+    expect(() => config.render(tokens, 0, {}, env)).not.toThrow()
   })
 
   it('render handles token with children (caption rendered via renderInline)', () => {
@@ -134,8 +138,8 @@ describe('b-ber-grammar-vimeo', () => {
         children: 'caption text',
       },
     ]
-    const result = config.render(tokens, 0)
+    const result = config.render(tokens, 0, {}, env)
     expect(typeof result).toBe('string')
-    expect(instance.renderInline).toHaveBeenCalledWith('caption text')
+    expect(instance.renderInline).toHaveBeenCalledWith('caption text', env)
   })
 })

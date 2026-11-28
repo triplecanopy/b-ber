@@ -1,10 +1,12 @@
-import type { MarkdownToken, SpineItem } from '@canopycanopycanopy/b-ber-lib'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type DocumentEnv,
+  type MarkdownToken,
+  nestedEnv,
+} from '@canopycanopycanopy/b-ber-lib'
 
 // `self` is b-ber-markdown-renderer's MarkdownRenderer, which cannot be
 // imported here without a dependency cycle
 export default function markdownItFootnotePlugin(self: {
-  fileName: string
   // The parts of markdown-it's Renderer this plugin calls
   markdownIt: {
     renderer: {
@@ -12,19 +14,15 @@ export default function markdownItFootnotePlugin(self: {
         // markdown-it's Token, and the token-shaped objects built below
         tokens: object[],
         options: object,
-        env: { reference: string }
+        env: DocumentEnv & { reference: string }
       ): string
     }
   }
 }) {
   // Some whole markdown-it tokens, some built below with only the fields the
-  // renderer reads
-  return function plugin(tokens: Partial<MarkdownToken>[]) {
-    const { fileName } = self
-    const entry = state.find('spine.flattened', { fileName }) as
-      | Omit<SpineItem, 'nodes'>
-      | undefined
-    const title = entry?.title || fileName
+  // renderer reads. `env` is that of the render that found the notes
+  return function plugin(tokens: Partial<MarkdownToken>[], env: DocumentEnv) {
+    const { fileName, title } = env.document
 
     // Add footnote container and heading. Doing this here instead of in
     // `footnotes.js` because we need the file's title
@@ -50,11 +48,9 @@ export default function markdownItFootnotePlugin(self: {
     const notes = self.markdownIt.renderer.render(
       tokens,
       0 as unknown as object,
-      {
-        reference: `${fileName}.xhtml`,
-      }
+      { ...nestedEnv(env), reference: `${fileName}.xhtml` }
     )
 
-    state.add('footnotes', { fileName, title, notes })
+    env.result.footnotes.push({ fileName, title, notes })
   }
 }

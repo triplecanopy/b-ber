@@ -1,28 +1,10 @@
-import { GuideItem, State as state } from '@canopycanopycanopy/b-ber-lib'
+import { GuideItem } from '@canopycanopycanopy/b-ber-lib'
 import markdownItFrontmatterPlugin from '../src'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/YamlAdaptor', () => ({
-  parse: jest.fn(() => ({ title: 'Test Title' })),
-}))
-
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  add: jest.fn(),
-  spine: {
-    frontMatter: {
-      get: jest.fn(() => null),
-      set: jest.fn(),
-    },
-  },
-}))
-
-jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  GuideItem: jest.fn().mockImplementation((data) => data),
-  YamlAdaptor: jest.requireMock('@canopycanopycanopy/b-ber-lib/YamlAdaptor'),
-  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-}))
-
-afterEach(() => {
-  jest.clearAllMocks()
+// The env of the render that found the front matter
+const envFor = (fileName) => ({
+  document: { fileName },
+  result: { guide: [], frontMatter: [] },
 })
 
 describe('b-ber-grammar-frontmatter', () => {
@@ -30,41 +12,26 @@ describe('b-ber-grammar-frontmatter', () => {
     expect(markdownItFrontmatterPlugin).toBeFunction()
   })
 
-  it('calling factory with self returns a plugin function', () => {
-    const self = { fileName: 'titlepage' }
-    const plugin = markdownItFrontmatterPlugin(self)
-    expect(plugin).toBeFunction()
+  it('calling the factory returns a plugin function', () => {
+    expect(markdownItFrontmatterPlugin()).toBeFunction()
   })
 
-  it('plugin calls state.add with guide and a GuideItem', () => {
-    const self = { fileName: 'titlepage' }
-    const plugin = markdownItFrontmatterPlugin(self)
-    plugin('title: Test Title')
-    expect(GuideItem).toHaveBeenCalledWith(
-      expect.objectContaining({ fileName: 'titlepage', title: 'Test Title' })
-    )
-    expect(state.add).toHaveBeenCalledWith('guide', expect.anything())
+  it('collects a guide item for the document', () => {
+    const env = envFor('titlepage')
+    markdownItFrontmatterPlugin()('title: Test Title\ntype: titlepage', env)
+    expect(env.result.guide).toEqual([
+      new GuideItem({
+        fileName: 'titlepage',
+        title: 'Test Title',
+        type: 'titlepage',
+      }),
+    ])
   })
 
-  it('plugin does not call state.spine.frontMatter.set when get returns null', () => {
-    // state is imported at top level
-    state.spine.frontMatter.get.mockReturnValue(null)
-    const self = { fileName: 'copyright' }
-    const plugin = markdownItFrontmatterPlugin(self)
-    plugin('title: Copyright')
-    expect(state.spine.frontMatter.set).not.toHaveBeenCalled()
-  })
-
-  it('plugin merges and calls state.spine.frontMatter.set when get returns existing data', () => {
-    // state is imported at top level
-    const existingData = { fileName: 'titlepage', someExisting: 'value' }
-    state.spine.frontMatter.get.mockReturnValue(existingData)
-    const self = { fileName: 'titlepage' }
-    const plugin = markdownItFrontmatterPlugin(self)
-    plugin('title: Test Title')
-    expect(state.spine.frontMatter.set).toHaveBeenCalledWith(
-      'titlepage',
-      expect.objectContaining({ title: 'Test Title' })
-    )
+  // The build merges it into the document's spine entry (b-ber-tasks' render)
+  it('collects the front matter as parsed', () => {
+    const env = envFor('copyright')
+    markdownItFrontmatterPlugin()('title: Copyright\nextra: 1', env)
+    expect(env.result.frontMatter).toEqual([{ title: 'Copyright', extra: 1 }])
   })
 })
