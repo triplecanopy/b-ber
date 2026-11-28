@@ -52,8 +52,9 @@ export const isBlockName = (name: string): boolean =>
 // - `section`: b-ber-grammar-section's structural blocks, and an `exit` whose
 //   id the host says is one of the cursor's (TASK-174);
 // - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`, and
-//   every other `exit`
-export type Family = 'section' | 'pullquote'
+//   every other `exit`;
+// - `dialogue`: b-ber-grammar-dialogue's `dialogue`
+export type Family = 'section' | 'pullquote' | 'dialogue'
 
 export const CLAIM_RE = new RegExp(
   `^(${Array.from(BLOCK_DIRECTIVES).join('|')}|exit)(?::([^\\s]+)(\\s.*)?)?$`
@@ -62,12 +63,24 @@ export const CLAIM_RE = new RegExp(
 export const PULLQUOTE_CLAIM_RE =
   /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 
-// The blocks whose tokens the rule makes and the structure pass rewrites
-export const OWNED: ReadonlySet<string> = new Set([
-  ...BLOCK_DIRECTIVES,
-  'pullquote',
-  'blockquote',
+export const DIALOGUE_CLAIM_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
+
+// The family each block the rule owns belongs to. The structure pass
+// rewrites the tokens of these blocks
+const FAMILY_OF = new Map<string, Family>([
+  ...Array.from(BLOCK_DIRECTIVES, (name): [string, Family] => [
+    name,
+    'section',
+  ]),
+  ['pullquote', 'pullquote'],
+  ['blockquote', 'pullquote'],
+  ['dialogue', 'dialogue'],
 ])
+
+export const OWNED: ReadonlySet<string> = new Set(FAMILY_OF.keys())
+
+export const familyOf = (name: string): Family =>
+  FAMILY_OF.get(name) ?? 'section'
 
 const distance = (a: string, b: string): number => {
   const row = Array.from({ length: b.length + 1 }, (_, i) => i)

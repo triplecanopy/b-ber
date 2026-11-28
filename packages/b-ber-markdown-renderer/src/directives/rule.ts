@@ -1,7 +1,8 @@
 // The directive block rule. It claims the lines that b-ber-parser-section
-// claimed for b-ber-grammar-section and b-ber-grammar-pullquote: a structural
-// opener (`::: chapter:a`), a `pullquote` or `blockquote` opener, or an
-// `exit` (registry.ts's families). Each token records which family claimed
+// claimed for b-ber-grammar-section, b-ber-grammar-pullquote and
+// b-ber-grammar-dialogue: a structural opener (`::: chapter:a`), a
+// `pullquote`, `blockquote` or `dialogue` opener, or an `exit` (registry.ts's
+// families). Each token records which family claimed
 // it, which decides how it renders.
 //
 // It deliberately reproduces that parser's token *shape*: each claimed line
@@ -15,7 +16,14 @@
 // recorded. That is what fixes the false `Duplicate [id]` after a paragraph.
 
 import type MarkdownIt from 'markdown-it'
-import { CLAIM_RE, EXIT, type Family, PULLQUOTE_CLAIM_RE } from './registry'
+import {
+  CLAIM_RE,
+  DIALOGUE_CLAIM_RE,
+  EXIT,
+  type Family,
+  PULLQUOTE_CLAIM_RE,
+} from './registry'
+import { markSpeakers } from './speakers'
 import type { DirectiveEnv, DirectiveHost } from './types'
 
 export const LINE_OPEN = 'directive_line_open'
@@ -43,8 +51,26 @@ const claim = (
     const [, name, id] = pullquote
     return { family: 'pullquote', name, id }
   }
+  const dialogue = params.trim().match(DIALOGUE_CLAIM_RE)
+  if (dialogue) {
+    const [, name, id] = dialogue
+    return { family: 'dialogue', name, id }
+  }
   return null
 }
+
+// The tag each family's old parser gave its tokens
+const TAG: Record<Family, string> = {
+  section: 'section',
+  pullquote: 'section',
+  dialogue: 'div',
+}
+
+const isFamily =
+  (type: string, family: Family) =>
+  (token: MarkdownIt.Token): boolean =>
+    token.type === type &&
+    (token.meta as { family?: Family } | null)?.family === family
 
 export const createRule =
   (host: DirectiveHost) =>
@@ -88,6 +114,8 @@ export const createRule =
       return true
     }
 
+    // b-ber-grammar-dialogue's parser recorded its id in silent mode too
+    if (family === 'dialogue') host.opened(id, name, lineNumber, env)
     if (silent) return true
     // b-ber-grammar-pullquote never recorded its ids; it checked them against
     // the cursor when they rendered
@@ -101,7 +129,7 @@ export const createRule =
     state.parentType = 'container' as typeof state.parentType
     state.lineMax = endLine
 
-    const open = state.push(LINE_OPEN, 'section', 1)
+    const open = state.push(LINE_OPEN, TAG[family], 1)
     open.meta = { family }
     open.markup = markup
     open.info = params
@@ -110,7 +138,7 @@ export const createRule =
 
     state.md.block.tokenize(state, startLine + 1, endLine)
 
-    const close = state.push(LINE_CLOSE, 'section', -1)
+    const close = state.push(LINE_CLOSE, TAG[family], -1)
     close.meta = { family }
     close.info = params
     close.block = true
@@ -118,5 +146,13 @@ export const createRule =
     state.parentType = oldParent
     state.lineMax = oldLineMax
     state.line = endLine
+
+    if (family === 'dialogue') {
+      markSpeakers(
+        state.tokens,
+        isFamily(LINE_OPEN, 'dialogue'),
+        isFamily(LINE_CLOSE, 'dialogue')
+      )
+    }
     return true
   }

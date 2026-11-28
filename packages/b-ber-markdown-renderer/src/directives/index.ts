@@ -27,8 +27,8 @@ export type LegacyRender = (tokens: LegacyToken[], index: number) => string
 
 export interface DirectiveOptions {
   host?: DirectiveHost
-  // Today's renderer for each family (b-ber-grammar-section's and
-  // b-ber-grammar-pullquote's `render`). It is called with tokens shaped as
+  // Today's renderer for each family (b-ber-grammar-section's,
+  // b-ber-grammar-pullquote's and b-ber-grammar-dialogue's `render`). It is called with tokens shaped as
   // b-ber-parser-section made them, at the places that parser put them, so
   // the output is unchanged. A family without one renders as plain
   // `<section id>` pairs.

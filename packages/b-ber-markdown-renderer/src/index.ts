@@ -51,25 +51,21 @@ class MarkdownRenderer {
 
     const reference = { instance: this.markdownIt, context: this }
 
-    // The directive rule takes the structural blocks (TASK-174), pullquote and
-    // blockquote (TASK-175) over from their parsers, at the place in the rule
-    // order the first of them had, and renders them with their grammars as
-    // before
+    // The directive rule takes the structural blocks (TASK-174), pullquote,
+    // blockquote and dialogue (TASK-175) over from their parsers, at the place
+    // in the rule order the first of them had, and renders them with their
+    // grammars as before
     this.markdownIt
       .use(directives, {
         host: legacyHost(this),
         legacy: {
           section: markdownItSection.renderer(reference).render,
           pullquote: markdownItPullquote.renderer(reference).render,
+          dialogue: markdownItDialogue.renderer(reference).render,
         },
       })
       .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
       .use(markdownItFootnote, markdownItFootnotePlugin(this))
-      .use(
-        markdownItDialogue.plugin,
-        markdownItDialogue.name,
-        markdownItDialogue.renderer(reference)
-      )
       .use(
         markdownItGallery.plugin,
         markdownItGallery.name,

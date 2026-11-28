@@ -24,7 +24,7 @@ import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
 import {
   EXIT,
-  type Family,
+  familyOf,
   INLINE,
   isBlockName,
   OWNED,
@@ -41,7 +41,7 @@ export const END_MARK = 'directive_end'
 
 // Old plugins whose container holds the rest of the enclosing range, as the
 // directive rule's does. Their tokens are transparent to the nesting
-const RANGE_CONTAINER_RE = /^container_(dialogue|gallery|spread)_/
+const RANGE_CONTAINER_RE = /^container_(gallery|spread)_/
 // Old plugins whose open and close tokens are adjacent (b-ber-parser-figure)
 const FIGURE_CONTAINER_RE = /^container_(figure|audio-video|vimeo|iframe|logo)_/
 
@@ -63,9 +63,6 @@ interface Scope {
   token: MarkdownIt.Token | null
   blocks: OpenBlock[]
 }
-
-const familyOf = (name: string): Family =>
-  name === 'pullquote' || name === 'blockquote' ? 'pullquote' : 'section'
 
 const kindOf = (token: MarkdownIt.Token | null): string => {
   if (!token) return 'the file'
