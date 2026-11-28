@@ -51,8 +51,8 @@ const setup = async (options = {}) => {
   await writeEpubBuild()
 }
 
-// `writeWebpubManifest` does not wait for its write (see the defect test),
-// so the writes are collected and awaited. The spy calls through.
+// The writes are collected so a test can hold one back. The spy calls
+// through.
 beforeEach(() => {
   // State logs while it initialises at import, before any test
   jest.clearAllMocks()
@@ -74,7 +74,7 @@ afterEach(async () => {
 })
 
 const run = async () => {
-  await reader()
+  await reader(project.ctx)
   await Promise.all(writes)
 }
 
@@ -218,16 +218,26 @@ describe('task: reader', () => {
     expect(log.warn).toHaveBeenCalledWith('Invalid property for config: layout')
   })
 
+  // One hash for the build: books.json, the manifest and the server data
+  // all name the directory it is in (#769)
   test('names the book directory with a random hash when there is no identifier', async () => {
     await setup({ metadata: [{ term: 'title', value: 'A Book' }] })
-    // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(log.warn).toHaveBeenCalledWith(
       'Could not find metadata value for identifier'
     )
     const [dir] = await fs.readdir(path.join(project.dist, 'epub'))
     expect(dir).toMatch(/^[0-9a-f]{40}$/)
+    const [book] = await fs.readJson(
+      path.join(project.dist, 'api', 'books.json')
+    )
+    expect(book.url).toBe(`http://localhost:4000/epub/${dir}`)
+    const index = await fs.readFile(
+      path.join(project.dist, 'index.html'),
+      'utf8'
+    )
+    expect(index).toContain(`epub/${dir}"`)
   })
 
   test('replaces characters other than letters, digits and dashes in the book directory name', async () => {
@@ -237,44 +247,45 @@ describe('task: reader', () => {
         { term: 'identifier', value: 'a.b c' },
       ],
     })
-    // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual(['a-b-c'])
   })
 
-  // DEFECT (#769): the book directory is named `createDirname(identifier)`
-  // (src/reader/index.ts:131), but `writeWebpubManifest` (line 188) reads
-  // `<outputDir>/<identifier>/OPS` with the raw identifier, and
-  // `injectServerDataIntoTemplate` (line 232) builds `bookURL` from it too.
-  // An identifier with any character outside [0-9a-zA-Z-], such as a
-  // `urn:uuid:` one, makes the manifest scan fail with ENOENT, which ends the
-  // task before the reader app is copied.
-  test('fails for an identifier that createDirname changes (defect)', async () => {
+  // #769: the book directory is named `createDirname(identifier)`, but
+  // `writeWebpubManifest` read `<outputDir>/<identifier>/OPS` with the raw
+  // identifier, and `injectServerDataIntoTemplate` built `bookURL` from it
+  // too. An identifier with any character outside [0-9a-zA-Z-], such as a
+  // `urn:uuid:` one, made the manifest scan fail with ENOENT, which ended the
+  // task before the reader app was copied.
+  test('builds for an identifier that createDirname changes (#769)', async () => {
     await setup({
       metadata: [
         ...METADATA.slice(0, 1),
         { term: 'identifier', value: 'urn:uuid:1234' },
       ],
     })
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await run()
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual([
       'urn-uuid-1234',
     ])
-    expect(log.error).toHaveBeenCalledWith(
-      expect.objectContaining({ code: 'ENOENT' })
+    const manifest = await fs.readJson(path.join(project.dist, 'manifest.json'))
+    expect(manifest.resources.length).toBeGreaterThan(0)
+    const index = await fs.readFile(
+      path.join(project.dist, 'index.html'),
+      'utf8'
     )
-    expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(false)
+    expect(index).toContain('epub/urn-uuid-1234"')
+    expect(index).not.toContain('epub/urn:uuid:1234')
   })
 
-  // DEFECT (#770): `writeWebpubManifest` (src/reader/index.ts:193) does not return
-  // its fs.writeJson, so the task can resolve before manifest.json is
-  // written, and a failed write is an unhandled rejection
-  test('does not wait for manifest.json to be written (defect)', async () => {
+  // #770: `writeWebpubManifest` did not return its fs.writeJson, so the task
+  // could resolve before manifest.json was written, and a failed write was an
+  // unhandled rejection
+  test('waits for manifest.json to be written (#770)', async () => {
     await setup()
-    // Hold the manifest write until the task has resolved. Were the task
-    // waiting on it, it would never resolve and this test would time out
+    // Hold the manifest write, and check the task does not finish before it
     let release
     const gate = new Promise((resolve) => {
       release = resolve
@@ -287,22 +298,37 @@ describe('task: reader', () => {
     )
     const manifest = path.join(project.dist, 'manifest.json')
 
-    await reader()
-    expect(fs.existsSync(manifest)).toBe(false)
-    expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(true)
+    let resolved = false
+    const task = reader(project.ctx).then(() => {
+      resolved = true
+    })
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(resolved).toBe(false)
 
     release()
-    await gate
-    await Promise.all(writes)
-    await fs.writeJson.mock.results.at(-1).value
+    await task
     expect(fs.existsSync(manifest)).toBe(true)
+  })
+
+  test('rejects, through log.error, when manifest.json cannot be written (#770)', async () => {
+    await setup()
+    const error = Object.assign(new Error('disk full'), { code: 'ENOSPC' })
+    const writeJson = fs.writeJson.getMockImplementation()
+    fs.writeJson.mockImplementation((file, ...rest) =>
+      path.basename(file) === 'manifest.json'
+        ? Promise.reject(error)
+        : writeJson(file, ...rest)
+    )
+
+    await expect(reader(project.ctx)).rejects.toBe(error)
+    expect(log.error).toHaveBeenCalledWith(error)
   })
 
   test('requires an http remote_url in production', async () => {
     await setup({ config: { remote_url: '' } })
     process.env.NODE_ENV = 'production'
 
-    await expect(reader()).rejects.toThrow('requires a remote_url')
+    await expect(reader(project.ctx)).rejects.toThrow('requires a remote_url')
 
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -329,7 +355,7 @@ describe('task: reader', () => {
     await setup()
     await fs.remove(path.join(project.dist, 'mimetype'))
 
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

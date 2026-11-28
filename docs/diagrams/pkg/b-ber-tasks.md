@@ -18,7 +18,6 @@ graph LR
     tasks --> mdr["b-ber-markdown-renderer"]
     tasks --> reader["b-ber-reader (legacy)"]
     tasks --> res["b-ber-resources"]
-    tasks --> sseq["shapes-sequences"]
     tasks --> tpl["b-ber-templates"]
     tasks --> val["b-ber-validator"]
 ```

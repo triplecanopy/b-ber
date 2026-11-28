@@ -1,6 +1,7 @@
 import { cover } from '@canopycanopycanopy/b-ber-tasks'
 import type { Argv } from 'yargs'
 import { noExtraArguments } from '../lib/arguments'
+import { inBuildContext } from '../lib/context'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'cover'
@@ -13,7 +14,8 @@ const builder = (yargs: Argv) =>
     .alias('h', 'help')
     .usage(`\nUsage: $0 cover\n\n${describe}`)
 
-const handler = exitOnFailure(() => cover())
+// In the epub build's context, the build State defaulted to
+const handler = exitOnFailure(() => inBuildContext('epub', (ctx) => cover(ctx)))
 
 export default {
   command,

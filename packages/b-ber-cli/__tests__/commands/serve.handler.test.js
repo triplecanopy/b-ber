@@ -45,18 +45,17 @@ describe('serve handler', () => {
       'listening'
     )
     expect(serveTask).toHaveBeenCalledWith({ build: 'web', external: true })
-    expect(logger.notice).toHaveBeenCalledWith('Serving [b-ber-web]')
   })
 
-  it('leaves the default build to the task', () => {
-    // The task falls back to `reader`. The notice does not know that and
-    // prints `Serving [b-ber-undefined]`: cosmetic, recorded in TASK-050.
+  it('leaves the default build, and the notice that names it, to the task', () => {
+    // The task falls back to `reader`. The handler's own notice did not know
+    // that and printed `Serving [b-ber-undefined]` (#743)
     serve.handler({})
     expect(serveTask).toHaveBeenCalledWith({
       build: undefined,
       external: undefined,
     })
-    expect(logger.notice).toHaveBeenCalledWith('Serving [b-ber-undefined]')
+    expect(logger.notice).not.toHaveBeenCalled()
   })
 
   describe('through yargs', () => {

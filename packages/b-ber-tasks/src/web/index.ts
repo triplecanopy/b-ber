@@ -6,12 +6,13 @@
 // This script can also be modularized in the future as an `ebook-to-static-
 // site` module for external use
 
-import { Url } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import {
-  generateWebpubManifest,
-  getBookMetadata,
-} from '@canopycanopycanopy/b-ber-lib/utils'
+  type BuildContext,
+  type Spine,
+  type SpineItem,
+  Url,
+} from '@canopycanopycanopy/b-ber-lib'
+import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import { load as loadHtml } from 'cheerio'
@@ -21,14 +22,8 @@ import findIndex from 'lodash/findIndex'
 import has from 'lodash/has'
 import path from 'path'
 import rrdir from 'recursive-readdir'
+import { bookMetadata, distDir } from '../context'
 import Template from './Template'
-
-let ASSETS_TO_UNLINK: string[]
-let DIST_PATH: string
-let OPS_PATH: string
-let OMIT_FROM_SEARCH: string[]
-let BASE_URL: string
-let flow: any // copy of spine for web task, see `WebFlow` below
 
 // Class to manage pagination for web layout. when building an epub, figures are
 // handled outside of the spine, mostly so that they can have hashed file names
@@ -84,27 +79,47 @@ class WebFlow {
   }
 }
 
-// Make sure we're using the correct build variables
-async function initialize() {
-  DIST_PATH = state.distDir
-  OPS_PATH = path.join(DIST_PATH, 'OPS')
-  BASE_URL = Url.addTrailingSlash(state.config.base_url as string)
-
-  ASSETS_TO_UNLINK = [
-    path.join(DIST_PATH, 'mimetype'),
-    path.join(DIST_PATH, 'META-INF'),
-    path.join(DIST_PATH, 'OPS/content.opf'),
-    path.join(DIST_PATH, 'OPS/toc.ncx'),
-  ]
-
+// What the web build's steps share: the build's context and what it read,
+// its paths, and the reading order. One per build, passed down; these used to
+// be module-level variables, shared by every build in the process
+interface WebBuild {
+  ctx: BuildContext
+  spine: Spine
+  toc: SpineItem[]
+  DIST_PATH: string
+  OPS_PATH: string
+  BASE_URL: string
+  ASSETS_TO_UNLINK: string[]
   // List of spine item entry `fileName`s
-  OMIT_FROM_SEARCH = ['toc']
-
-  const { spine, loi } = state
-  flow = new WebFlow({ spine, loi })
+  OMIT_FROM_SEARCH: string[]
+  flow: any // copy of spine for web task, see `WebFlow` above
 }
 
-async function moveAssetsToRootDirctory() {
+function initialize(
+  ctx: BuildContext,
+  { spine, loi, toc }: { spine: Spine; loi: SpineItem[]; toc: SpineItem[] }
+): WebBuild {
+  const DIST_PATH = distDir(ctx)
+
+  return {
+    ctx,
+    spine,
+    toc,
+    DIST_PATH,
+    OPS_PATH: path.join(DIST_PATH, 'OPS'),
+    BASE_URL: Url.addTrailingSlash(ctx.config.base_url as string),
+    ASSETS_TO_UNLINK: [
+      path.join(DIST_PATH, 'mimetype'),
+      path.join(DIST_PATH, 'META-INF'),
+      path.join(DIST_PATH, 'OPS/content.opf'),
+      path.join(DIST_PATH, 'OPS/toc.ncx'),
+    ],
+    OMIT_FROM_SEARCH: ['toc'],
+    flow: new WebFlow({ spine, loi }),
+  }
+}
+
+async function moveAssetsToRootDirctory({ DIST_PATH, OPS_PATH }: WebBuild) {
   const files = fs.readdirSync(OPS_PATH)
   const dirs = files.filter(
     (file) =>
@@ -125,7 +140,7 @@ async function moveAssetsToRootDirctory() {
   return fs.remove(OPS_PATH)
 }
 
-function unlinkRedundantAssets() {
+function unlinkRedundantAssets({ ASSETS_TO_UNLINK }: WebBuild) {
   const promises = ASSETS_TO_UNLINK.map((file) => {
     log.info('Removing [%s]', path.basename(file))
     return fs.remove(file)
@@ -134,9 +149,9 @@ function unlinkRedundantAssets() {
   return Promise.all(promises)
 }
 
-function getProjectTitle() {
+function getProjectTitle(w: WebBuild) {
   let title = ''
-  const titleEntry = getBookMetadata('title')
+  const titleEntry = bookMetadata(w.ctx, 'title')
 
   if (titleEntry) {
     title = titleEntry
@@ -145,32 +160,32 @@ function getProjectTitle() {
   return title
 }
 
-function getChapterTitle(fileName: string | undefined) {
-  if (typeof fileName !== 'string') return getProjectTitle()
+function getChapterTitle(w: WebBuild, fileName: string | undefined) {
+  if (typeof fileName !== 'string') return getProjectTitle(w)
 
-  const meta = state.spine.frontMatter.get(fileName)
-  if (!meta?.title) return getProjectTitle()
+  const meta = w.spine.frontMatter.get(fileName)
+  if (!meta?.title) return getProjectTitle(w)
 
   return (meta as any).title as string
 }
 
-function getProjectMetadataHTML() {
-  return Template.metadata(state.metadata.json())
+function getProjectMetadataHTML(w: WebBuild) {
+  return Template.metadata(w.ctx.project.metadata.json())
 }
 
-function getHeaderElement(fileName?: string) {
-  const title = getChapterTitle(fileName) ?? ''
+function getHeaderElement(w: WebBuild, fileName?: string) {
+  const title = getChapterTitle(w, fileName) ?? ''
   return Template.header(title)
 }
 
-function createNavigationElement() {
-  const { toc: prevToc } = state
+function createNavigationElement(w: WebBuild) {
+  const { toc: prevToc, BASE_URL } = w
 
   // Filter out toc entry if it exists
   const toc = (prevToc as any[]).filter((item: any) => item.fileName !== 'toc')
   const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
-  const metadataHTML = getProjectMetadataHTML()
-  const title = getProjectTitle()
+  const metadataHTML = getProjectMetadataHTML(w)
+  const title = getProjectTitle(w)
 
   const tocElement = Template.toc(BASE_URL, title, tocHTML)
   const infoElement = Template.info(metadataHTML)
@@ -178,7 +193,7 @@ function createNavigationElement() {
   return { tocElement, infoElement }
 }
 
-function buttonPrev(filePath: string) {
+function buttonPrev({ flow, BASE_URL }: WebBuild, filePath: string) {
   const fileName = path.basename(filePath, '.xhtml')
   const index = findIndex(flow.spine, { fileName })
   const prevIndex = index - 1
@@ -193,7 +208,7 @@ function buttonPrev(filePath: string) {
   return html
 }
 
-function buttonNext(filePath: string) {
+function buttonNext({ flow, BASE_URL }: WebBuild, filePath: string) {
   const fileName = path.basename(filePath, '.xhtml')
   const index = findIndex(flow.spine, { fileName })
   const nextIndex = index + 1
@@ -208,19 +223,19 @@ function buttonNext(filePath: string) {
   return html
 }
 
-function paginate(filePath: string) {
+function paginate(w: WebBuild, filePath: string) {
   return {
-    prev: buttonPrev(filePath),
-    next: buttonNext(filePath),
+    prev: buttonPrev(w, filePath),
+    next: buttonNext(w, filePath),
   }
 }
 
-function paginationNavigation(filePath: string) {
-  const { prev, next } = paginate(filePath)
+function paginationNavigation(w: WebBuild, filePath: string) {
+  const { prev, next } = paginate(w, filePath)
   return Template.pagination(prev, next)
 }
 
-function injectBaseURL(script: any) {
+function injectBaseURL({ BASE_URL }: WebBuild, script: any) {
   const script_ = typeof script === 'string' ? script : String(script)
   return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
@@ -229,35 +244,39 @@ function getStyleBlock() {
   return Template.styles()
 }
 
-function getNavigationToggleScript() {
+function getNavigationToggleScript(w: WebBuild) {
   const content = injectBaseURL(
+    w,
     fs.readFileSync(path.join(__dirname, 'navigation.js'))
   )
   return Template.scripts(content)
 }
 
-function getWebWorkerScript() {
+function getWebWorkerScript(w: WebBuild) {
   const content = injectBaseURL(
+    w,
     fs.readFileSync(path.join(__dirname, 'search.js'))
   )
   return Template.scripts(content)
 }
 
-function getEventHandlerScript() {
+function getEventHandlerScript(w: WebBuild) {
   const content = injectBaseURL(
+    w,
     fs.readFileSync(path.join(__dirname, 'event-handlers.js'))
   )
   return Template.scripts(content)
 }
 
-function injectPageElementsIntoFile(filePath: string) {
-  const { tocElement, infoElement } = createNavigationElement()
-  const pageNavigation = paginationNavigation(filePath)
+function injectPageElementsIntoFile(w: WebBuild, filePath: string) {
+  const { tocElement, infoElement } = createNavigationElement(w)
+  const pageNavigation = paginationNavigation(w, filePath)
   const styleBlock = getStyleBlock()
-  const navigationToggleScript = getNavigationToggleScript()
-  const webWorkerScript = getWebWorkerScript()
-  const evenHandlerScript = getEventHandlerScript()
+  const navigationToggleScript = getNavigationToggleScript(w)
+  const webWorkerScript = getWebWorkerScript(w)
+  const evenHandlerScript = getEventHandlerScript(w)
   const headerElement = getHeaderElement(
+    w,
     path.basename(filePath, path.extname(filePath))
   )
 
@@ -295,20 +314,20 @@ function injectPageElementsIntoFile(filePath: string) {
   return fs.writeFile(filePath, contents)
 }
 
-function injectPageElementsIntoFiles(elements: any) {
-  const textPath = path.join(DIST_PATH, 'text')
+function injectPageElementsIntoFiles(w: WebBuild) {
+  const textPath = path.join(w.DIST_PATH, 'text')
   const files = fs
     .readdirSync(textPath)
     .filter((file) => path.extname(file) === '.xhtml')
   const promises = files.map((file) => {
     const filePath = path.resolve(textPath, file)
-    return injectPageElementsIntoFile(filePath)
+    return injectPageElementsIntoFile(w, filePath)
   })
 
-  return Promise.all(promises).then(() => elements)
+  return Promise.all(promises)
 }
 
-function indexPageContent() {
+function indexPageContent({ flow, OMIT_FROM_SEARCH, OPS_PATH, BASE_URL }: WebBuild) {
   const { spine } = flow
   const records: any[] = []
 
@@ -333,27 +352,31 @@ function indexPageContent() {
   return Promise.all(promises).then(() => JSON.stringify(records))
 }
 
-function writeJSONPageData(json: string) {
+function writeJSONPageData({ DIST_PATH }: WebBuild, json: string) {
   return fs.writeFile(path.join(DIST_PATH, 'search-index.json'), json)
 }
 
-function importVendorScripts() {
+function importVendorScripts({ DIST_PATH }: WebBuild) {
   const lunrPath = require.resolve('lunr')
   const outputPath = path.join(DIST_PATH, 'lunr.js')
   return fs.copy(lunrPath, outputPath)
 }
 
-function writeWebWorker() {
+function writeWebWorker(w: WebBuild) {
+  const { DIST_PATH } = w
   const worker = injectBaseURL(
+    w,
     fs.readFileSync(path.join(__dirname, 'worker.js'))
   )
   return fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker)
 }
 
-function writeWebpubManifest() {
+function writeWebpubManifest({ DIST_PATH }: WebBuild) {
   return new Promise((resolve, reject) => {
-    rrdir(state.distDir, (err1, files) => {
-      if (err1) reject(err1)
+    rrdir(DIST_PATH, (err1, files) => {
+      // Returned: it used to go on to read `files`, which is undefined after
+      // an error, and throw in the callback, where nothing caught it (#770)
+      if (err1) return reject(err1)
 
       const manifest = generateWebpubManifest(files)
 
@@ -364,22 +387,22 @@ function writeWebpubManifest() {
   })
 }
 
-// subtracts 1 from `n` argument since `getPage` refrerences state.spine,
+// subtracts 1 from `n` argument since `getPage` refrerences the spine,
 // which is 0-indexed
-function getPage(_n = -1) {
+function getPage({ flow, BASE_URL }: WebBuild, _n = -1) {
   const n = _n - 1
   const url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
   return url
 }
 
-function getFirstPage() {
-  return getPage(1)
+function getFirstPage(w: WebBuild) {
+  return getPage(w, 1)
 }
 
-function getCoverImage() {
-  const metadata = state.metadata.json()
+function getCoverImage(w: WebBuild) {
+  const metadata = w.ctx.project.metadata.json()
   const coverEntry = find(metadata, { term: 'cover' })
-  const firstPage = getFirstPage()
+  const firstPage = getFirstPage(w)
 
   let coverImageSrc = 'images/'
   if (coverEntry && has(coverEntry, 'value')) {
@@ -389,15 +412,16 @@ function getCoverImage() {
   return Template.cover(firstPage, coverImageSrc)
 }
 
-function createIndexHTML() {
-  const { tocElement, infoElement } = createNavigationElement()
-  const title = getProjectTitle()
-  const coverImage = getCoverImage()
-  const navigationToggleScript = getNavigationToggleScript()
-  const webWorkerScript = getWebWorkerScript()
-  const headerElement = getHeaderElement()
+function createIndexHTML(w: WebBuild) {
+  const { BASE_URL, DIST_PATH } = w
+  const { tocElement, infoElement } = createNavigationElement(w)
+  const title = getProjectTitle(w)
+  const coverImage = getCoverImage(w)
+  const navigationToggleScript = getNavigationToggleScript(w)
+  const webWorkerScript = getWebWorkerScript(w)
+  const headerElement = getHeaderElement(w)
   const styleBlock = getStyleBlock()
-  const robotsMeta = Template.robots(state.config.private)
+  const robotsMeta = Template.robots(w.ctx.config.private)
 
   // TODO: should get dynamic page template here to ensure asset hash on production build
   // @issue: https://github.com/triplecanopy/b-ber/issues/232
@@ -417,24 +441,39 @@ function createIndexHTML() {
   return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
 }
 
-const web = () =>
-  initialize()
-    .then(unlinkRedundantAssets)
+// Rearranges the epub's directory into a static site: the pages at the root,
+// each with the site's navigation, an index page and a search index
+const web = (
+  ctx: BuildContext,
+  inputs: { spine: Spine; loi: SpineItem[]; toc: SpineItem[] }
+): Promise<unknown> => {
+  let w: WebBuild
 
-    // Create search index
-    .then(indexPageContent)
-    .then(writeJSONPageData)
+  return (
+    Promise.resolve()
+      .then(() => {
+        w = initialize(ctx, inputs)
+      })
+      .then(() => unlinkRedundantAssets(w))
 
-    // move files to root directory and create an index.html
-    .then(moveAssetsToRootDirctory)
-    .then(injectPageElementsIntoFiles)
-    .then(createIndexHTML)
+      // Create search index
+      .then(() => indexPageContent(w))
+      .then((json) => writeJSONPageData(w, json))
 
-    // write scripts into HTML files
-    .then(importVendorScripts)
-    .then(writeWebpubManifest)
-    .then(writeWebWorker)
+      // move files to root directory and create an index.html
+      .then(() => moveAssetsToRootDirctory(w))
+      .then(() => injectPageElementsIntoFiles(w))
+      .then(() => createIndexHTML(w))
 
-    .catch((err) => { throw log.error(err) })
+      // write scripts into HTML files
+      .then(() => importVendorScripts(w))
+      .then(() => writeWebpubManifest(w))
+      .then(() => writeWebWorker(w))
+
+      .catch((err) => {
+        throw log.error(err)
+      })
+  )
+}
 
 export default web

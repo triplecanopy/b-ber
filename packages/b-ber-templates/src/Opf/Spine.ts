@@ -9,7 +9,7 @@ import File from 'vinyl'
 
 const { fileId } = utils
 
-// A spine entry, from `state.spine.flattened` or `state.loi`
+// A spine entry, from the spine's flat list or the figure pages
 type SpineEntry = Pick<SpineItem, 'fileName' | 'extension' | 'linear'>
 
 class Spine {
@@ -25,7 +25,9 @@ class Spine {
     return `<itemref idref="${idref}_xhtml" linear="${linear ? 'yes' : 'no'}"/>`
   }
 
-  static items(data: SpineEntry[]) {
+  // `loi` is the figure pages, which follow the figures titlepage. b-ber-tasks'
+  // `loi` step returns them; they used to be read from `state.loi`
+  static items(data: SpineEntry[], loi: SpineEntry[]) {
     return data.reduce((acc, curr) => {
       const { fileName } = curr
 
@@ -45,10 +47,9 @@ class Spine {
       if (fileName === 'figures-titlepage') {
         log.info('opf templates/spine writing [loi]')
 
-        if (state.loi.length) {
+        if (loi.length) {
           return acc.concat(
-            // b-ber-tasks' `loi` task fills `state.loi` with SpineItems
-            (state.loi as SpineItem[]).reduce(
+            loi.reduce(
               (acc2, curr2) =>
                 acc2.concat(Spine.item({ ...curr2, linear: true })),
               Spine.item(curr)

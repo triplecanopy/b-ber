@@ -1,8 +1,9 @@
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import css from 'css'
 import fs from 'fs-extra'
+import { dist } from '../context'
 
 const blackListedPrefixes = ['epub|']
 const blackListedTypes = ['namespace']
@@ -40,6 +41,7 @@ const process = (file: string) =>
     while (i >= 0) {
       const rule = ast.stylesheet.rules[i]
       if (rule.selectors) {
+        const selectorCount = rule.selectors.length
         let j = rule.selectors.length - 1
         while (j >= 0) {
           let jj = 0
@@ -54,6 +56,16 @@ const process = (file: string) =>
             jj++ // eslint-disable-line no-plusplus
           }
           j-- // eslint-disable-line no-plusplus
+        }
+
+        // Every selector was an `epub|` one. The rule used to be kept with
+        // none, which is not valid CSS (#806). Only a rule that had some: an
+        // `@page` rule has none to begin with
+        if (selectorCount && !rule.selectors.length) {
+          log.info('mobiCSS remove rule with no selectors left')
+          ast.stylesheet.rules.splice(i, 1)
+          i-- // eslint-disable-line no-plusplus
+          continue
         }
       }
 
@@ -82,12 +94,12 @@ const process = (file: string) =>
     return { file, content }
   })
 
-const mobiCSS = () => {
-  const stylesheetsPath = state.dist.stylesheets()
+const mobiCSS = (ctx: BuildContext) => {
+  const stylesheetsPath = dist(ctx).stylesheets()
   return fs.readdir(stylesheetsPath).then((files) =>
     Promise.all(
       files.map((stylesheet) => {
-        const file = state.dist.stylesheets(stylesheet)
+        const file = dist(ctx).stylesheets(stylesheet)
         log.info(`mobiCSS process [${path.basename(file)}]`)
         return process(file).then(write)
       })

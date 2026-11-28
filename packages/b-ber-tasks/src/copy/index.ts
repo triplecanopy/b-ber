@@ -1,34 +1,37 @@
 import path from 'node:path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isArray from 'lodash/isArray'
+import { dist, src } from '../context'
 
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const cwd = process.cwd()
 
 // Copy directories of assets into the output directory
-const copy = () => {
-  const rawIgnore: string[] = isArray(state.config.ignore)
-    ? (state.config.ignore as string[])
+const copy = (ctx: BuildContext) => {
+  const rawIgnore: string[] = isArray(ctx.config.ignore)
+    ? (ctx.config.ignore as string[])
     : []
   const ignoreMap = rawIgnore.reduce<Record<string, boolean>>((acc, curr) => {
     acc[path.resolve(cwd, curr)] = true
     return acc
   }, {})
 
+  const from = src(ctx)
+  const to = dist(ctx)
   const dirs = [
     {
-      from: path.resolve(state.src.images()),
-      to: path.resolve(state.dist.images()),
+      from: path.resolve(from.images()),
+      to: path.resolve(to.images()),
     },
     {
-      from: path.resolve(state.src.fonts()),
-      to: path.resolve(state.dist.fonts()),
+      from: path.resolve(from.fonts()),
+      to: path.resolve(to.fonts()),
     },
     {
-      from: path.resolve(state.src.media()),
-      to: path.resolve(state.dist.media()),
+      from: path.resolve(from.media()),
+      to: path.resolve(to.media()),
     },
   ].filter((dir) => !ignoreMap[dir.from])
 

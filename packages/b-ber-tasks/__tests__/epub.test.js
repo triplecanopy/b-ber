@@ -30,7 +30,7 @@ afterEach(async () => {
 
 describe('task: epub', () => {
   test('zips the build directory, named for the book identifier', async () => {
-    await epub()
+    await epub(project.ctx)
 
     expect(zipper.create).toHaveBeenCalledTimes(1)
     expect(zipper.create).toHaveBeenCalledWith({
@@ -44,7 +44,7 @@ describe('task: epub', () => {
   test('does nothing with --no-compile', async () => {
     process.argv = [...argv, '--no-compile']
 
-    await expect(epub()).resolves.toBeUndefined()
+    await expect(epub(project.ctx)).resolves.toBeUndefined()
     expect(zipper.create).not.toHaveBeenCalled()
   })
 
@@ -52,7 +52,7 @@ describe('task: epub', () => {
     const err = new Error('zip failed')
     zipper.create.mockRejectedValue(err)
 
-    await expect(epub()).rejects.toBe(err)
+    await expect(epub(project.ctx)).rejects.toBe(err)
 
     expect(log.error).toHaveBeenCalledWith(err)
   })
@@ -61,7 +61,7 @@ describe('task: epub', () => {
     // Restored by project.cleanup
     state.metadata = { json: () => [] }
 
-    await epub()
+    await epub(project.ctx)
 
     expect(zipper.create).toHaveBeenCalledWith(
       expect.objectContaining({ fileName: '' })

@@ -189,7 +189,7 @@ describe('templates.Opf.Spine', () => {
       { fileName: 'chapter-01.xhtml', extension: '.xhtml', linear: true },
       { fileName: 'chapter-02.xhtml', extension: '.xhtml', linear: true },
     ]
-    const result = Spine.items(data)
+    const result = Spine.items(data, [])
     expect(result).toMatchSnapshot()
     expect(result).toContain('chapter-01_xhtml')
     expect(result).toContain('chapter-02_xhtml')
@@ -200,7 +200,7 @@ describe('templates.Opf.Spine', () => {
     const data = [
       { fileName: 'aside.xhtml', extension: '.xhtml', linear: false },
     ]
-    expect(Spine.items(data)).toContain('aside_xhtml')
+    expect(Spine.items(data, [])).toContain('aside_xhtml')
   })
 
   test('items() omits non-linear items on mobi builds', () => {
@@ -208,22 +208,21 @@ describe('templates.Opf.Spine', () => {
     const data = [
       { fileName: 'aside.xhtml', extension: '.xhtml', linear: false },
     ]
-    expect(Spine.items(data)).toBe('')
+    expect(Spine.items(data, [])).toBe('')
     state.build = 'epub'
   })
 
   test('items() appends loi items for figures-titlepage', () => {
     state.build = 'epub'
-    state.loi = [
+    const loi = [
       { fileName: 'figures-loi-01.xhtml', extension: '.xhtml', linear: true },
     ]
     const data = [
       { fileName: 'figures-titlepage', extension: '.xhtml', linear: true },
     ]
-    const result = Spine.items(data)
+    const result = Spine.items(data, loi)
     expect(result).toContain('figures-titlepage_xhtml')
     expect(result).toContain('figures-loi-01_xhtml')
-    state.loi = []
   })
 })
 

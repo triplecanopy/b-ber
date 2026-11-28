@@ -29,26 +29,11 @@ const METADATA = [
 // of metadata.yml: see the YAML defect test below
 const LONG_DESCRIPTION = 'About the book. '.repeat(20).trim()
 
-// The task reads State's metadata, and works out the path of metadata.yml,
-// once, when it is imported (see the defect tests below). The CLI imports it
-// after State has loaded the project, so it is imported here the same way.
-// The path is relative to the working directory, so the tests also run from
-// inside the project, as the CLI does.
-let cover
-
-beforeAll(() => {
-  const { metadata } = state
-  state.metadata = {
-    json: () =>
-      METADATA.map((entry) =>
-        entry.term === 'description'
-          ? { ...entry, value: LONG_DESCRIPTION }
-          : entry
-      ),
-  }
-  cover = require('../src/cover').default
-  state.metadata = metadata
-})
+// The task reads the metadata, and works out the path of metadata.yml, from
+// the build's context when it runs. Both used to be read once, when the
+// module was imported. The path is relative to the working directory, so the
+// tests run from inside the project, as the CLI does.
+const cover = require('../src/cover').default
 
 let project
 
@@ -95,7 +80,7 @@ describe('task: cover', () => {
         ''
       )
 
-      await cover()
+      await cover(project.ctx)
 
       // A JPEG in _images
       const files = await images()
@@ -130,7 +115,7 @@ describe('task: cover', () => {
         png(600, 900)
       )
 
-      await cover()
+      await cover(project.ctx)
 
       expect(await images()).toEqual(['mine.png'])
       const xhtml = await fs.readFile(coverXhtml(), 'utf8')
@@ -146,7 +131,7 @@ describe('task: cover', () => {
         png(600, 900)
       )
 
-      await cover()
+      await cover(project.ctx)
 
       const xhtml = await fs.readFile(coverXhtml(), 'utf8')
       expect(xhtml).toContain('images/my%20cover.png')
@@ -160,7 +145,7 @@ describe('task: cover', () => {
         png(600, 900)
       )
 
-      await cover()
+      await cover(project.ctx)
 
       expect(await fs.readFile(coverXhtml(), 'utf8')).toContain(
         'images/mine.jpg'
@@ -170,7 +155,7 @@ describe('task: cover', () => {
     test('rejects when the image does not exist', async () => {
       await setup({ metadata: withCover('missing.png') })
 
-      await expect(cover()).rejects.toThrow(
+      await expect(cover(project.ctx)).rejects.toThrow(
         'Cover image listed in metadata.yml cannot be found'
       )
       expect(fs.existsSync(coverXhtml())).toBe(false)
@@ -194,7 +179,7 @@ describe('task: cover', () => {
       const file = path.join(project.src, 'metadata.yml')
       expect(await fs.readFile(file, 'utf8')).toContain('value: >-')
 
-      await cover()
+      await cover(project.ctx)
 
       expect(await fs.readFile(file, 'utf8')).toContain(
         'About the book.- term: identifier'
@@ -210,7 +195,7 @@ describe('task: cover', () => {
     async () => {
       await setup({ build: 'pdf' })
 
-      await cover()
+      await cover(project.ctx)
 
       expect(await images()).toHaveLength(1)
       expect(fs.existsSync(coverXhtml())).toBe(false)
@@ -222,7 +207,7 @@ describe('task: cover', () => {
     await setup()
     await fs.remove(path.join(project.src, '_images'))
 
-    await expect(cover()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(cover(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -243,7 +228,7 @@ describe('task: cover', () => {
     await fs.move(path.join(project.root, '_project'), 'book')
     state.config.src = 'book'
 
-    await cover()
+    await cover(project.ctx)
 
     expect(await fs.readFile(coverXhtml(), 'utf8')).toContain('images/mine.png')
     expect(fs.existsSync(path.join(project.root, '_project'))).toBe(false)
@@ -293,7 +278,7 @@ describe('task: cover', () => {
         isolatedCover = require('../src/cover').default
       })
 
-      const result = isolatedCover().then(
+      const result = isolatedCover(project.ctx).then(
         () => 'settled',
         () => 'settled'
       )

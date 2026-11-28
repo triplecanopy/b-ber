@@ -52,7 +52,7 @@ const STATE = {
   toc: [{ title: 'One', name: 'one' }],
 }
 
-// Runs the tasks of each format in `plan` as b-ber-tasks' serialize does,
+// Runs the tasks of each format in `plan` as b-ber-tasks' build does,
 // calling `during(format, task)` inside each
 const build = (log, plan, during = () => {}) => {
   log.registerSequence(plan)

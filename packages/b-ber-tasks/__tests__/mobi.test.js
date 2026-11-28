@@ -38,19 +38,19 @@ describe('task: mobi', () => {
   test('converts content.opf to <identifier>.mobi in the working directory', async () => {
     project = await createProject({ build: 'mobi', metadata: METADATA })
 
-    await mobi()
+    await mobi(project.ctx)
 
     expect(exec).toHaveBeenCalledTimes(1)
     const opf = path.join(project.dist, 'OPS', 'content.opf')
     const book = path.resolve(process.cwd(), 'book-id.mobi')
-    expect(command()).toStartWith(`ebook-convert ${opf} "${book}" `)
+    expect(command()).toStartWith(`ebook-convert "${opf}" "${book}" `)
     expect(exec.mock.calls[0][1]).toEqual({ cwd: process.cwd() })
   })
 
   test('asks for KF8 and the old format, without calibre’s own changes', async () => {
     project = await createProject({ build: 'mobi', metadata: METADATA })
 
-    await mobi()
+    await mobi(project.ctx)
 
     for (const flag of [
       '--mobi-file-type=both',
@@ -73,7 +73,7 @@ describe('task: mobi', () => {
     project = await createProject({ build: 'mobi', metadata: METADATA })
     process.argv = [...argv, '--no-compile']
 
-    await expect(mobi()).resolves.toBeUndefined()
+    await expect(mobi(project.ctx)).resolves.toBeUndefined()
     expect(exists).not.toHaveBeenCalled()
     expect(exec).not.toHaveBeenCalled()
   })
@@ -82,7 +82,7 @@ describe('task: mobi', () => {
     project = await createProject({ build: 'mobi', metadata: METADATA })
     exists.mockImplementation((_cmd, cb) => cb(null, false))
 
-    await expect(mobi()).rejects.toThrow(
+    await expect(mobi(project.ctx)).rejects.toThrow(
       "calibre's ebook-convert must be installed"
     )
     expect(exec).not.toHaveBeenCalled()
@@ -94,26 +94,25 @@ describe('task: mobi', () => {
     const err = new Error('Command failed')
     exec.mockImplementation((_cmd, _opts, cb) => cb(err, '', 'Traceback'))
 
-    await expect(mobi()).rejects.toBe(err)
+    await expect(mobi(project.ctx)).rejects.toBe(err)
     expect(log.error).toHaveBeenCalledWith(err)
   })
 
-  // Defect, in b-ber-lib's EbookConvert (src/EbookConvert.ts:51): the output
-  // path is quoted and the input path is not, so a project under a directory
-  // whose name has a space hands ebook-convert a broken command line.
-  test('does not quote the input path (defect)', async () => {
+  // #802, in b-ber-lib's EbookConvert: the output path was quoted and the
+  // input path was not, so a project under a directory whose name has a
+  // space handed ebook-convert a broken command line
+  test('quotes the input path (#802)', async () => {
     project = await createProject({
       build: 'mobi',
       metadata: METADATA,
       dist: path.join('my book', 'project'),
     })
 
-    await mobi()
+    await mobi(project.ctx)
 
     const opf = path.join(project.dist, 'OPS', 'content.opf')
     expect(opf).toContain('my book')
-    expect(command()).toContain(`ebook-convert ${opf} `)
-    expect(command()).not.toContain(`"${opf}"`)
+    expect(command()).toContain(`ebook-convert "${opf}" `)
   })
 })
 
@@ -136,7 +135,7 @@ describe('task: mobiCSS', () => {
         'p { color: red; line-height: 1.5; hyphens: auto; widows: 2; orphans: 2 }',
     })
 
-    await mobiCSS()
+    await mobiCSS(project.ctx)
 
     expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
       'p {\n  color: red;\n}'
@@ -149,23 +148,39 @@ describe('task: mobiCSS', () => {
         '@namespace epub "http://www.idpf.org/2007/ops";\nepub|type, h1 { color: red }',
     })
 
-    await mobiCSS()
+    await mobiCSS(project.ctx)
 
     expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
       'h1 {\n  color: red;\n}'
     )
   })
 
-  // Defect: a rule whose only selectors are `epub|` ones keeps its
-  // declarations with no selector at all (src/mobi/mobi-css.ts:52), which is
-  // not valid CSS.
-  test('leaves a rule with no selector behind (defect)', async () => {
-    await setup({ 'application.css': 'epub|switch { display: none }' })
+  // #806: a rule whose only selectors were `epub|` ones kept its
+  // declarations with no selector at all, which is not valid CSS
+  test('removes a rule left with no selectors (#806)', async () => {
+    await setup({
+      'application.css':
+        'a { color: red } epub|switch { display: none } b { color: blue }',
+    })
 
-    await mobiCSS()
+    await mobiCSS(project.ctx)
 
     expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
-      ' {\n  display: none;\n}'
+      'a {\n  color: red;\n}\n\nb {\n  color: blue;\n}'
+    )
+  })
+
+  // An `@page` rule has no selectors to begin with. The first fix for #806
+  // removed it with the rules it had emptied
+  test('keeps an @page rule (#806)', async () => {
+    await setup({
+      'application.css': '@page { margin: 32px } epub|switch { display: none }',
+    })
+
+    await mobiCSS(project.ctx)
+
+    expect(await fs.readFile(stylesheets('application.css'), 'utf8')).toBe(
+      '@page {\n  margin: 32px;\n}'
     )
   })
 
@@ -175,7 +190,7 @@ describe('task: mobiCSS', () => {
       'b.css': 'b { color: blue; orphans: 2 }',
     })
 
-    await mobiCSS()
+    await mobiCSS(project.ctx)
 
     expect(await fs.readFile(stylesheets('a.css'), 'utf8')).toBe(
       'a {\n  color: red;\n}'
@@ -188,13 +203,13 @@ describe('task: mobiCSS', () => {
   test('rejects, through log.error, when a stylesheet does not parse', async () => {
     await setup({ 'a.css': 'a { color: red' })
 
-    await expect(mobiCSS()).rejects.toThrow('missing')
+    await expect(mobiCSS(project.ctx)).rejects.toThrow('missing')
     expect(log.error).toHaveBeenCalled()
   })
 
   test('rejects when the build has no stylesheets directory', async () => {
     project = await createProject({ build: 'mobi' })
 
-    await expect(mobiCSS()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(mobiCSS(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
   })
 })

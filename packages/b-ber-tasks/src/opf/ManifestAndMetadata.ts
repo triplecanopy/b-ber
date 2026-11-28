@@ -4,8 +4,7 @@
 // `metadata` elements in the `content.opf`
 
 import path from 'node:path'
-import type { MetadataEntry } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext, MetadataEntry } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
 import Metadata from '@canopycanopycanopy/b-ber-templates/Opf/Metadata'
@@ -13,30 +12,40 @@ import renderLayouts from 'layouts'
 import has from 'lodash/has'
 import rrdir from 'recursive-readdir'
 import File from 'vinyl'
+import { dist, distDir, libVersion } from '../context'
 import { pathInfoFromFiles } from './helpers'
 
+// One per `content.opf` written: it holds the build's context and the
+// metadata it reads, so it is created for each call, never shared
 class ManifestAndMetadata {
+  ctx: BuildContext
+
+  // URLs of the media the book embeds from elsewhere, listed in the manifest
+  remoteAssets: string[]
+
   bookmeta: MetadataEntry[]
 
-  constructor() {
+  constructor(ctx: BuildContext, { remoteAssets }: { remoteAssets: string[] }) {
+    this.ctx = ctx
+    this.remoteAssets = remoteAssets
     this.bookmeta = []
   }
 
   async loadMetadata() {
-    this.bookmeta = state.metadata.json()
+    this.bookmeta = this.ctx.project.metadata.json()
   }
 
   // Retrieve lists of files to include in the `content.opf`
   async createManifestObjectFromAssets() {
-    let files = await rrdir(state.dist.ops())
+    let files = await rrdir(dist(this.ctx).ops())
 
     // TODO: better testing here, make sure we're not including symlinks, for example
     // @issue: https://github.com/triplecanopy/b-ber/issues/228
     files = [
-      ...(state.remoteAssets as string[]),
+      ...this.remoteAssets,
       ...files.filter((file: string) => path.basename(file).charAt(0) !== '.'),
     ]
-    const fileObjects = pathInfoFromFiles(files, state.distDir)
+    const fileObjects = pathInfoFromFiles(files, distDir(this.ctx))
     return fileObjects
   }
 
@@ -45,12 +54,13 @@ class ManifestAndMetadata {
   ) {
     const manifest = files.map((file) => Manifest.item(file))
 
+    const { config } = this.ctx
     const specifiedFonts =
-      has(state.config, 'ibooks_specified_fonts') &&
-      state.config.ibooks_specified_fonts === true
+      has(config, 'ibooks_specified_fonts') &&
+      config.ibooks_specified_fonts === true
 
     const modified = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
-    const generator = `b-ber@${state.version}`
+    const generator = `b-ber@${libVersion()}`
 
     // Add exceptions here as needed
     const bookmeta = [
@@ -95,7 +105,7 @@ class ManifestAndMetadata {
   }
 
   init() {
-    // get the book metadata from state or yaml file
+    // get the book metadata the project read from metadata.yml
     return (
       this.loadMetadata()
 

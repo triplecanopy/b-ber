@@ -16,6 +16,10 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
   require('../helpers/cli').createMockState()
 )
 
+jest.mock('@canopycanopycanopy/b-ber-lib', () =>
+  require('../helpers/cli').createMockBuildApi()
+)
+
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   ensure: jest.fn(() => Promise.resolve()),
   fail: jest.fn(),
@@ -38,10 +42,13 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('cover handler', () => {
-  it('runs the cover task without arguments and returns its promise', async () => {
+  it("runs the cover task in the epub build's context and returns its promise", async () => {
     coverTask.mockResolvedValueOnce('cover.jpg')
     await expect(cover.handler({ _: ['cover'] })).resolves.toBe('cover.jpg')
-    expect(coverTask).toHaveBeenCalledWith()
+    expect(coverTask).toHaveBeenCalledTimes(1)
+    const [[ctx, ...rest]] = coverTask.mock.calls
+    expect(ctx.target.name).toBe('epub')
+    expect(rest).toEqual([])
   })
 
   it('is reached through yargs', () => {

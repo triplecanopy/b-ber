@@ -1,7 +1,12 @@
 import path from 'node:path'
-import type { NavigationEntry, SpineItem } from '@canopycanopycanopy/b-ber-lib'
+import type {
+  BuildContext,
+  GuideItem,
+  NavigationEntry,
+  SpineItem,
+  Spine as SpineModel,
+} from '@canopycanopycanopy/b-ber-lib'
 import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Ncx from '@canopycanopycanopy/b-ber-templates/Ncx'
 import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
@@ -13,25 +18,39 @@ import difference from 'lodash/difference'
 import find from 'lodash/find'
 import remove from 'lodash/remove'
 import File from 'vinyl'
+import { dist, src } from '../context'
 import { getFileObjects } from '../inject'
+
+// What the navigation documents and the OPF's spine and guide are made from
+export interface NavigationInputs {
+  spine: SpineModel
+  // The nested navigation, as the build read it, before any step added to it
+  toc: SpineItem[]
+  guide: GuideItem[]
+  // The figure pages, which follow the figures titlepage in the spine
+  loi: SpineItem[]
+}
 
 class Navigation {
   // Remove the `toc.xhtml` and `toc.ncx` from the output directory
-  static createEmptyNavDocuments() {
+  static createEmptyNavDocuments(ctx: BuildContext) {
     const navDocs = ['toc.ncx', 'toc.xhtml']
 
     log.info(`opf build navigation documents [${navDocs.join(', ')}]`)
 
-    const promises = navDocs.map((doc) => fs.writeFile(state.dist.ops(doc), ''))
+    const promises = navDocs.map((doc) => fs.writeFile(dist(ctx).ops(doc), ''))
     return Promise.all(promises)
   }
 
   // Resolve discrepancies between files that exist in the output directory
   // and those that are listed in the YAML manifest
-  static compareXhtmlWithYaml() {
+  static compareXhtmlWithYaml(
+    ctx: BuildContext,
+    { spine, loi }: Pick<NavigationInputs, 'spine' | 'loi'>
+  ) {
     // Get the XHTML file names
     const files = glob
-      .sync(state.dist.ops('**', '*.xhtml'))
+      .sync(dist(ctx).ops('**', '*.xhtml'))
       .map((file) => path.basename(file, '.xhtml'))
 
     // Set up our promise chain
@@ -42,15 +61,16 @@ class Navigation {
 
     // Check if we need to compare agains the global toc.yml, or an
     // overrides (type.yml) file
-    const tocFile = fs.existsSync(state.src.root(`${state.build}.yml`))
-      ? state.src.root(`${state.build}.yml`)
-      : state.src.root('toc.yml')
+    const { root } = src(ctx)
+    const tocFile = fs.existsSync(root(`${ctx.target.name}.yml`))
+      ? root(`${ctx.target.name}.yml`)
+      : root('toc.yml')
 
     // Load the TOC from the YAML file directly. We know that the spine
     // contains the correct entries since we load any files that haven't
     // been declared in the TOC when initializing the Spine object, so no
     // need to update anything there
-    const tocEntries = state.spine.flattenYAML(
+    const tocEntries = spine.flattenYAML(
       YamlAdaptor.load(tocFile) as NavigationEntry[]
     )
 
@@ -59,11 +79,9 @@ class Navigation {
 
     // Add the missing entries to the YAML file (either toc.yml or type.yml)
     missingEntries.forEach((name) => {
-      if (state.contains('loi', { name })) return
+      if (loi.some((item) => item.name === name)) return
 
-      const entry = state.find('spine.flattened', { name }) as
-        | Omit<SpineItem, 'nodes'>
-        | undefined
+      const entry = spine.flattened.find((item) => item.name === name)
 
       let yamlString = `\n- ${name}`
 
@@ -96,7 +114,7 @@ class Navigation {
 
     // Strip out the `cover` entry where the target has no cover page (pdf),
     // since the project's config.yml handles it
-    if (!state.target.features.coverPage) {
+    if (!ctx.target.features.coverPage) {
       const coverIndex = redundantEntries.indexOf('cover')
       if (coverIndex > -1) redundantEntries.splice(coverIndex, 1)
     }
@@ -132,40 +150,42 @@ class Navigation {
     return Promise.all(promises)
   }
 
-  static async createTocStringsFromTemplate() {
+  static async createTocStringsFromTemplate(
+    ctx: BuildContext,
+    toc: SpineItem[]
+  ) {
     log.info('opf build [toc.xhtml]')
 
-    const { toc } = state
     const data = new File({
       contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())),
     })
     const file = [{ name: 'toc.xhtml', data }]
-    const [{ contents }] = await getFileObjects(file)
+    const [{ contents }] = await getFileObjects(ctx, file)
 
     return contents
   }
 
-  static createNcxStringsFromTemplate() {
+  static createNcxStringsFromTemplate(toc: SpineItem[]) {
     log.info('opf build [toc.ncx]')
 
-    const { toc } = state
     const ncxXML = Ncx.navPoints(toc)
 
     return Template.render(ncxXML, Ncx.document())
   }
 
-  static createGuideStringsFromTemplate() {
+  static createGuideStringsFromTemplate(guide: GuideItem[]) {
     log.info('opf build [guide]')
 
-    const guideXML = Guide.items(state.guide)
+    const guideXML = Guide.items(guide)
 
     return Template.render(guideXML, Guide.body())
   }
 
-  static createSpineStringsFromTemplate() {
+  static createSpineStringsFromTemplate(spine: SpineModel, loi: SpineItem[]) {
     log.info('opf build [spine]')
 
-    const { flattened } = state.spine
+    // In place: the steps after opf read the spine in this order
+    const { flattened } = spine
 
     // We add entries to the spine programatically, but then they're
     // also found on the system, so we dedupe them here
@@ -178,53 +198,51 @@ class Navigation {
       }
     })
 
-    const spineXML = Spine.items(flattened)
+    const spineXML = Spine.items(flattened, loi)
 
     return Template.render(spineXML, Spine.body())
   }
 
-  static writeTocXhtmlFile(toc: string) {
-    const filepath = state.dist.ops('toc.xhtml')
+  static writeTocXhtmlFile(ctx: BuildContext, toc: string) {
+    const filepath = dist(ctx).ops('toc.xhtml')
 
     log.info(`opf emit toc.xhtml [${filepath}]`)
 
     return fs.writeFile(filepath, toc)
   }
 
-  static writeTocNcxFile(ncx: string) {
-    const filepath = state.dist.ops('toc.ncx')
+  static writeTocNcxFile(ctx: BuildContext, ncx: string) {
+    const filepath = dist(ctx).ops('toc.ncx')
 
     log.info(`opf emit toc.ncx [${filepath}]`)
 
     return fs.writeFile(filepath, ncx)
   }
 
-  static async writeFiles([toc, ncx, guide, spine]: [
-    string,
-    string,
-    string,
-    string,
-  ]) {
+  static async writeFiles(
+    ctx: BuildContext,
+    [toc, ncx, guide, spine]: [string, string, string, string]
+  ) {
     await Promise.all([
-      Navigation.writeTocXhtmlFile(toc),
-      Navigation.writeTocNcxFile(ncx),
+      Navigation.writeTocXhtmlFile(ctx, toc),
+      Navigation.writeTocNcxFile(ctx, ncx),
     ])
     return { spine, guide }
   }
 
-  static init() {
-    return Navigation.createEmptyNavDocuments()
-      .then(() => Navigation.compareXhtmlWithYaml())
+  static init(ctx: BuildContext, { spine, toc, guide, loi }: NavigationInputs) {
+    return Navigation.createEmptyNavDocuments(ctx)
+      .then(() => Navigation.compareXhtmlWithYaml(ctx, { spine, loi }))
       .then(() =>
         Promise.all([
-          Navigation.createTocStringsFromTemplate(),
-          Navigation.createNcxStringsFromTemplate(),
-          Navigation.createGuideStringsFromTemplate(),
-          Navigation.createSpineStringsFromTemplate(),
+          Navigation.createTocStringsFromTemplate(ctx, toc),
+          Navigation.createNcxStringsFromTemplate(toc),
+          Navigation.createGuideStringsFromTemplate(guide),
+          Navigation.createSpineStringsFromTemplate(spine, loi),
         ])
       )
       .then((resp) =>
-        Navigation.writeFiles(resp as [string, string, string, string])
+        Navigation.writeFiles(ctx, resp as [string, string, string, string])
       )
       .catch((err) => {
         throw log.error(err)

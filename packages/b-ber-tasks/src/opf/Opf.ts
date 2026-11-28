@@ -1,13 +1,20 @@
 // Generates metadata, manifest, guide, and spine XML and writes to to `content.opf`
 
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Pkg from '@canopycanopycanopy/b-ber-templates/Opf/Pkg'
 import fs from 'fs-extra'
 import renderLayouts from 'layouts' // eslint-disable-line import/no-unresolved
 import File from 'vinyl' // eslint-disable-line import/no-unresolved
+import { dist } from '../context'
 import ManifestAndMetadata from './ManifestAndMetadata'
-import Navigation from './Navigation'
+import Navigation, { type NavigationInputs } from './Navigation'
+
+// What `content.opf` and the navigation documents are made from: what render,
+// loi and footnotes returned, and the spine they extended
+export interface OpfInputs extends NavigationInputs {
+  remoteAssets: string[]
+}
 
 // What the `init`s below resolve to. Each ends in a catch that reports the
 // error and rethrows it, so a failure rejects rather than resolving to
@@ -26,19 +33,25 @@ interface NavigationXML {
 }
 
 class Opf {
-  static createOpf() {
-    const manifestAndMetadata = new ManifestAndMetadata()
+  static createOpf(
+    ctx: BuildContext,
+    { remoteAssets, ...navigation }: OpfInputs
+  ) {
+    const manifestAndMetadata = new ManifestAndMetadata(ctx, { remoteAssets })
 
-    return Promise.all([manifestAndMetadata.init(), Navigation.init()])
+    return Promise.all([
+      manifestAndMetadata.init(),
+      Navigation.init(ctx, navigation),
+    ])
       .then(Opf.createOpfPackageString)
-      .then(Opf.writeOPF)
+      .then((contents) => Opf.writeOPF(ctx, contents))
       .catch((err) => {
         throw log.error(err)
       })
   }
 
-  static writeOPF(contents: string) {
-    const opsPath = state.dist.ops('content.opf')
+  static writeOPF(ctx: BuildContext, contents: string) {
+    const opsPath = dist(ctx).ops('content.opf')
     log.info(`opf emit content.opf [${opsPath}]`)
 
     return fs.writeFile(opsPath, contents)

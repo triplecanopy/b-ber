@@ -9,9 +9,9 @@ jest.mock('@canopycanopycanopy/b-ber-logger')
 
 beforeEach(() => returnReportedErrors(log))
 
-// `render` does not wait for its own writes (see the defect test below), so
-// the tests collect the promises fs.writeFile returns and await them. The
-// spy calls through: the files are really written.
+// The tests collect the promises fs.writeFile returns, so a test can wait
+// for them and check render did too. The spy calls through: the files are
+// really written.
 let writes
 let project
 
@@ -43,7 +43,7 @@ describe('task: render', () => {
       markdown: { one: '# One', two: 'Some *text*' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const text = path.join(project.dist, 'OPS', 'text')
@@ -58,7 +58,7 @@ describe('task: render', () => {
       markdown: { one: '# Heading\n\nSome *emphasis*' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const xhtml = await fs.readFile(
@@ -75,11 +75,33 @@ describe('task: render', () => {
       'not markdown'
     )
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const text = path.join(project.dist, 'OPS', 'text')
     expect(await fs.readdir(text)).toEqual(['one.xhtml'])
+  })
+
+  // Render collects into the build's context, and returns those collections
+  // for the steps after it
+  test('returns what the documents collected', async () => {
+    project = await createProject({
+      toc: ['one'],
+      markdown: { one: 'Text.[^1]\n\n[^1]: A note.' },
+    })
+
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
+    await settle()
+
+    expect(output.footnotes).toEqual([
+      expect.objectContaining({ fileName: 'one' }),
+    ])
+    expect(output.footnotes).toBe(project.ctx.settings.footnotes)
+    expect(output.figures).toBe(project.ctx.settings.figures)
+    expect(output.guide).toBe(project.ctx.settings.guide)
+    expect(output.remoteAssets).toBe(project.ctx.settings.remoteAssets)
   })
 
   test('renders files in spine order, not directory order', async () => {
@@ -89,7 +111,7 @@ describe('task: render', () => {
       markdown: { a: 'a', b: 'b', c: 'c' },
     })
 
-    await render()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     await settle()
 
     const rendered = log.info.mock.calls
@@ -102,10 +124,10 @@ describe('task: render', () => {
     ])
   })
 
-  // The renderer returns what each document collects, and the task writes it
-  // where the later tasks read it (TASK-177). The grammars wrote it to State
-  // themselves before
-  test('writes what each document collects to State', async () => {
+  // The renderer returns what each document collects (TASK-177), and render
+  // returns it for the steps after it. The front matter goes on the spine,
+  // where web reads it
+  test('returns what each document collects, and puts its front matter on the spine', async () => {
     project = await createProject({
       toc: ['one'],
       markdown: {
@@ -113,23 +135,23 @@ describe('task: render', () => {
       },
     })
 
-    await render()
+    const { spine } = project.ctx.settings
+    const output = await render(project.ctx, { spine })
     await settle()
 
-    const state = require('@canopycanopycanopy/b-ber-lib').State
     // The notes page is headed with the document's title in the spine
-    expect(state.footnotes).toEqual([
+    expect(output.footnotes).toEqual([
       expect.objectContaining({ fileName: 'one', title: 'One' }),
     ])
-    expect(state.footnotes[0].notes).toContain('A note')
-    expect(state.guide).toEqual([
+    expect(output.footnotes[0].notes).toContain('A note')
+    expect(output.guide).toEqual([
       expect.objectContaining({
         fileName: 'one',
         title: 'One',
         type: 'bodymatter',
       }),
     ])
-    expect(state.spine.frontMatter.get('one')).toEqual({
+    expect(spine.frontMatter.get('one')).toEqual({
       title: 'One',
       type: 'bodymatter',
     })
@@ -144,11 +166,12 @@ describe('task: render', () => {
       markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
     })
 
-    await render()
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
     await settle()
 
-    const state = require('@canopycanopycanopy/b-ber-lib').State
-    const [one, two] = state.footnotes.map((f) => f.notes)
+    const [one, two] = output.footnotes.map((f) => f.notes)
     expect(one).toContain('<ol class="footnotes" start="1">')
     expect(two).toContain('<ol class="footnotes" start="3">')
     const xhtml = await fs.readFile(
@@ -164,17 +187,25 @@ describe('task: render', () => {
       markdown: { one: 'A^[a] b^[b].\n', two: 'C^[c] d^[d].\n' },
     })
 
-    await render()
+    const output = await render(project.ctx, {
+      spine: project.ctx.settings.spine,
+    })
     await settle()
 
-    const state = require('@canopycanopycanopy/b-ber-lib').State
-    expect(state.footnotes[1].notes).toContain('start="1"')
+    expect(output.footnotes[1].notes).toContain('start="1"')
   })
 
-  test('resolves with nothing when the Markdown directory is empty', async () => {
+  test('collects nothing when the Markdown directory is empty', async () => {
     project = await createProject()
 
-    await expect(render()).resolves.toBeUndefined()
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).resolves.toEqual({
+      figures: [],
+      footnotes: [],
+      guide: [],
+      remoteAssets: [],
+    })
     expect(fs.existsSync(path.join(project.dist, 'OPS', 'text'))).toBe(false)
   })
 
@@ -183,7 +214,9 @@ describe('task: render', () => {
     await fs.remove(path.join(project.src, '_markdown'))
 
     // The readdir failure is not caught: only the per-file chain is
-    await expect(render()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   test('passes a per-file failure to log.error and stops there', async () => {
@@ -192,7 +225,9 @@ describe('task: render', () => {
     // the TOC, so it sorts first and the files after it are never rendered
     await fs.ensureDir(path.join(project.src, '_markdown', 'broken.md'))
 
-    await expect(render()).rejects.toMatchObject({ code: 'EISDIR' })
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toMatchObject({ code: 'EISDIR' })
     await settle()
 
     expect(log.error).toHaveBeenCalledWith(
@@ -203,11 +238,10 @@ describe('task: render', () => {
     ).toBe(false)
   })
 
-  // DEFECT (#770): `writeMarkupToFile` (src/render/index.ts:9) neither returns nor
-  // awaits its fs.writeFile, so `render()` resolves before the XHTML is on
-  // disk and a write failure is unhandled. The next task in the sequence can
-  // read a file that is not there yet.
-  test('resolves before its XHTML writes complete (defect)', async () => {
+  // #770: `writeMarkupToFile` neither returned nor awaited its fs.writeFile,
+  // so render resolved before the XHTML was on disk, and a write failure was
+  // unhandled. The next step could read a page that was not there yet
+  test('resolves once its XHTML writes are complete (#770)', async () => {
     project = await createProject({ toc: ['one'], markdown: { one: 'x' } })
 
     let writeSettled = false
@@ -220,10 +254,18 @@ describe('task: render', () => {
       return p
     })
 
-    await render()
-    expect(writeSettled).toBe(false)
-
-    await settle()
+    await render(project.ctx, { spine: project.ctx.settings.spine })
     expect(writeSettled).toBe(true)
+  })
+
+  test('rejects, through log.error, when a page cannot be written (#770)', async () => {
+    project = await createProject({ toc: ['one'], markdown: { one: 'x' } })
+    const error = Object.assign(new Error('disk full'), { code: 'ENOSPC' })
+    fs.writeFile.mockImplementation(() => Promise.reject(error))
+
+    await expect(
+      render(project.ctx, { spine: project.ctx.settings.spine })
+    ).rejects.toBe(error)
+    expect(log.error).toHaveBeenCalledWith(error)
   })
 })

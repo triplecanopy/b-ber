@@ -4,13 +4,15 @@ import {
   mergeConfig,
   readConfig,
   runBuild,
+  type TargetName,
 } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
-import { serialize } from '@canopycanopycanopy/b-ber-tasks'
+import {
+  build,
+  targetNames,
+  targetSteps,
+} from '@canopycanopycanopy/b-ber-tasks'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import type { Arguments, Argv } from 'yargs'
 import { knownFormats } from '../lib/arguments'
@@ -22,12 +24,12 @@ import {
 import { exitOnFailure, fail } from '../lib/exit'
 
 // Every format `bber build` knows, in the order `bber build` alone runs them
-const FORMATS = Object.keys(sequences)
+const FORMATS: string[] = targetNames
 
 // No positional: one would take the first word that is not a format
 // sub-command (`bber build ebup`) out of `argv._`, where knownFormats could
 // not see it, and the handler would build every format. The formats are in
-// the usage line instead, from the sequences, so that it cannot leave one out.
+// the usage line instead, from the targets, so that it cannot leave one out.
 const command = 'build'
 const describe = 'Build a project'
 
@@ -62,12 +64,13 @@ const configOverrides = (
 const handler = exitOnFailure(async (argv: Arguments) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-  const { _: desiredSequences, $0, config, ...configOptions } = argv
-  const sequence = createBuildSequence(desiredSequences)
-  const subSequence = sequence.reduce(
-    (a: string[], c) => a.concat(...sequences[c]),
-    [] as string[]
+  const { _: words, $0, config, ...configOptions } = argv
+  // The formats named, in the order given, or every format. The other words
+  // are the command's own (`build`); knownFormats has rejected anything else
+  const named = words.filter((word): word is TargetName =>
+    FORMATS.includes(String(word))
   )
+  const targets: TargetName[] = named.length ? named : targetNames
 
   let projectConfig: Record<string, unknown> = {}
 
@@ -82,9 +85,11 @@ const handler = exitOnFailure(async (argv: Arguments) => {
   const overrides = configOverrides(projectConfig, readConfig())
   const project = loadProject(process.cwd(), overrides)
 
-  state.update('sequence', subSequence)
   log.registerSequence(
-    sequence.map((name) => ({ name, tasks: sequences[name] }))
+    targets.map((name) => ({
+      name,
+      tasks: [...targetSteps(name)],
+    }))
   )
 
   const { src } = mergeConfig(project.config, overrides)
@@ -92,9 +97,7 @@ const handler = exitOnFailure(async (argv: Arguments) => {
   const files = [...Project.javascripts(projectPath), ...Project.stylesheets()]
 
   await ensure({ files, src: src as string })
-  await runBuild(project, sequence, ({ target }) =>
-    serialize(sequences[target.name])
-  )
+  await runBuild(project, targets, build)
 })
 
 const builder = (yargs: Argv) =>

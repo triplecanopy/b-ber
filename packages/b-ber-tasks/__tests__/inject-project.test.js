@@ -50,7 +50,7 @@ describe('task: inject', () => {
       text: { 'one.xhtml': '<p>One</p>', 'two.xhtml': '<p>Two</p>' },
     })
 
-    await inject()
+    await inject(project.ctx)
 
     const one = await read('one.xhtml')
     expect(one).toStartWith('<?xml')
@@ -66,7 +66,7 @@ describe('task: inject', () => {
       javascripts: ['application.js'],
     })
 
-    await inject()
+    await inject(project.ctx)
 
     const [head, tail] = (await read('one.xhtml')).split('<p>One</p>')
     expect(head).toContain(
@@ -80,7 +80,7 @@ describe('task: inject', () => {
   test('tells the page scripts which build they are in', async () => {
     await setup({ text: { 'one.xhtml': '' } })
 
-    await inject()
+    await inject(project.ctx)
 
     expect(await read('one.xhtml')).toContain(
       '<script type="application/javascript">window.bber = window.bber || {}; window.bber.env = \'epub\';</script>'
@@ -90,7 +90,7 @@ describe('task: inject', () => {
   test('marks the pages noindex when the project is private', async () => {
     await setup({ text: { 'one.xhtml': '' }, config: { private: true } })
 
-    await inject()
+    await inject(project.ctx)
 
     expect(await read('one.xhtml')).toContain(
       '<meta name="robots" content="noindex,nofollow"/>'
@@ -100,14 +100,14 @@ describe('task: inject', () => {
   test('rejects when the build has no text directory', async () => {
     await setup({})
 
-    await expect(inject()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(inject(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   test('rejects when the build has no stylesheets directory', async () => {
     await setup({ text: { 'one.xhtml': '' } })
     await fs.remove(ops('stylesheets'))
 
-    await expect(inject()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(inject(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   test('rejects, through log.error, when a page cannot be written', async () => {
@@ -115,7 +115,7 @@ describe('task: inject', () => {
     // Readable, so it can be wrapped, but not writable
     await fs.chmod(ops('text', 'one.xhtml'), 0o444)
 
-    await expect(inject()).rejects.toMatchObject({ code: 'EACCES' })
+    await expect(inject(project.ctx)).rejects.toMatchObject({ code: 'EACCES' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'EACCES' })
     )
@@ -133,7 +133,7 @@ describe('task: inject', () => {
       },
     })
 
-    await inject()
+    await inject(project.ctx)
 
     const page = await read('one.xhtml')
     expect(page).toContain('href="../stylesheets/https:/example.com/a.css"')

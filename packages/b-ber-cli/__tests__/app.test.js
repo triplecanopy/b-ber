@@ -1,4 +1,3 @@
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import {
   flushPromises,
   mockProcessExit,
@@ -10,7 +9,9 @@ import {
 // src/app.ts and the real command modules, with the tasks mocked.
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-  serialize: jest.fn(() => Promise.resolve()),
+  build: jest.fn(() => Promise.resolve()),
+  targetNames: ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml'],
+  targetSteps: () => [],
   validate: jest.fn(),
   xml: jest.fn(),
   opf: jest.fn(),
@@ -38,6 +39,9 @@ jest.mock('@canopycanopycanopy/b-ber-templates/Project', () => ({
 }))
 
 const USAGE = 'Usage: bber <command> [options]'
+
+// The targets b-ber-tasks' `build` was asked to build, in order
+const built = (tasks) => tasks.build.mock.calls.map(([ctx]) => ctx.target.name)
 
 let exit
 
@@ -97,7 +101,7 @@ describe('bber', () => {
     const { tasks } = quietly(['build', 'xml'])
     await flushPromises()
 
-    expect(tasks.serialize).toHaveBeenCalledWith(sequences.xml)
+    expect(built(tasks)).toEqual(['xml'])
   })
 
   it('runs several formats given together, one after another', async () => {
@@ -105,10 +109,7 @@ describe('bber', () => {
     await flushPromises()
 
     expect(stoppedByExit).toBe(false)
-    expect(tasks.serialize.mock.calls).toEqual([
-      [sequences.epub],
-      [sequences.web],
-    ])
+    expect(built(tasks)).toEqual(['epub', 'web'])
   })
 
   it.each([
@@ -137,7 +138,7 @@ describe('bber', () => {
       expect.objectContaining({ message })
     )
     expect(stoppedByExit).toBe(true)
-    for (const task of Object.values(tasks)) {
+    for (const task of Object.values(tasks).filter(jest.isMockFunction)) {
       expect(task).not.toHaveBeenCalled()
     }
   })
@@ -168,7 +169,7 @@ describe('bber', () => {
     let logger
     runCli(['build', 'epub'], ({ tasks, log }) => {
       logger = spyOnLogger(log)
-      tasks.serialize.mockImplementation(() =>
+      tasks.build.mockImplementation(() =>
         Promise.reject(new Error('render failed')).catch((err) => {
           throw log.error(err)
         })
@@ -205,7 +206,7 @@ describe('the logger’s flags', () => {
       await flushPromises()
 
       expect(stoppedByExit).toBe(false)
-      expect(tasks.serialize.mock.calls).toEqual([[sequences.epub]])
+      expect(built(tasks)).toEqual(['epub'])
     }
   )
 
@@ -219,7 +220,7 @@ describe('the logger’s flags', () => {
     await flushPromises()
 
     expect(stoppedByExit).toBe(false)
-    expect(tasks.serialize.mock.calls).toEqual([[sequences.epub]])
+    expect(built(tasks)).toEqual(['epub'])
   })
 
   it('leave the positional of a command that takes one', async () => {
@@ -256,6 +257,6 @@ describe('the logger’s flags', () => {
     // yargs puts words after `--` in `argv._`, where build's format check
     // finds one that is not a format
     expect(stoppedByExit).toBe(true)
-    expect(tasks.serialize).not.toHaveBeenCalled()
+    expect(tasks.build).not.toHaveBeenCalled()
   })
 })

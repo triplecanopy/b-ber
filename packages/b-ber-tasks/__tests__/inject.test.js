@@ -9,14 +9,17 @@ jest.mock('fs-extra', () => ({
   writeFile: jest.fn().mockResolvedValue(undefined),
 }))
 
+// b-ber-templates' Xhtml templates still read the config from State
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   config: { private: false },
-  build: 'epub',
-  dist: {
-    ops: (...parts) => `/builds/epub/ops/${parts.join('/')}`,
-    text: (file) => `/builds/epub/ops/text/${file}`,
-  },
 }))
+
+// The build's context: the epub target, building into `/builds/epub`
+const ctx = {
+  config: { private: false },
+  target: { name: 'epub' },
+  settings: { dist: '/builds/epub' },
+}
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
@@ -36,7 +39,7 @@ describe('task: inject — getFileObjects', () => {
         data: new File({ contents: Buffer.from('<p>world</p>') }),
       },
     ]
-    const result = await getFileObjects(files)
+    const result = await getFileObjects(ctx, files)
     expect(result).toHaveLength(2)
   })
 
@@ -47,7 +50,7 @@ describe('task: inject — getFileObjects', () => {
         data: new File({ contents: Buffer.from('<p>test</p>') }),
       },
     ]
-    const [{ fileName }] = await getFileObjects(files)
+    const [{ fileName }] = await getFileObjects(ctx, files)
     expect(fileName).toBe('chapter-01.xhtml')
   })
 
@@ -59,7 +62,7 @@ describe('task: inject — getFileObjects', () => {
         data: new File({ contents: Buffer.from(bodyContent) }),
       },
     ]
-    const [{ contents }] = await getFileObjects(files)
+    const [{ contents }] = await getFileObjects(ctx, files)
     expect(contents).toContain(bodyContent)
   })
 
@@ -70,7 +73,7 @@ describe('task: inject — getFileObjects', () => {
         data: new File({ contents: Buffer.from('<p>test</p>') }),
       },
     ]
-    const [{ contents }] = await getFileObjects(files)
+    const [{ contents }] = await getFileObjects(ctx, files)
     expect(contents).toContain("window.bber.env = 'epub'")
   })
 
@@ -78,14 +81,14 @@ describe('task: inject — getFileObjects', () => {
     const files = [
       { name: 'test.xhtml', data: new File({ contents: Buffer.from('') }) },
     ]
-    await getFileObjects(files)
+    await getFileObjects(ctx, files)
     const calledWith = mockFsReaddir.mock.calls.map(([p]) => p)
     expect(calledWith.some((p) => p.includes('stylesheets'))).toBe(true)
     expect(calledWith.some((p) => p.includes('javascripts'))).toBe(true)
   })
 
   test('returns empty array for empty input', async () => {
-    const result = await getFileObjects([])
+    const result = await getFileObjects(ctx, [])
     expect(result).toEqual([])
   })
 
@@ -96,7 +99,7 @@ describe('task: inject — getFileObjects', () => {
         data: new File({ contents: Buffer.from('<p>test</p>') }),
       },
     ]
-    const result = await getFileObjects(files, 'text')
+    const result = await getFileObjects(ctx, files, 'text')
     expect(result).toHaveLength(1)
     expect(result[0].fileName).toBe('test.xhtml')
   })

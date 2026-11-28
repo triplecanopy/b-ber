@@ -1,7 +1,7 @@
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
+import { bookMetadata, dist } from '../context'
 
 const pageBreakBeforeXPATH = () =>
   [
@@ -15,15 +15,15 @@ const pageBreakBeforeXPATH = () =>
     '//h:*[@data-gallery-item]', // prettier-ignore
   ].join('|')
 
-const mobi = () =>
+const mobi = (ctx: BuildContext) =>
   process.argv.includes('--no-compile')
     ? Promise.resolve()
     : EbookConvert.convert({
         // https://manual.calibre-ebook.com/generated/en/ebook-convert.html#mobi-output-options
-        inputPath: state.dist.ops('content.opf'),
+        inputPath: dist(ctx).ops('content.opf'),
         outputPath: process.cwd(),
         fileType: 'mobi',
-        fileName: getBookMetadata('identifier'),
+        fileName: bookMetadata(ctx, 'identifier'),
         flags: [
           '--mobi-file-type=both',
           '--disable-font-rescaling',

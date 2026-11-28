@@ -1,10 +1,10 @@
 import path from 'node:path'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import kebabCase from 'lodash/kebabCase'
+import { bookMetadata, dist } from '../context'
 
 const booleans = new Set([
   'pdf_mark_links',
@@ -16,7 +16,7 @@ const booleans = new Set([
   'use_profile_size',
   'disable_font_rescaling',
   'subset_embedded_fonts',
-  'embed_all_fonts ',
+  'embed_all_fonts',
   'linearize_tables',
   'expand_css',
   'smarten_punctuation',
@@ -36,7 +36,7 @@ const booleans = new Set([
   'disable_renumber_headings',
   'prefer_metadata_cover',
   'remove_first_image',
-  'insert_metadata ',
+  'insert_metadata',
   'disable_remove_fake_margins',
   'no_chapters_in_toc',
   'use_auto_toc',
@@ -116,16 +116,23 @@ const settings = new Set([
   'timestamp',
 ])
 
+// Single-quoted for the shell ebook-convert runs in, so that a value with a
+// space or a shell character stays one argument (#801)
+const quote = (val: string | boolean) =>
+  `'${String(val).replace(/'/g, `'\\''`)}'`
+
 const toArg = (key: string, val?: string | boolean) => {
   if (typeof val === 'undefined') return `--${kebabCase(key)}`
-  return `--${kebabCase(key)}=${val}`
+  return `--${kebabCase(key)}=${quote(val)}`
 }
 
 const getPDFFlags = (options: Record<string, string | boolean>) => {
   if (Object.keys(options).length < 1) return []
 
   const flags = Object.entries(options).reduce<string[]>((acc, [key, val]) => {
-    if (booleans.has(key)) return acc.concat(toArg(key))
+    // A switch is on when it is set to true. Any value used to turn it on,
+    // `false` included (#801)
+    if (booleans.has(key)) return val === true ? acc.concat(toArg(key)) : acc
     if (settings.has(key)) return acc.concat(toArg(key, val))
 
     return acc
@@ -134,11 +141,11 @@ const getPDFFlags = (options: Record<string, string | boolean>) => {
   return flags
 }
 
-const pdf = () => {
-  const opsPath = state.dist.ops()
+const pdf = (ctx: BuildContext) => {
+  const opsPath = dist(ctx).ops()
   const inputPath = path.join(opsPath, 'content.opf')
 
-  const pdfOptions = (state.config.pdf_options || {}) as Record<
+  const pdfOptions = (ctx.config.pdf_options || {}) as Record<
     string,
     string | boolean
   >
@@ -155,7 +162,7 @@ const pdf = () => {
           inputPath,
           outputPath: process.cwd(),
           fileType: 'pdf',
-          fileName: getBookMetadata('identifier'),
+          fileName: bookMetadata(ctx, 'identifier'),
           flags,
         }).catch((err) => {
           throw log.error(err)

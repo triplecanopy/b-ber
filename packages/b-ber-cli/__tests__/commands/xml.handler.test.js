@@ -12,6 +12,10 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
   require('../helpers/cli').createMockState()
 )
 
+jest.mock('@canopycanopycanopy/b-ber-lib', () =>
+  require('../helpers/cli').createMockBuildApi()
+)
+
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   ensure: jest.fn(() => Promise.resolve()),
   fail: jest.fn(),
@@ -33,9 +37,13 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('xml handler', () => {
-  it('runs the xml task, without passing it argv', async () => {
+  it("runs the xml task in the xml build's context, without passing it argv", async () => {
     await xml.handler({})
-    expect(xmlTask).toHaveBeenCalledWith()
+
+    expect(xmlTask).toHaveBeenCalledTimes(1)
+    const [[ctx, inputs]] = xmlTask.mock.calls
+    expect(ctx.target.name).toBe('xml')
+    expect(inputs).toEqual({ spine: ctx.settings.spine, loi: ctx.settings.loi })
   })
 
   it('is not exported from the commands index, so `bber xml` does not exist', () => {

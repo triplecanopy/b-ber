@@ -37,7 +37,7 @@ describe('task: scripts', () => {
     const a = 'function a() {\n  return 1\n}\n'
     await setup({ 'a.js': a, 'b.js': 'var b = 2\n', 'notes.txt': 'x' })
 
-    await scripts()
+    await scripts(project.ctx)
 
     expect((await fs.readdir(out())).sort()).toEqual(['a.js', 'b.js'])
     expect(await fs.readFile(out('a.js'), 'utf8')).toBe(a)
@@ -51,7 +51,7 @@ describe('task: scripts', () => {
       'notes.txt': 'x',
     })
 
-    await scripts()
+    await scripts(project.ctx)
 
     expect(await fs.readdir(out())).toEqual([`${state.hash}.js`])
     const js = await fs.readFile(out(`${state.hash}.js`), 'utf8')
@@ -63,7 +63,7 @@ describe('task: scripts', () => {
     await setup({})
     await fs.ensureDir(path.join(project.src, '_javascripts'))
 
-    await scripts()
+    await scripts(project.ctx)
 
     expect(await fs.readdir(out())).toEqual([])
   })
@@ -72,7 +72,9 @@ describe('task: scripts', () => {
     process.env.NODE_ENV = 'production'
     await setup({ 'a.js': 'var = ;' })
 
-    await expect(scripts()).rejects.toMatchObject({ name: 'SyntaxError' })
+    await expect(scripts(project.ctx)).rejects.toMatchObject({
+      name: 'SyntaxError',
+    })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'SyntaxError' })
     )
@@ -81,7 +83,7 @@ describe('task: scripts', () => {
   test('rejects, through log.error, when _javascripts does not exist', async () => {
     await setup({})
 
-    await expect(scripts()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(scripts(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

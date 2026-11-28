@@ -1,4 +1,5 @@
 import path from 'node:path'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import loi from '../src/loi'
@@ -46,8 +47,20 @@ const build = async ({ images = {}, ...options }) => {
       fs.writeFile(path.join(project.src, '_images', name), png(w, h))
     )
   )
-  await render()
+  const { figures } = await render(project.ctx, {
+    spine: project.ctx.settings.spine,
+  })
   await settle()
+  return figures
+}
+
+// The figure pages, recorded where xml reads them, as the target's build does
+const runLoi = async (figures) => {
+  const { pages } = await loi(project.ctx, {
+    figures,
+    spine: project.ctx.settings.spine,
+  })
+  project.ctx.settings.loi = pages
 }
 
 const readXml = () =>
@@ -57,7 +70,7 @@ describe('task: xml', () => {
   test('writes <identifier>.xml to the working directory', async () => {
     await build({ toc: ['one'], markdown: { one: '# One' } })
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toBe(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body><h1>One</h1>\n</body>\n'
@@ -70,7 +83,7 @@ describe('task: xml', () => {
       markdown: { a: 'Page A', b: 'Page B' },
     })
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     const out = await readXml()
     expect(out).toContain('<p>Page B</p>\n<pagebreak></pagebreak>')
@@ -78,7 +91,7 @@ describe('task: xml', () => {
   })
 
   test('places the figure pages after the figures title page', async () => {
-    await build({
+    const figures = await build({
       toc: ['one', 'figures-titlepage', 'two'],
       markdown: {
         one: '::: figure:fig-1 source:a.png\n',
@@ -86,9 +99,9 @@ describe('task: xml', () => {
       },
       images: { 'a.png': [400, 300] },
     })
-    await loi()
+    await runLoi(figures)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     // The chapter, the title page, the figure's own page, the next chapter
     const out = await readXml()
@@ -105,7 +118,9 @@ describe('task: xml', () => {
   test('rejects, through log.error, when a page is missing', async () => {
     await build({ toc: ['one', 'two'], markdown: { one: 'One' } })
 
-    await expect(xml()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      xml(project.ctx, { spine: state.spine, loi: state.loi })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -115,14 +130,14 @@ describe('task: xml', () => {
   // used to add a plain object to `spine.flattened`, with no `absolutePath`,
   // and the xml task read `undefined.xhtml` for it (#757)
   test("includes a figures title page the TOC doesn't list (#757)", async () => {
-    await build({
+    const figures = await build({
       toc: ['one'],
       markdown: { one: '::: figure:fig-1 source:a.png\n' },
       images: { 'a.png': [400, 300] },
     })
-    await loi()
+    await runLoi(figures)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toContain('<h1>Figures</h1>')
   })
@@ -135,7 +150,7 @@ describe('task: xml', () => {
     await build({ dist: '_builds', toc: ['one'], markdown: { one: 'One' } })
     expect(fs.existsSync(path.join('_builds-xml', 'OPS', 'text'))).toBe(true)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toContain('<p>One</p>')
   })

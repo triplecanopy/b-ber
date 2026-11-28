@@ -48,6 +48,19 @@ const createMockBuildApi = () => {
       config: new Config(),
       overrides,
     })),
+    createBuildContext: jest.fn((project, target) => ({
+      project,
+      target: getTarget(target),
+      config: project.config,
+      settings: {
+        spine: { flattened: [] },
+        toc: [],
+        guide: [],
+        loi: [],
+        remoteAssets: [],
+      },
+    })),
+    runInBuildContext: jest.fn((ctx, fn) => fn()),
     runBuild: jest.fn((project, targets, build) =>
       targets.reduce(
         (previous, target) =>

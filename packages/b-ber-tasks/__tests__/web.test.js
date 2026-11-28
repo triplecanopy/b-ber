@@ -98,7 +98,11 @@ afterEach(async () => {
 describe('task: web', () => {
   test('removes the EPUB-only files', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(fs.existsSync(dist('mimetype'))).toBe(false)
     expect(fs.existsSync(dist('META-INF'))).toBe(false)
@@ -108,7 +112,11 @@ describe('task: web', () => {
 
   test('moves the OPS directories to the root of the site', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(fs.existsSync(dist('text', 'one.xhtml'))).toBe(true)
     expect(fs.existsSync(dist('stylesheets', 'application.css'))).toBe(true)
@@ -120,7 +128,11 @@ describe('task: web', () => {
   test('writes a search index of the linear pages', async () => {
     await setup({ toc: ['one', 'two', { three: { linear: false } }] })
     await writeEpubBuild({ three: page('Three', 'not linear') })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const records = JSON.parse(await read('search-index.json'))
     // DEFECT (#771): `indexPageContent` (src/web/index.ts:311) numbers and pushes
@@ -148,7 +160,11 @@ describe('task: web', () => {
 
   test('leaves the toc out of the search index and the pagination', async () => {
     await setup({ toc: ['toc', 'one'] })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const records = JSON.parse(await read('search-index.json'))
     expect(records.map((r) => r.url)).toEqual([`${BASE_URL}text/one.xhtml`])
@@ -159,7 +175,11 @@ describe('task: web', () => {
 
   test('wraps each page in the site chrome', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const html = await read('text', 'one.xhtml')
     expect(html).toContain('<body style="opacity: 0;">')
@@ -184,7 +204,11 @@ describe('task: web', () => {
         three: page('Three', ''),
       },
     })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const one = await read('text', 'one.xhtml')
     const two = await read('text', 'two.xhtml')
@@ -200,7 +224,11 @@ describe('task: web', () => {
 
   test('prefixes the TOC links with the base URL', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(await read('text', 'one.xhtml')).toContain(
       `<a href="${BASE_URL}text/one.xhtml">One</a>`
@@ -209,7 +237,11 @@ describe('task: web', () => {
 
   test('inlines the browser scripts with the base URL filled in', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const html = await read('text', 'one.xhtml')
     expect(html).not.toContain('%BASE_URL%')
@@ -220,7 +252,11 @@ describe('task: web', () => {
   test('titles the header with the page title from front matter, else the book title', async () => {
     await setup()
     state.spine.frontMatter.set('two', { title: 'Chapter Two' })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(await read('text', 'one.xhtml')).toContain('<h1>A Book</h1>')
     expect(await read('text', 'two.xhtml')).toContain('<h1>Chapter Two</h1>')
@@ -228,7 +264,11 @@ describe('task: web', () => {
 
   test('writes an index.html with the cover linking to the first page', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const html = await read('index.html')
     expect(html).toContain('<title>A Book</title>')
@@ -242,7 +282,11 @@ describe('task: web', () => {
 
   test('marks a private project noindex', async () => {
     await setup({ config: { base_url: BASE_URL, private: true } })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(await read('index.html')).toContain(
       '<meta name="robots" content="noindex,nofollow"/>'
@@ -251,14 +295,22 @@ describe('task: web', () => {
 
   test('points the cover at the images directory when there is no cover', async () => {
     await setup({ metadata: METADATA.filter((m) => m.term !== 'cover') })
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(await read('index.html')).toContain('src="images/"')
   })
 
   test('copies lunr, the web worker and a webpub manifest into the site', async () => {
     await setup()
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     expect(await read('lunr.js')).toContain('lunr')
     expect(fs.existsSync(dist('worker.js'))).toBe(true)
@@ -285,7 +337,11 @@ describe('task: web', () => {
     state.loi = [
       new SpineItem({ fileName: 'figure-1.xhtml', dist: state.distDir }),
     ]
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const figure = await read('text', 'figure-1.xhtml')
     expect(figure).toContain(`href="${BASE_URL}text/figures-titlepage.xhtml"`)
@@ -306,7 +362,11 @@ describe('task: web', () => {
     state.loi = [
       new SpineItem({ fileName: 'figure-1.xhtml', dist: state.distDir }),
     ]
-    await web()
+    await web(project.ctx, {
+      spine: state.spine,
+      loi: state.loi,
+      toc: state.toc,
+    })
 
     const records = JSON.parse(await read('search-index.json'))
     expect(records.map((r) => r.title).sort()).toEqual(['One', 'Two'])
@@ -316,7 +376,9 @@ describe('task: web', () => {
     await setup()
     await fs.remove(dist('OPS', 'text', 'two.xhtml'))
 
-    await expect(web()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      web(project.ctx, { spine: state.spine, loi: state.loi, toc: state.toc })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

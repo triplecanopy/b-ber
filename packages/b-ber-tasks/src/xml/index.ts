@@ -1,18 +1,22 @@
 import path from 'node:path'
+import type {
+  BuildContext,
+  Spine,
+  SpineItem,
+} from '@canopycanopycanopy/b-ber-lib'
 import HtmlToXmlParser from '@canopycanopycanopy/b-ber-lib/HtmlToXml'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import findIndex from 'lodash/findIndex'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
+import { bookMetadata } from '../context'
 
 const fileExtension = '.xhtml'
 
-const writeXML = (str: string) => {
+const writeXML = (ctx: BuildContext, str: string) => {
   const cwd = process.cwd()
-  const uuid = getBookMetadata('identifier')
+  const uuid = bookMetadata(ctx, 'identifier')
   const filePath = path.join(cwd, `${uuid}.xml`)
   return fs.writeFile(filePath, str, 'utf8')
 }
@@ -38,8 +42,14 @@ const parseHTMLFiles = (files: string[]) =>
     parser.parse()
   })
 
-const xml = () => {
-  const spineFiles = [...state.spine.flattened]
+// Joins the book's pages, in spine order with the figure pages after the
+// figures titlepage, into one InDesign XML document, `<identifier>.xml`, in
+// the working directory
+const xml = (
+  ctx: BuildContext,
+  { spine, loi }: { spine: Spine; loi: SpineItem[] }
+) => {
+  const spineFiles = [...spine.flattened]
   const figuresTitlePageIndex = findIndex(spineFiles, {
     fileName: 'figures-titlepage',
   })
@@ -48,13 +58,13 @@ const xml = () => {
     (entry) => `${entry.absolutePath}${fileExtension}`
   )
 
-  if (figuresTitlePageIndex > -1 && state.loi.length) {
-    const loi = state.loi.map((entry) => entry.absolutePath)
-    files.splice(figuresTitlePageIndex + 1, 0, ...loi)
+  if (figuresTitlePageIndex > -1 && loi.length) {
+    const pages = loi.map((entry) => entry.absolutePath)
+    files.splice(figuresTitlePageIndex + 1, 0, ...pages)
   }
 
   return parseHTMLFiles(files)
-    .then(writeXML)
+    .then((str) => writeXML(ctx, str))
     .catch((err) => {
       throw log.error(err)
     })

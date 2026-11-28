@@ -2,33 +2,45 @@
  * @jest-environment node
  */
 
-// The package's public surface: what b-ber-cli imports, and the names a build
-// sequence can use. Node, not jsdom: importing every task imports cheerio,
+// The package's public surface: what b-ber-cli imports, and the steps a target's
+// build runs. Node, not jsdom: importing every task imports cheerio,
 // which under jsdom resolves to a browser ESM build Jest cannot load.
 
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import * as index from '../src'
-import * as taskHandlers from '../src/task-handlers'
+import { targetNames, targetSteps } from '../src/targets'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
 const tasks = { ...index }
-const handlers = { ...taskHandlers }
-const sequenced = [...new Set(Object.values(sequences).flat())]
+
+// Every step a target's build runs, each an exported task
+const steps = [...new Set(targetNames.flatMap((name) => targetSteps(name)))]
 
 describe('b-ber-tasks', () => {
-  test.each(sequenced)('a build sequence can run [%s]', (name) => {
-    expect(handlers[name]).toBeFunction()
+  test.each(steps)('a target build step is an exported task [%s]', (name) => {
+    expect(tasks[name]).toBeFunction()
   })
 
-  // `serialize` runs a sequence and `serve` runs `serialize`, so neither is a
-  // step of one
-  test('exports every task, serialize and serve', () => {
-    expect(Object.keys(tasks).sort()).toEqual(
-      [...Object.keys(handlers), 'serialize', 'serve'].sort()
+  // `build` builds a target, `step` runs one of its steps, and `serve`
+  // builds one; the others are the commands' own tasks
+  test('exports every task, and what runs them', () => {
+    const { targetNames: names, ...functions } = tasks
+    expect(Object.keys(functions).sort()).toEqual(
+      [
+        ...steps,
+        'build',
+        'deploy',
+        'generate',
+        'init',
+        'serve',
+        'step',
+        'targetSteps',
+        'validate',
+      ].sort()
     )
-    for (const task of Object.values(tasks)) {
+    for (const task of Object.values(functions)) {
       expect(task).toBeFunction()
     }
+    expect(names).toEqual(targetNames)
   })
 })

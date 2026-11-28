@@ -48,7 +48,9 @@ function convertDocument({
 }: ConvertSettings): Promise<void> {
   return new Promise((resolve, reject) => {
     exec(
-      `${command} ${inputPath} ${bookPath} ${(flags || []).join(' ')}`,
+      // Both paths quoted, as the output path already was: the input path
+      // was not, so a project under a directory with a space failed (#802)
+      `${command} "${inputPath}" ${bookPath} ${(flags || []).join(' ')}`,
       { cwd: process.cwd() },
       (err, stdout, stderr) => {
         if (err) return reject(err)

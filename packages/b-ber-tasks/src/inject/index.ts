@@ -1,27 +1,30 @@
 import path from 'node:path'
-import { Template } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import { type BuildContext, Template } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
 import File from 'vinyl'
+import { dist } from '../context'
 
 // A file to link or inline: a vinyl file whose contents are the text, or a
 // file name or URL
 type Asset = File | string
 
-const getRemoteAssets = (type: string) =>
-  Promise.resolve(state.config[`remote_${type}`] || [])
+const getRemoteAssets = (ctx: BuildContext, type: string) =>
+  Promise.resolve(ctx.config[`remote_${type}`] || [])
 
-const getAssets = (type: string) =>
-  Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(
-    ([a, b]) => [...a, ...(b as string[])]
-  )
+const getAssets = (ctx: BuildContext, type: string) =>
+  Promise.all([
+    fs.readdir(dist(ctx).ops(type)),
+    getRemoteAssets(ctx, type),
+  ]).then(([a, b]) => [...a, ...(b as string[])])
 
-const getInlineScripts = () => [
+// `window.bber.env` is the target's name, one of the four places a project
+// sees it (TASK-160)
+const getInlineScripts = (ctx: BuildContext) => [
   new File({
     contents: Buffer.from(
-      `window.bber = window.bber || {}; window.bber.env = '${state.build}';`
+      `window.bber = window.bber || {}; window.bber.env = '${ctx.target.name}';`
     ),
   }),
 ]
@@ -34,23 +37,26 @@ const ensureString = (objectOrString: Asset): string =>
 const relative = (from: string[], to: string[]) =>
   path.relative(path.join(...from), path.join(...to))
 
-const render = ({
-  file,
-  basePath,
-  stylesheets,
-  javascripts,
-  inlineStylesheets,
-  inlineJavascripts,
-  metadata,
-}: {
-  file: Asset
-  basePath: string
-  stylesheets: string[]
-  javascripts: string[]
-  inlineStylesheets: Asset[]
-  inlineJavascripts: Asset[]
-  metadata: Asset[]
-}) => {
+const render = (
+  ctx: BuildContext,
+  {
+    file,
+    basePath,
+    stylesheets,
+    javascripts,
+    inlineStylesheets,
+    inlineJavascripts,
+    metadata,
+  }: {
+    file: Asset
+    basePath: string
+    stylesheets: string[]
+    javascripts: string[]
+    inlineStylesheets: Asset[]
+    inlineJavascripts: Asset[]
+    metadata: Asset[]
+  }
+) => {
   const stylesheets_ = stylesheets
     .map(ensureString)
     .map((f) =>
@@ -93,7 +99,7 @@ const render = ({
   const body =
     file instanceof File
       ? (file.contents?.toString() ?? '')
-      : fs.readFileSync(state.dist.ops(basePath, file), 'utf8')
+      : fs.readFileSync(dist(ctx).ops(basePath, file), 'utf8')
   const tail = Template.render(
     `${javascripts_}${inlineJavascripts_}${metadata_}`,
     Xhtml.tail()
@@ -102,21 +108,25 @@ const render = ({
   return `${head}${body}${tail}`
 }
 
-const writeAll = (files: { fileName: string; contents: string }[]) =>
+const writeAll = (
+  ctx: BuildContext,
+  files: { fileName: string; contents: string }[]
+) =>
   Promise.all(
     files.map((file) =>
-      fs.writeFile(state.dist.text(file.fileName), file.contents)
+      fs.writeFile(dist(ctx).text(file.fileName), file.contents)
     )
   )
 
 export const getFileObjects = async (
+  ctx: BuildContext,
   files: { name: string; data: Asset }[],
   basePath = ''
 ) => {
-  const stylesheets = await getAssets('stylesheets')
-  const javascripts = await getAssets('javascripts')
+  const stylesheets = await getAssets(ctx, 'stylesheets')
+  const javascripts = await getAssets(ctx, 'javascripts')
   const inlineStylesheets: Asset[] = []
-  const inlineJavascripts = getInlineScripts()
+  const inlineJavascripts = getInlineScripts(ctx)
 
   // TODO:
   // @issue: https://github.com/triplecanopy/b-ber/issues/226
@@ -124,7 +134,7 @@ export const getFileObjects = async (
 
   const files_ = files.map((file) => ({
     fileName: file.name,
-    contents: render({
+    contents: render(ctx, {
       file: file.data,
       basePath,
       stylesheets,
@@ -138,14 +148,16 @@ export const getFileObjects = async (
   return files_
 }
 
-const inject = async () => {
+// Wraps each page's body in the document head and tail, with the build's
+// stylesheets and scripts
+const inject = async (ctx: BuildContext) => {
   const basePath = 'text'
   const files = fs
-    .readdirSync(state.dist.ops(basePath))
+    .readdirSync(dist(ctx).ops(basePath))
     .map((file) => ({ name: file, data: file }))
-  const fileObjects = await getFileObjects(files, basePath)
+  const fileObjects = await getFileObjects(ctx, files, basePath)
 
-  return writeAll(fileObjects).catch((err) => {
+  return writeAll(ctx, fileObjects).catch((err) => {
     throw log.error(err)
   })
 }

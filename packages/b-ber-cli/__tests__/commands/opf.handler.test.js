@@ -1,3 +1,4 @@
+import { loadProject, runInBuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { opf as opfTask } from '@canopycanopycanopy/b-ber-tasks'
 import opf from '../../src/commands/opf'
@@ -14,6 +15,10 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
   require('../helpers/cli').createMockState()
+)
+
+jest.mock('@canopycanopycanopy/b-ber-lib', () =>
+  require('../helpers/cli').createMockBuildApi()
 )
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -38,9 +43,17 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('opf handler', () => {
-  it('runs the opf task, without passing it argv', async () => {
+  it("runs the opf task in the epub build's context, without passing it argv", async () => {
     await opf.handler({ _: ['opf'] })
-    expect(opfTask).toHaveBeenCalledWith()
+
+    expect(loadProject).toHaveBeenCalledWith(process.cwd())
+    expect(opfTask).toHaveBeenCalledTimes(1)
+    const [[ctx, inputs]] = opfTask.mock.calls
+    expect(ctx.target.name).toBe('epub')
+    expect(runInBuildContext).toHaveBeenCalledWith(ctx, expect.any(Function))
+    // The navigation alone: the context's empty collections
+    const { spine, toc, guide, loi, remoteAssets } = ctx.settings
+    expect(inputs).toEqual({ spine, toc, guide, loi, remoteAssets })
   })
 
   it('is reached through yargs', () => {

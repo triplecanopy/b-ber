@@ -11,12 +11,6 @@ jest.mock('@canopycanopycanopy/b-ber-logger')
 
 beforeEach(() => returnReportedErrors(log))
 
-let manifestAndMetadata
-
-let src = 'src'
-let dist = 'dist'
-let version = '0.0.0'
-
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('Opf', () => {
@@ -28,53 +22,18 @@ describe('Opf', () => {
 })
 
 describe('ManifestAndMetadata', () => {
-  beforeAll(() => {
-    manifestAndMetadata = new ManifestAndMetadata()
+  // One per content.opf, holding the build's context: never shared between
+  // builds
+  test('holds the context and remote assets it is given', async () => {
+    const metadata = [{ term: 'title', value: 'T' }]
+    const ctx = { project: { metadata: { json: () => metadata } } }
+    const mm = new ManifestAndMetadata(ctx, { remoteAssets: ['https://x'] })
 
-    Object.defineProperties(manifestAndMetadata, {
-      src: {
-        get: () => src,
-        set: (val) => (src = val),
-        enumerable: true,
-        configurable: true,
-      },
-      dist: {
-        get: () => dist,
-        set: (val) => (dist = val),
-        enumerable: true,
-        configurable: true,
-      },
-      version: {
-        get: () => version,
-        set: (val) => (version = val),
-        enumerable: true,
-        configurable: true,
-      },
-      bookmeta: {
-        get: () => [],
-        set: () => {},
-        enumerable: true,
-        configurable: true,
-      },
-    })
-
-    manifestAndMetadata.src = src
-    manifestAndMetadata.dist = dist
-    manifestAndMetadata.version = version
-  })
-
-  test('it loads the module', () => {
-    expect(ManifestAndMetadata).toBeFunction()
-  })
-
-  test('it is properly configured', () => {
-    expect(manifestAndMetadata.src).toBe(src)
-    expect(manifestAndMetadata.dist).toBe(dist)
-    expect(manifestAndMetadata.version).toBe(version)
-
-    manifestAndMetadata
-      .loadMetadata()
-      .then(() => expect(manifestAndMetadata.bookmeta).toEqual([]))
+    expect(mm.ctx).toBe(ctx)
+    expect(mm.remoteAssets).toEqual(['https://x'])
+    expect(mm.bookmeta).toEqual([])
+    await mm.loadMetadata()
+    expect(mm.bookmeta).toBe(metadata)
   })
 })
 
@@ -88,6 +47,18 @@ const METADATA = [
 ]
 
 let project
+
+// The inputs the target's build gives the opf step, from the build's
+// collections, which the tests fill through State
+const navInputs = () => ({
+  spine: state.spine,
+  toc: state.toc,
+  guide: state.guide,
+  loi: state.loi,
+})
+const opfInputs = () => ({ ...navInputs(), remoteAssets: state.remoteAssets })
+const newManifestAndMetadata = () =>
+  new ManifestAndMetadata(project.ctx, { remoteAssets: state.remoteAssets })
 
 // Write the files a build has produced by the time the opf task runs
 const writeOps = async (files) => {
@@ -117,8 +88,8 @@ describe('ManifestAndMetadata, against a project', () => {
     project = await createProject({ toc: ['one'], metadata: METADATA })
   })
 
-  test('loadMetadata reads the metadata from State', async () => {
-    const mm = new ManifestAndMetadata()
+  test('loadMetadata reads the metadata the project read', async () => {
+    const mm = newManifestAndMetadata()
     await mm.loadMetadata()
     expect(mm.bookmeta).toEqual(METADATA)
   })
@@ -132,7 +103,7 @@ describe('ManifestAndMetadata, against a project', () => {
     state.remoteAssets = ['https://example.com/video.mp4']
 
     const files =
-      await new ManifestAndMetadata().createManifestObjectFromAssets()
+      await newManifestAndMetadata().createManifestObjectFromAssets()
 
     expect(files[0]).toEqual({
       absolutePath: 'https://example.com/video.mp4',
@@ -157,7 +128,7 @@ describe('ManifestAndMetadata, against a project', () => {
   })
 
   test('builds manifest items and metadata entries from templates', async () => {
-    const mm = new ManifestAndMetadata()
+    const mm = newManifestAndMetadata()
     await mm.loadMetadata()
 
     const { manifest, bookmeta } = mm.createManifestAndMetadataFromTemplates([
@@ -195,7 +166,7 @@ describe('ManifestAndMetadata, against a project', () => {
   })
 
   test('sets ibooks:specified-fonts only when the config says exactly true', () => {
-    const mm = new ManifestAndMetadata()
+    const mm = newManifestAndMetadata()
 
     state.config.ibooks_specified_fonts = true
     expect(mm.createManifestAndMetadataFromTemplates([]).bookmeta).toContain(
@@ -209,7 +180,7 @@ describe('ManifestAndMetadata, against a project', () => {
   })
 
   test('wraps the entries in <metadata> and <manifest>', () => {
-    const xml = new ManifestAndMetadata().createManifestAndMetadataXML({
+    const xml = newManifestAndMetadata().createManifestAndMetadataXML({
       manifest: ['<item a/>', '', '<item b/>'],
       bookmeta: ['<meta a/>', '<meta b/>'],
     })
@@ -223,7 +194,7 @@ describe('ManifestAndMetadata, against a project', () => {
   test('init resolves to the metadata and manifest XML', async () => {
     await writeOps({ 'text/one.xhtml': '' })
 
-    const { metadata, manifest } = await new ManifestAndMetadata().init()
+    const { metadata, manifest } = await newManifestAndMetadata().init()
 
     expect(metadata).toStartWith('<metadata>')
     expect(metadata).toContain('<dc:language')
@@ -234,7 +205,7 @@ describe('ManifestAndMetadata, against a project', () => {
 
   test('init passes a failure to log.error and rejects with it', async () => {
     // No OPS directory: recursive-readdir fails
-    await expect(new ManifestAndMetadata().init()).rejects.toMatchObject({
+    await expect(newManifestAndMetadata().init()).rejects.toMatchObject({
       code: 'ENOENT',
     })
     expect(log.error).toHaveBeenCalledWith(
@@ -250,7 +221,7 @@ describe('Navigation', () => {
     project = await createProject({ toc: ['one'] })
     await writeOps({ 'toc.ncx': 'old', 'toc.xhtml': 'old' })
 
-    await Navigation.createEmptyNavDocuments()
+    await Navigation.createEmptyNavDocuments(project.ctx)
 
     expect(await fs.readFile(state.dist.ops('toc.ncx'), 'utf8')).toBe('')
     expect(await fs.readFile(state.dist.ops('toc.xhtml'), 'utf8')).toBe('')
@@ -262,7 +233,7 @@ describe('Navigation', () => {
       await writeOps({ 'text/one.xhtml': '', 'text/two.xhtml': '' })
       const before = await tocYml()
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(await tocYml()).toBe(before)
       expect(log.warn).not.toHaveBeenCalled()
@@ -273,7 +244,7 @@ describe('Navigation', () => {
       project = await createProject({ toc: ['one'] })
       await writeOps({ 'text/one.xhtml': '', 'text/extra.xhtml': '' })
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(await tocYml()).toBe('- one\n- extra')
       expect(log.warn).toHaveBeenCalledWith(
@@ -294,7 +265,7 @@ describe('Navigation', () => {
         in_toc: false,
       })
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(await tocYml()).toBe(
         '- one\n- extra:\n    linear: false\n    in_toc: false'
@@ -311,7 +282,7 @@ describe('Navigation', () => {
         in_toc: true,
       })
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(await tocYml()).toBe('- one\n- extra')
     })
@@ -321,7 +292,7 @@ describe('Navigation', () => {
       await writeOps({ 'text/one.xhtml': '', 'text/figure-1.xhtml': '' })
       state.loi = [{ name: 'figure-1' }]
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(await tocYml()).toBe('- one')
     })
@@ -331,7 +302,9 @@ describe('Navigation', () => {
       await writeOps({ 'text/one.xhtml': '' })
 
       // It throws before it returns its Promise
-      expect(() => Navigation.compareXhtmlWithYaml()).toThrow('[gone]')
+      expect(() =>
+        Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
+      ).toThrow('[gone]')
 
       expect(log.error).toHaveBeenCalledTimes(1)
       const [message] = log.error.mock.calls[0]
@@ -347,7 +320,7 @@ describe('Navigation', () => {
       await fs.writeFile(path.join(project.src, 'epub.yml'), '- one')
       await writeOps({ 'text/one.xhtml': '', 'text/extra.xhtml': '' })
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(
         await fs.readFile(path.join(project.src, 'epub.yml'), 'utf8')
@@ -359,7 +332,7 @@ describe('Navigation', () => {
       project = await createProject({ build: 'pdf', toc: ['cover', 'one'] })
       await writeOps({ 'text/one.xhtml': '' })
 
-      await Navigation.compareXhtmlWithYaml()
+      await Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
 
       expect(log.error).not.toHaveBeenCalled()
     })
@@ -368,7 +341,9 @@ describe('Navigation', () => {
       project = await createProject({ toc: ['cover', 'one'] })
       await writeOps({ 'text/one.xhtml': '' })
 
-      expect(() => Navigation.compareXhtmlWithYaml()).toThrow('[cover]')
+      expect(() =>
+        Navigation.compareXhtmlWithYaml(project.ctx, navInputs())
+      ).toThrow('[cover]')
 
       expect(log.error).toHaveBeenCalledWith(expect.stringContaining('[cover]'))
     })
@@ -384,7 +359,10 @@ describe('Navigation', () => {
     })
 
     test('createTocStringsFromTemplate renders the TOC page', async () => {
-      const toc = await Navigation.createTocStringsFromTemplate()
+      const toc = await Navigation.createTocStringsFromTemplate(
+        project.ctx,
+        state.toc
+      )
 
       expect(toc).toContain('<html')
       expect(toc).toContain('href="text/one.xhtml"')
@@ -392,7 +370,7 @@ describe('Navigation', () => {
     })
 
     test('createNcxStringsFromTemplate renders the NCX from the TOC', () => {
-      const ncx = Navigation.createNcxStringsFromTemplate()
+      const ncx = Navigation.createNcxStringsFromTemplate(state.toc)
 
       expect(ncx).toContain('<meta name="dtb:uid" content="book-id"/>')
       expect(ncx).toContain('<text>A &amp; B</text>')
@@ -406,13 +384,15 @@ describe('Navigation', () => {
         { fileName: 'two.xhtml', title: 'Two' },
       ]
 
-      expect(Navigation.createGuideStringsFromTemplate()).toBe(
+      expect(Navigation.createGuideStringsFromTemplate(state.guide)).toBe(
         '<guide><reference type="bodymatter" title="One" href="text/one.xhtml"/></guide>'
       )
     })
 
     test('createSpineStringsFromTemplate renders the spine in order', () => {
-      expect(Navigation.createSpineStringsFromTemplate()).toBe(
+      expect(
+        Navigation.createSpineStringsFromTemplate(state.spine, state.loi)
+      ).toBe(
         '<spine toc="_toc_ncx"><itemref idref="_one_xhtml" linear="yes"/><itemref idref="_two_xhtml" linear="no"/></spine>'
       )
     })
@@ -425,7 +405,9 @@ describe('Navigation', () => {
       })
       state.spine.flattened.unshift(generated)
 
-      expect(Navigation.createSpineStringsFromTemplate()).toBe(
+      expect(
+        Navigation.createSpineStringsFromTemplate(state.spine, state.loi)
+      ).toBe(
         '<spine toc="_toc_ncx"><itemref idref="_one_xhtml" linear="yes"/><itemref idref="_two_xhtml" linear="no"/><itemref idref="_generated_xhtml" linear="yes"/></spine>'
       )
       // It reorders State's spine in place
@@ -445,7 +427,9 @@ describe('Navigation', () => {
         })
       )
 
-      expect(Navigation.createSpineStringsFromTemplate()).toBe(
+      expect(
+        Navigation.createSpineStringsFromTemplate(state.spine, state.loi)
+      ).toBe(
         '<spine toc="_toc_ncx"><itemref idref="_one_xhtml" linear="yes"/><itemref idref="_two_xhtml" linear="no"/></spine>'
       )
     })
@@ -455,7 +439,12 @@ describe('Navigation', () => {
     project = await createProject({ toc: ['one'] })
     await fs.ensureDir(path.join(project.dist, 'OPS'))
 
-    const result = await Navigation.writeFiles(['TOC', 'NCX', 'GUIDE', 'SPINE'])
+    const result = await Navigation.writeFiles(project.ctx, [
+      'TOC',
+      'NCX',
+      'GUIDE',
+      'SPINE',
+    ])
 
     expect(result).toEqual({ spine: 'SPINE', guide: 'GUIDE' })
     expect(await fs.readFile(state.dist.ops('toc.xhtml'), 'utf8')).toBe('TOC')
@@ -467,7 +456,7 @@ describe('Navigation', () => {
     await scaffoldOps()
     await writeOps({ 'text/one.xhtml': '' })
 
-    const { spine, guide } = await Navigation.init()
+    const { spine, guide } = await Navigation.init(project.ctx, navInputs())
 
     expect(spine).toContain('idref="_one_xhtml"')
     expect(guide).toBe('<guide></guide>')
@@ -483,7 +472,9 @@ describe('Navigation', () => {
     project = await createProject({ toc: ['one'] })
     // No OPS directory: the nav documents cannot be written
 
-    await expect(Navigation.init()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      Navigation.init(project.ctx, navInputs())
+    ).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -502,7 +493,7 @@ describe('Opf.createOpf', () => {
     // whichever way the race in the defect test below goes
     await writeOps({ 'text/one.xhtml': '', 'toc.ncx': '', 'toc.xhtml': '' })
 
-    await opf()
+    await opf(project.ctx, opfInputs())
 
     const contents = await fs.readFile(state.dist.ops('content.opf'), 'utf8')
     expect(contents).toStartWith('<?xml version="1.0" encoding="UTF-8"?>')
@@ -514,6 +505,46 @@ describe('Opf.createOpf', () => {
     expect(contents).toContain('href="toc.ncx"')
     expect(contents).toContain('<itemref idref="_one_xhtml" linear="yes"/>')
     expect(contents).toContain('<guide></guide>')
+  })
+
+  // What render, loi and footnotes returned, passed by the target's build,
+  // not read from State's collections
+  test('writes the guide, figure pages and remote assets it is given', async () => {
+    project = await createProject({ toc: ['one'], metadata: METADATA })
+    await scaffoldOps()
+    await writeOps({
+      'text/one.xhtml': '',
+      'text/figures-titlepage.xhtml': '',
+      'text/figure-1.xhtml': '',
+    })
+    const titlepage = new SpineItem({
+      fileName: 'figures-titlepage',
+      dist: project.dist,
+    })
+    state.spine.flattened.push(titlepage)
+    const figurePage = new SpineItem({
+      fileName: 'figure-1.xhtml',
+      in_toc: false,
+      dist: project.dist,
+    })
+
+    await opf(project.ctx, {
+      ...opfInputs(),
+      guide: [
+        { fileName: 'figures-titlepage.xhtml', title: 'Figures', type: 'loi' },
+      ],
+      loi: [figurePage],
+      remoteAssets: ['https://example.com/video.mp4'],
+    })
+
+    const contents = await fs.readFile(state.dist.ops('content.opf'), 'utf8')
+    expect(state.guide).toEqual([])
+    expect(state.loi).toEqual([])
+    expect(contents).toContain('type="loi"')
+    expect(contents).toContain(
+      '<itemref idref="_figures-titlepage_xhtml" linear="yes"/><itemref idref="_figure-1_xhtml" linear="yes"/>'
+    )
+    expect(contents).toContain('https://example.com/video.mp4')
   })
 
   // DEFECT (#768): createOpf (src/opf/Opf.ts:31) runs ManifestAndMetadata.init and
@@ -545,9 +576,9 @@ describe('Opf.createOpf', () => {
     const createEmpty = Navigation.createEmptyNavDocuments
     jest
       .spyOn(Navigation, 'createEmptyNavDocuments')
-      .mockImplementation(() => scanDone.then(createEmpty))
+      .mockImplementation((ctx) => scanDone.then(() => createEmpty(ctx)))
 
-    await opf()
+    await opf(project.ctx, opfInputs())
 
     const contents = await fs.readFile(state.dist.ops('content.opf'), 'utf8')
     expect(fs.existsSync(state.dist.ops('toc.ncx'))).toBe(true)
@@ -566,7 +597,7 @@ describe('Opf.createOpf', () => {
     project = await createProject()
     await fs.ensureDir(path.join(project.dist, 'OPS'))
 
-    await Opf.writeOPF('<package/>')
+    await Opf.writeOPF(project.ctx, '<package/>')
 
     expect(await fs.readFile(state.dist.ops('content.opf'), 'utf8')).toBe(
       '<package/>'
@@ -576,7 +607,7 @@ describe('Opf.createOpf', () => {
   test('passes a failure to log.error and rejects with it', async () => {
     project = await createProject({ toc: ['one'] })
 
-    await expect(opf()).rejects.toThrow()
+    await expect(opf(project.ctx, opfInputs())).rejects.toThrow()
 
     expect(log.error).toHaveBeenCalled()
     expect(fs.existsSync(state.dist.ops('content.opf'))).toBe(false)

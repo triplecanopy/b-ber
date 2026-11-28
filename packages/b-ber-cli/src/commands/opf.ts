@@ -1,6 +1,7 @@
 import { opf } from '@canopycanopycanopy/b-ber-tasks'
 import type { Argv } from 'yargs'
 import { noExtraArguments } from '../lib/arguments'
+import { inBuildContext } from '../lib/context'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'opf'
@@ -13,7 +14,14 @@ const builder = (yargs: Argv) =>
     .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = exitOnFailure(() => opf())
+// The epub build's OPF, from the navigation alone: nothing has been rendered
+// to add figure pages or guide entries
+const handler = exitOnFailure(() =>
+  inBuildContext('epub', (ctx) => {
+    const { spine, toc, guide, loi, remoteAssets } = ctx.settings
+    return opf(ctx, { spine, toc, guide, loi, remoteAssets })
+  })
+)
 
 export default {
   command,
