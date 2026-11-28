@@ -74,7 +74,7 @@ afterEach(async () => {
 })
 
 const run = async () => {
-  await reader()
+  await reader(project.ctx)
   await Promise.all(writes)
 }
 
@@ -221,7 +221,7 @@ describe('task: reader', () => {
   test('names the book directory with a random hash when there is no identifier', async () => {
     await setup({ metadata: [{ term: 'title', value: 'A Book' }] })
     // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(log.warn).toHaveBeenCalledWith(
       'Could not find metadata value for identifier'
@@ -238,7 +238,7 @@ describe('task: reader', () => {
       ],
     })
     // The directory is created, then the task fails on the defect below (#769)
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual(['a-b-c'])
   })
@@ -257,7 +257,7 @@ describe('task: reader', () => {
         { term: 'identifier', value: 'urn:uuid:1234' },
       ],
     })
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual([
       'urn-uuid-1234',
@@ -287,7 +287,7 @@ describe('task: reader', () => {
     )
     const manifest = path.join(project.dist, 'manifest.json')
 
-    await reader()
+    await reader(project.ctx)
     expect(fs.existsSync(manifest)).toBe(false)
     expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(true)
 
@@ -302,7 +302,7 @@ describe('task: reader', () => {
     await setup({ config: { remote_url: '' } })
     process.env.NODE_ENV = 'production'
 
-    await expect(reader()).rejects.toThrow('requires a remote_url')
+    await expect(reader(project.ctx)).rejects.toThrow('requires a remote_url')
 
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -329,7 +329,7 @@ describe('task: reader', () => {
     await setup()
     await fs.remove(path.join(project.dist, 'mimetype'))
 
-    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(reader(project.ctx)).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

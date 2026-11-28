@@ -6,6 +6,7 @@
 
 import path from 'node:path'
 import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 
 const SRC_DIR_IMAGES = '_images'
@@ -97,3 +98,12 @@ export const libVersion = (): string =>
       'package.json'
     )
   ).version as string
+
+// The value of one term of metadata.yml, as b-ber-lib's `getBookMetadata`
+// gives it from `State`: the empty string, with a warning, when it is missing
+export const bookMetadata = (ctx: BuildContext, term: string): string => {
+  const entry = ctx.project.metadata.json().find((item) => item.term === term)
+  if (entry?.value) return entry.value
+  log.warn(`Could not find metadata value for ${term}`)
+  return ''
+}

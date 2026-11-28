@@ -1,4 +1,5 @@
 import path from 'node:path'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import loi from '../src/loi'
@@ -69,7 +70,7 @@ describe('task: xml', () => {
   test('writes <identifier>.xml to the working directory', async () => {
     await build({ toc: ['one'], markdown: { one: '# One' } })
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toBe(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body><h1>One</h1>\n</body>\n'
@@ -82,7 +83,7 @@ describe('task: xml', () => {
       markdown: { a: 'Page A', b: 'Page B' },
     })
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     const out = await readXml()
     expect(out).toContain('<p>Page B</p>\n<pagebreak></pagebreak>')
@@ -100,7 +101,7 @@ describe('task: xml', () => {
     })
     await runLoi(figures)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     // The chapter, the title page, the figure's own page, the next chapter
     const out = await readXml()
@@ -117,7 +118,9 @@ describe('task: xml', () => {
   test('rejects, through log.error, when a page is missing', async () => {
     await build({ toc: ['one', 'two'], markdown: { one: 'One' } })
 
-    await expect(xml()).rejects.toMatchObject({ code: 'ENOENT' })
+    await expect(
+      xml(project.ctx, { spine: state.spine, loi: state.loi })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -134,7 +137,7 @@ describe('task: xml', () => {
     })
     await runLoi(figures)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toContain('<h1>Figures</h1>')
   })
@@ -147,7 +150,7 @@ describe('task: xml', () => {
     await build({ dist: '_builds', toc: ['one'], markdown: { one: 'One' } })
     expect(fs.existsSync(path.join('_builds-xml', 'OPS', 'text'))).toBe(true)
 
-    await xml()
+    await xml(project.ctx, { spine: state.spine, loi: state.loi })
 
     expect(await readXml()).toContain('<p>One</p>')
   })

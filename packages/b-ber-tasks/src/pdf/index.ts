@@ -1,10 +1,10 @@
 import path from 'node:path'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import kebabCase from 'lodash/kebabCase'
+import { bookMetadata, dist } from '../context'
 
 const booleans = new Set([
   'pdf_mark_links',
@@ -134,11 +134,11 @@ const getPDFFlags = (options: Record<string, string | boolean>) => {
   return flags
 }
 
-const pdf = () => {
-  const opsPath = state.dist.ops()
+const pdf = (ctx: BuildContext) => {
+  const opsPath = dist(ctx).ops()
   const inputPath = path.join(opsPath, 'content.opf')
 
-  const pdfOptions = (state.config.pdf_options || {}) as Record<
+  const pdfOptions = (ctx.config.pdf_options || {}) as Record<
     string,
     string | boolean
   >
@@ -155,7 +155,7 @@ const pdf = () => {
           inputPath,
           outputPath: process.cwd(),
           fileType: 'pdf',
-          fileName: getBookMetadata('identifier'),
+          fileName: bookMetadata(ctx, 'identifier'),
           flags,
         }).catch((err) => {
           throw log.error(err)

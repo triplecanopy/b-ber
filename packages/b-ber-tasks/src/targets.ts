@@ -2,7 +2,12 @@
 // to bottom (TASK-160, TASK-165). They replace b-ber-shapes-sequences' lists of
 // task names and `serialize`, which ran them.
 
-import type { BuildContext, TargetName } from '@canopycanopycanopy/b-ber-lib'
+import type {
+  BuildContext,
+  Spine,
+  SpineItem,
+  TargetName,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import clean from './clean'
 import container from './container'
@@ -40,20 +45,26 @@ const BOOK_STEPS = [
   'opf',
 ] as const
 
-async function book(ctx: BuildContext): Promise<void> {
+// What the packaging steps read from the book's steps: the spine, as render,
+// loi and footnotes extended it, the nested navigation, and the figure pages
+interface Book {
+  spine: Spine
+  toc: SpineItem[]
+  loi: SpineItem[]
+}
+
+async function book(ctx: BuildContext): Promise<Book> {
   await step(ctx, 'clean', () => clean())
   await step(ctx, 'container', () => container())
   await step(ctx, 'cover', () => cover())
   await step(ctx, 'sass', () => sass())
   await step(ctx, 'copy', () => copy())
   await step(ctx, 'scripts', () => scripts())
-  const { spine } = ctx.settings
+  const { spine, toc } = ctx.settings
   const pages = await step(ctx, 'render', () => render(ctx, { spine }))
   const figures = await step(ctx, 'loi', () =>
     loi(ctx, { figures: pages.figures, spine })
   )
-  // Until web and xml take them as inputs
-  ctx.settings.loi = figures.pages
   await step(ctx, 'footnotes', () =>
     footnotes(ctx, { footnotes: pages.footnotes, spine })
   )
@@ -61,12 +72,14 @@ async function book(ctx: BuildContext): Promise<void> {
   await step(ctx, 'opf', () =>
     opf(ctx, {
       spine,
-      toc: ctx.settings.toc,
+      toc,
       guide: [...pages.guide, ...figures.guide],
       loi: figures.pages,
       remoteAssets: pages.remoteAssets,
     })
   )
+
+  return { spine, toc, loi: figures.pages }
 }
 
 interface TargetBuild {
@@ -78,31 +91,33 @@ interface TargetBuild {
 
 const packaged = (
   name: string,
-  pack: (ctx: BuildContext) => Promise<unknown>
+  pack: (ctx: BuildContext, book: Book) => Promise<unknown>
 ): TargetBuild => ({
   steps: [...BOOK_STEPS, name],
   async build(ctx) {
-    await book(ctx)
-    await step(ctx, name, () => pack(ctx))
+    const pages = await book(ctx)
+    await step(ctx, name, () => pack(ctx, pages))
   },
 })
 
 // In the order `bber build` alone builds them
 const builds: Record<TargetName, TargetBuild> = {
-  epub: packaged('epub', () => epub()),
+  epub: packaged('epub', (ctx) => epub(ctx)),
   mobi: {
     steps: [...BOOK_STEPS, 'mobiCSS', 'mobi'],
     async build(ctx) {
       await book(ctx)
-      await step(ctx, 'mobiCSS', () => mobiCSS())
-      await step(ctx, 'mobi', () => mobi())
+      await step(ctx, 'mobiCSS', () => mobiCSS(ctx))
+      await step(ctx, 'mobi', () => mobi(ctx))
     },
   },
-  pdf: packaged('pdf', () => pdf()),
-  web: packaged('web', () => web()),
-  sample: packaged('sample', () => sample()),
-  reader: packaged('reader', () => reader()),
-  xml: packaged('xml', () => xml()),
+  pdf: packaged('pdf', (ctx) => pdf(ctx)),
+  web: packaged('web', (ctx, { spine, loi, toc }) =>
+    web(ctx, { spine, loi, toc })
+  ),
+  sample: packaged('sample', (ctx) => sample(ctx)),
+  reader: packaged('reader', (ctx) => reader(ctx)),
+  xml: packaged('xml', (ctx, { spine, loi }) => xml(ctx, { spine, loi })),
 }
 
 // Every target, in the order `bber build` alone builds them

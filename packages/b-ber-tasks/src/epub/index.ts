@@ -1,17 +1,19 @@
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import type { BuildContext } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import zipper from 'epub-zipper'
+import { bookMetadata, distDir } from '../context'
 
-const epub = (): Promise<void> =>
+// Zips the build's directory into `<identifier>.epub` in the working
+// directory, unless `--no-compile` is given
+const epub = (ctx: BuildContext): Promise<void> =>
   process.argv.includes('--no-compile')
     ? Promise.resolve()
     : zipper
         .create({
-          input: state.distDir,
+          input: distDir(ctx),
           output: process.cwd(),
           clean: true,
-          fileName: getBookMetadata('identifier'),
+          fileName: bookMetadata(ctx, 'identifier'),
         })
         .catch((err) => {
           throw log.error(err)

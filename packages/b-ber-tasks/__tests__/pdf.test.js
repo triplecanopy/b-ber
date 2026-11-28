@@ -52,7 +52,7 @@ describe('task: pdf', () => {
   test('converts content.opf to <identifier>.pdf in the working directory', async () => {
     await setup()
 
-    await pdf()
+    await pdf(project.ctx)
 
     const book = path.resolve(process.cwd(), 'book-id.pdf')
     expect(command()).toBe(`ebook-convert ${ops('content.opf')} "${book}" `)
@@ -62,7 +62,7 @@ describe('task: pdf', () => {
   test('removes toc.xhtml from the build first', async () => {
     await setup()
 
-    await pdf()
+    await pdf(project.ctx)
 
     expect(fs.existsSync(ops('toc.xhtml'))).toBe(false)
     expect(fs.existsSync(ops('content.opf'))).toBe(true)
@@ -76,7 +76,7 @@ describe('task: pdf', () => {
       not_an_option: 'x',
     })
 
-    await pdf()
+    await pdf(project.ctx)
 
     // Switches by name, settings with their value, unknown keys dropped
     expect(flags()).toBe(
@@ -88,7 +88,7 @@ describe('task: pdf', () => {
     await setup()
     process.argv = [...argv, '--no-compile']
 
-    await expect(pdf()).resolves.toBeUndefined()
+    await expect(pdf(project.ctx)).resolves.toBeUndefined()
     expect(exec).not.toHaveBeenCalled()
     expect(fs.existsSync(ops('toc.xhtml'))).toBe(false)
   })
@@ -98,7 +98,7 @@ describe('task: pdf', () => {
     const err = new Error('Command failed')
     exec.mockImplementation((_cmd, _opts, cb) => cb(err, '', ''))
 
-    await expect(pdf()).rejects.toBe(err)
+    await expect(pdf(project.ctx)).rejects.toBe(err)
     expect(log.error).toHaveBeenCalledWith(err)
   })
 
@@ -107,7 +107,7 @@ describe('task: pdf', () => {
   test('turns a switch on when pdf_options sets it false (defect)', async () => {
     await setup({ pdf_page_numbers: false })
 
-    await pdf()
+    await pdf(project.ctx)
 
     expect(flags()).toBe('--pdf-page-numbers')
   })
@@ -118,7 +118,7 @@ describe('task: pdf', () => {
   test('drops embed_all_fonts and insert_metadata (defect)', async () => {
     await setup({ embed_all_fonts: true, insert_metadata: true })
 
-    await pdf()
+    await pdf(project.ctx)
 
     expect(flags()).toBe('')
   })
@@ -128,7 +128,7 @@ describe('task: pdf', () => {
   test('does not quote option values (defect)', async () => {
     await setup({ toc_title: 'The Contents' })
 
-    await pdf()
+    await pdf(project.ctx)
 
     expect(flags()).toBe('--toc-title=The Contents')
   })
