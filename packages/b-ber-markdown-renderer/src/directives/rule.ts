@@ -67,14 +67,6 @@ const claim = (
   return null
 }
 
-// The families whose parser recorded an id in markdown-it's silent mode too
-// (b-ber-grammar-renderer's `validateOpen`)
-const RECORDS_IN_SILENT: ReadonlySet<Family> = new Set([
-  'dialogue',
-  'gallery',
-  'spread',
-])
-
 // The tag each family's old parser gave its tokens
 const TAG: Record<Family, string> = {
   section: 'section',
@@ -145,11 +137,10 @@ export const createRule =
       return true
     }
 
-    if (RECORDS_IN_SILENT.has(family)) host.opened(id, name, lineNumber, env)
     if (silent) return true
     // b-ber-grammar-pullquote never recorded its ids; it checked them against
     // the cursor when they rendered
-    if (name !== EXIT && family === 'section')
+    if (name !== EXIT && family !== 'pullquote')
       host.opened(id, name, lineNumber, env)
 
     const oldParent = state.parentType
