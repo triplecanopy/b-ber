@@ -31,7 +31,7 @@ here.</p>
 <section id="fixture-outer" class="subchapter bodymatter chapter" epub:type="bodymatter chapter"><p>Outer section.</p>
 
 <!-- START: section:subchapter#fixture-inner; _markdown/rendering-fixture.md:43 -->
-<section id="fixture-inner" class="one two subchapter  chapter" epub:type=" chapter"><p>Inner section.</p>
+<section id="fixture-inner" class="one two subchapter bodymatter chapter" epub:type="bodymatter chapter"><p>Inner section.</p>
 </section>
 <!-- END: section:exit#fixture-inner -->
 </section>

@@ -192,9 +192,12 @@ const _buildAttrQueryString = (
 
 // Ensure that attributes required for valid XHTML are present, and that system
 // defaults are merged into user settings
+// `family` is the original directive's, for one substituted with `chapter`:
+// `credits` is backmatter
 const _extendWithDefaults = (
   obj: Record<string, string>,
-  genus: string
+  genus: string,
+  family: string = _lookUpFamily(genus)
 ): Record<string, string> => {
   const result = { ...obj }
   const order = _directiveOrder(genus)
@@ -204,19 +207,16 @@ const _extendWithDefaults = (
   switch (order) {
     case 'block':
     case 'misc':
-      taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
+      taxonomy = `${family} ${genus}` // -> `bodymatter chapter`
 
       if (order === 'block') {
         result.epubTypes = taxonomy
       }
 
       if (has(obj, 'classes')) {
-        taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
-
-        if (order === 'block') {
-          result.epubTypes = taxonomy
-        }
-
+        // The family is the directive's. It used to be looked up from the
+        // classes, which usually name none, so `epub:type` lost it
+        // (" chapter")
         result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
       } else {
         result.classes = taxonomy // -> class="bodymatter chapter"
@@ -301,7 +301,11 @@ const attributesObject = (
     }
   }
 
-  const mergedAttrs = _extendWithDefaults(attrsObject, genus)
+  const mergedAttrs = _extendWithDefaults(
+    attrsObject,
+    genus,
+    _lookUpFamily(origGenus) || _lookUpFamily(genus)
+  )
   return mergedAttrs
 }
 
