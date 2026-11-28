@@ -24,7 +24,6 @@ import type MarkdownIt from 'markdown-it'
 import { checkLine, type LineSource, label } from './diagnostics'
 import {
   EXIT,
-  type Family,
   familyOf,
   INLINE,
   isBlockName,
@@ -36,7 +35,7 @@ import { type DirectiveLine, fenceOffset, readDirectiveLine } from './syntax'
 import type { Diagnostic, DirectiveEnv, DirectiveNode } from './types'
 
 // Which family's renderer draws a block's `exit`
-export const exitFamilyOf = (name: string): Family =>
+export const exitFamilyOf = (name: string): 'section' | 'pullquote' =>
   familyOf(name) === 'pullquote' ? 'pullquote' : 'section'
 
 // How a block's `directive_close` came about: at its own `exit`, at an outer
@@ -181,13 +180,8 @@ export function structure(state: MarkdownIt.StateCore): void {
     current().blocks.push({ line, node })
   }
 
-  // Returns the block the exit closes, or null when it matches none
-  const exitBlock = (
-    line: DirectiveLine,
-    at: number,
-    level: number
-  ): OpenBlock | null => {
-    if (!line.id) return null
+  const exitBlock = (line: DirectiveLine, at: number, level: number): void => {
+    if (!line.id) return
     const scope = current()
     const k = scope.blocks.map((b) => b.line.id).lastIndexOf(line.id)
 
@@ -200,7 +194,7 @@ export function structure(state: MarkdownIt.StateCore): void {
         span: line.span,
         notes: [unmatchedNote(line.id)],
       })
-      return null
+      return
     }
 
     const inner = scope.blocks.splice(k + 1)
@@ -228,7 +222,6 @@ export function structure(state: MarkdownIt.StateCore): void {
     for (const b of inner.reverse())
       if (b.node) insert(at, closeToken(b.node, level, 'crossed-exit'))
     if (named.node) insert(at, closeToken(named.node, level, 'exit'))
-    return named
   }
 
   const unmatchedNote = (id: string) => {
@@ -258,18 +251,8 @@ export function structure(state: MarkdownIt.StateCore): void {
     token: MarkdownIt.Token | null
   ): void => {
     if (line.name === EXIT) {
-      const named = exitBlock(line, at, level)
-      if (token) {
-        token.type = EXIT_MARK
-        // An exit renders as the exit of the block it closes:
-        // b-ber-grammar-pullquote draws a pullquote's or blockquote's, and
-        // b-ber-grammar-section every other block's. One that closes nothing
-        // is ignored: it used to close whichever pullquote was open, or crash
-        // b-ber-grammar-pullquote when none was (TASK-161)
-        token.meta = named
-          ? { ...token.meta, family: exitFamilyOf(named.line.name) }
-          : { ...token.meta, ignored: true }
-      }
+      exitBlock(line, at, level)
+      if (token) token.type = EXIT_MARK
       return
     }
     if (!line.id) return
@@ -394,9 +377,6 @@ export function structure(state: MarkdownIt.StateCore): void {
       if (token.type === LINE_CLOSE) {
         token.type = END_MARK
         token.nesting = 0
-        // An ignored exit's range draws nothing at its end either
-        if ((open?.token.meta as { ignored?: boolean } | null)?.ignored)
-          token.meta = { ...token.meta, ignored: true }
       }
       return
     }

@@ -40,7 +40,6 @@ export { default as Spine } from './Spine'
 export { default as SpineItem } from './SpineItem'
 export type {
   BuildSettings,
-  CursorEntry,
   FootnotesEntry,
   MediaEntry,
   ThemeModule,

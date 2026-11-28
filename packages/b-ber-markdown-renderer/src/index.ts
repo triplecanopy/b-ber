@@ -73,6 +73,9 @@ class MarkdownRenderer {
       return { family, validate, render }
     })
 
+    const section = markdownItSection.renderer(reference)
+    const pullquote = markdownItPullquote.renderer(reference)
+
     // The directive rule takes every directive over from its parser
     // (TASK-174 and TASK-175), at the place in the rule order the first of
     // them had, and renders each with its grammar as before
@@ -80,12 +83,13 @@ class MarkdownRenderer {
       .use(directives, {
         host: legacyHost(this),
         legacy: {
-          section: markdownItSection.renderer(reference).render,
-          pullquote: markdownItPullquote.renderer(reference).render,
+          section: section.render,
+          pullquote: pullquote.render,
           dialogue: markdownItDialogue.renderer(reference).render,
           gallery: markdownItGallery.renderer(reference).render,
           spread: markdownItSpread.renderer(reference).render,
         },
+        close: { section: section.close, pullquote: pullquote.close },
         afterBlock: { gallery: galleryItems, spread: galleryItems },
         inline,
       })

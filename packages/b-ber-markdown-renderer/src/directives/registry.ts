@@ -49,10 +49,9 @@ export const isBlockName = (name: string): boolean =>
 // optionally `:id` and the rest. They are tried in this order, which was the
 // plugins' order in markdown-it's block rules.
 //
-// - `section`: b-ber-grammar-section's structural blocks, and an `exit` whose
-//   id the host says is one of the cursor's (TASK-174);
-// - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`, and
-//   every other `exit`;
+// - `section`: b-ber-grammar-section's structural blocks, and every `exit`.
+//   The structure pass decides which block an exit closes;
+// - `pullquote`: b-ber-grammar-pullquote's `pullquote` and `blockquote`;
 // - `dialogue`: b-ber-grammar-dialogue's `dialogue`;
 // - `gallery` and `spread`: b-ber-grammar-gallery's and b-ber-grammar-spread's,
 //   both parsed by b-ber-parser-gallery.
@@ -79,7 +78,7 @@ export const CLAIM_RE = new RegExp(
 )
 
 export const PULLQUOTE_CLAIM_RE =
-  /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
+  /^(pullquote|blockquote)(?::([^\s]+)(\s.*)?)?$/
 
 export const DIALOGUE_CLAIM_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
 export const GALLERY_CLAIM_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/

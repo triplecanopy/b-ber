@@ -51,12 +51,6 @@ export interface MediaEntry {
   [attribute: string]: unknown
 }
 
-// What b-ber-grammar-renderer records for each open block directive
-export interface CursorEntry {
-  id: string
-  type: string
-}
-
 // The rendered footnotes of one file, from b-ber-grammar-footnotes
 export interface FootnotesEntry {
   fileName: string
@@ -205,7 +199,6 @@ export interface BuildSettings {
   spine: Spine
   // The nested navigation, `spine.nested`
   toc: SpineItem[]
-  cursor: CursorEntry[]
   // b-ber-templates' FigureData. Not typed here because b-ber-templates
   // depends on this package
   figures: unknown[]
@@ -312,14 +305,6 @@ class State {
 
   set footnotes(val: FootnotesEntry[]) {
     this.builds[this.build].footnotes = val
-  }
-
-  get cursor(): CursorEntry[] {
-    return this.builds[this.build].cursor
-  }
-
-  set cursor(val: CursorEntry[]) {
-    this.builds[this.build].cursor = val
   }
 
   // The nested navigation, `spine.nested`
