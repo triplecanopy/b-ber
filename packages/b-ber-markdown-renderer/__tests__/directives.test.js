@@ -459,6 +459,23 @@ describe('directive structure', () => {
     expect(families).toEqual(['section', 'pullquote', 'pullquote'])
   })
 
+  it('makes a dialogue node and marks its speaker lines (TASK-175)', () => {
+    const { env, tokens } = parse(
+      '::: dialogue:d\n\n:: Ann :: Hello.\n\n::: exit:d\n'
+    )
+    expect(env.diagnostics).toEqual([])
+    expect(env.tree.children[0]).toMatchObject({
+      type: 'directive',
+      name: 'dialogue',
+      id: 'd',
+    })
+    const paragraph = tokens.find((t) => t.type === 'paragraph_open')
+    expect(paragraph.attrGet('class')).toBe('interlocutor-parent')
+    const line = tokens.find((t) => t.type === 'inline')
+    expect(line.content).toBe(' Hello.')
+    expect(line.children[0].attrs).toEqual([['class', 'interlocutor']])
+  })
+
   it('renders plain sections without a legacy renderer', () => {
     expect(md.render('::: chapter:a\n\nx\n\n::: exit:a\n')).toBe(
       '<section id="a"><p>x</p>\n</section>'
