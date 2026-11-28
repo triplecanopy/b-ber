@@ -1,20 +1,31 @@
 /* eslint-disable camelcase */
 
-import { GuideItem, SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import {
+  type BuildContext,
+  GuideItem,
+  type Spine,
+  SpineItem,
+  Template,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
-import figure, {
-  type FigureData,
-} from '@canopycanopycanopy/b-ber-templates/figures'
+import figure from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
 import sortBy from 'lodash/sortBy'
+import { dist, distDir } from '../context'
+import type { ListedFigure } from '../render'
 
-// A figure as the grammar directives add it to `state.figures`: the template's
-// data, plus the page it is listed on and its position in the list
-type ListedFigure = FigureData & { page: string; pageOrder: number }
+// The pages loi writes for the figures render collected
+export interface LoiOutput {
+  // One page per figure, in figure order. Empty where the target lists every
+  // figure on its titlepage
+  pages: SpineItem[]
+  // The figures titlepage's entry
+  guide: GuideItem[]
+}
 
-const createLOILeader = () => {
+// Adds the figures titlepage to the spine, if the navigation leaves it out
+const createLOILeader = (ctx: BuildContext, spine: Spine) => {
   const baseName = 'figures-titlepage'
   const fileName = `${baseName}.xhtml`
 
@@ -23,15 +34,11 @@ const createLOILeader = () => {
 
   // Add guide item to content.opf
   const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
-  state.add('guide', guideItem)
 
   // Check if the figures titlepage has been declared
-  const index = state.indexOf(
-    'spine.flattened',
-    (item: { fileName: string }) => item.fileName === baseName
-  )
+  const index = spine.flattened.findIndex((item) => item.fileName === baseName)
 
-  // If not, add it to state.spine so that it can be referenced in the
+  // If not, add it to the spine so that it can be referenced in the
   // content.opf, as the same item a TOC that lists it would give. The flat
   // list used to get a plain object with no `linear` or `absolutePath`: the
   // OPF marked the page non-linear, the web build left it out of the reading
@@ -43,28 +50,35 @@ const createLOILeader = () => {
       ref: null,
       pageOrder: -1,
       generated: true,
-      dist: state.distDir,
+      dist: distDir(ctx),
     })
     // The flat list holds items without their children, as Spine makes it
     const { nodes, ...flattened } = item
 
-    state.add('spine.entries', baseName)
-    state.add('spine.nested', item)
-    state.add('spine.flattened', flattened)
+    // New lists rather than pushes, as `state.add` made them: the build's
+    // `toc` is the nested list as it was before, and stays without the page
+    spine.entries = [...spine.entries, baseName]
+    spine.nested = [...spine.nested, item]
+    spine.flattened = [...spine.flattened, flattened]
   }
 
   log.info(`loi emit default figures titlepage [${fileName}]`)
 
-  return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
+  return fs
+    .writeFile(dist(ctx).text(fileName), markup, 'utf8')
+    .then(() => guideItem)
 }
 
 // Only for a target whose figures live on one titlepage
-const createLOIAsSingleHTMLFile = () => {
+const createLOIAsSingleHTMLFile = (
+  ctx: BuildContext,
+  figures: ListedFigure[]
+): Promise<LoiOutput> => {
   const classes = (item: ListedFigure) =>
     item.classes ? item.classes.replace(/small/g, 'inline') : ''
-  const figuresPage = (state.figures as ListedFigure[]).reduce<string>(
+  const figuresPage = figures.reduce<string>(
     (acc, curr) =>
-      acc.concat(figure({ ...curr, classes: classes(curr) }, state.target)),
+      acc.concat(figure({ ...curr, classes: classes(curr) }, ctx.target)),
     Xhtml.loi()
   )
 
@@ -72,17 +86,21 @@ const createLOIAsSingleHTMLFile = () => {
   const markup = Template.render(figuresPage, Xhtml.body())
   const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
 
-  state.add('guide', guideItem)
   log.info(`loi emit figures titlepage [${fileName}]`)
-  return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
+  return fs
+    .writeFile(dist(ctx).text(fileName), markup, 'utf8')
+    .then(() => ({ pages: [], guide: [guideItem] }))
 }
 
-const createLOIAsSeparateHTMLFiles = () => {
-  const promises = (state.figures as ListedFigure[]).map((data) => {
+const createLOIAsSeparateHTMLFiles = (
+  ctx: BuildContext,
+  figures: ListedFigure[]
+): Promise<SpineItem[]> => {
+  const pages: SpineItem[] = []
+  const promises = figures.map((data) => {
     // Create image string based on dimensions of image
     // returns square | landscape | portrait | portraitLong
-    const figures = figure(data, state.target)
-    const markup = Template.render(figures, Xhtml.body())
+    const markup = Template.render(figure(data, ctx.target), Xhtml.body())
     const { page: fileName, ref, pageOrder } = data
     const in_toc = false //eslint-disable-line camelcase
     const spineItem = new SpineItem({
@@ -90,35 +108,43 @@ const createLOIAsSeparateHTMLFiles = () => {
       in_toc,
       ref,
       pageOrder,
-      dist: state.distDir,
+      dist: distDir(ctx),
     })
 
-    state.add('loi', spineItem)
+    pages.push(spineItem)
     log.info(`loi linking [${data.source}] to [${data.page}]`)
 
-    return fs.writeFile(state.dist.text(data.page), markup, 'utf8')
+    return fs.writeFile(dist(ctx).text(data.page), markup, 'utf8')
   })
 
-  return Promise.all(promises).then(() =>
-    state.update('loi', sortBy(state.loi, 'pageOrder'))
-  )
+  return Promise.all(promises).then(() => sortBy(pages, 'pageOrder'))
 }
 
-const loi = () => {
-  if (!state.figures.length) return Promise.resolve()
+// Writes a page for each figure, or one page for all of them, and adds the
+// figures titlepage to the spine where the navigation leaves it out
+const loi = (
+  ctx: BuildContext,
+  { figures, spine }: { figures: ListedFigure[]; spine: Spine }
+): Promise<LoiOutput> => {
+  if (!figures.length) return Promise.resolve({ pages: [], guide: [] })
 
   // A target whose figures live on one titlepage gets every figure, and the
   // loi-leader (the 'Figures' header text), in a single document. The others
   // get one page per figure
-  if (state.target.features.figuresOn === 'titlepage') {
-    return createLOIAsSingleHTMLFile().catch((err) => {
+  if (ctx.target.features.figuresOn === 'titlepage') {
+    return createLOIAsSingleHTMLFile(ctx, figures).catch((err) => {
       throw log.error(err)
     })
   }
 
   // create separate files
-  return createLOILeader()
-    .then(createLOIAsSeparateHTMLFiles)
+  return createLOILeader(ctx, spine)
+    .then((guideItem) =>
+      createLOIAsSeparateHTMLFiles(ctx, figures).then((pages) => ({
+        pages,
+        guide: [guideItem],
+      }))
+    )
     .catch((err) => {
       throw log.error(err)
     })

@@ -46,8 +46,20 @@ const build = async ({ images = {}, ...options }) => {
       fs.writeFile(path.join(project.src, '_images', name), png(w, h))
     )
   )
-  await render(project.ctx, { spine: project.ctx.settings.spine })
+  const { figures } = await render(project.ctx, {
+    spine: project.ctx.settings.spine,
+  })
   await settle()
+  return figures
+}
+
+// The figure pages, recorded where xml reads them, as the target's build does
+const runLoi = async (figures) => {
+  const { pages } = await loi(project.ctx, {
+    figures,
+    spine: project.ctx.settings.spine,
+  })
+  project.ctx.settings.loi = pages
 }
 
 const readXml = () =>
@@ -78,7 +90,7 @@ describe('task: xml', () => {
   })
 
   test('places the figure pages after the figures title page', async () => {
-    await build({
+    const figures = await build({
       toc: ['one', 'figures-titlepage', 'two'],
       markdown: {
         one: '::: figure:fig-1 source:a.png\n',
@@ -86,7 +98,7 @@ describe('task: xml', () => {
       },
       images: { 'a.png': [400, 300] },
     })
-    await loi()
+    await runLoi(figures)
 
     await xml()
 
@@ -115,12 +127,12 @@ describe('task: xml', () => {
   // used to add a plain object to `spine.flattened`, with no `absolutePath`,
   // and the xml task read `undefined.xhtml` for it (#757)
   test("includes a figures title page the TOC doesn't list (#757)", async () => {
-    await build({
+    const figures = await build({
       toc: ['one'],
       markdown: { one: '::: figure:fig-1 source:a.png\n' },
       images: { 'a.png': [400, 300] },
     })
-    await loi()
+    await runLoi(figures)
 
     await xml()
 

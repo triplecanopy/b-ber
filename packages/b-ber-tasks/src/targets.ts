@@ -47,8 +47,14 @@ async function book(ctx: BuildContext): Promise<void> {
   await step(ctx, 'sass', () => sass())
   await step(ctx, 'copy', () => copy())
   await step(ctx, 'scripts', () => scripts())
-  await step(ctx, 'render', () => render(ctx, { spine: ctx.settings.spine }))
-  await step(ctx, 'loi', () => loi())
+  const { spine } = ctx.settings
+  const pages = await step(ctx, 'render', () => render(ctx, { spine }))
+  const figures = await step(ctx, 'loi', () =>
+    loi(ctx, { figures: pages.figures, spine })
+  )
+  // Until the steps that read them take them as inputs
+  ctx.settings.loi = figures.pages
+  ctx.settings.guide = [...pages.guide, ...figures.guide]
   await step(ctx, 'footnotes', async () => {
     await footnotes()
   })

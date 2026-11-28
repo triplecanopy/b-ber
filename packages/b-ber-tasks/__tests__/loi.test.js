@@ -51,15 +51,16 @@ const build = async ({
     )
   )
 
-  await render(project.ctx, { spine: project.ctx.settings.spine })
+  const { spine } = project.ctx.settings
+  const { figures } = await render(project.ctx, { spine })
   await settle()
   await before()
-  return loi()
+  return loi(project.ctx, { figures, spine })
 }
 
 describe('task: loi', () => {
   test('writes nothing when the project has no figures', async () => {
-    await build()
+    await expect(build()).resolves.toEqual({ pages: [], guide: [] })
 
     expect(await fs.readdir(text())).toEqual(['chapter.xhtml'])
   })
@@ -74,6 +75,38 @@ describe('task: loi', () => {
         'figurefig-2.xhtml',
         'figures-titlepage.xhtml',
       ])
+    })
+
+    test('returns the pages in figure order, and the title page as a guide entry', async () => {
+      const { pages, guide } = await build({
+        images: { 'a.png': [400, 300], 'b.png': [300, 400] },
+      })
+
+      expect(pages.map((p) => [p.fileName, p.pageOrder])).toEqual([
+        ['figurefig-1.xhtml', 0],
+        ['figurefig-2.xhtml', 1],
+      ])
+      expect(guide).toEqual([
+        expect.objectContaining({
+          fileName: 'figures-titlepage.xhtml',
+          type: 'loi',
+        }),
+      ])
+      // Returned, not written to the build's collections
+      expect(state.loi).toEqual([])
+      expect(state.guide).toEqual([])
+    })
+
+    // A new list, as `state.add` made it: the toc the build captured keeps
+    // its own, without the page
+    test('adds the title page to the nested spine but not to the toc', async () => {
+      await build({ images: { 'a.png': [400, 300] } })
+
+      expect(state.spine.nested.map((e) => e.fileName)).toEqual([
+        'chapter',
+        'figures-titlepage',
+      ])
+      expect(state.toc.map((e) => e.fileName)).toEqual(['chapter'])
     })
 
     test('the title page is the Figures heading alone', async () => {
@@ -123,11 +156,15 @@ describe('task: loi', () => {
 
   describe('reader', () => {
     test('writes every figure into a single title page', async () => {
-      await build({
+      const { pages, guide } = await build({
         build: 'reader',
         images: { 'a.png': [400, 300], 'b.png': [300, 400] },
       })
 
+      expect(pages).toEqual([])
+      expect(guide).toEqual([
+        expect.objectContaining({ fileName: 'figures-titlepage.xhtml' }),
+      ])
       expect((await fs.readdir(text())).sort()).toEqual([
         'chapter.xhtml',
         'figures-titlepage.xhtml',
