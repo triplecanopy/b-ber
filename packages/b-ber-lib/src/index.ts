@@ -12,11 +12,15 @@ export { default as Html } from './Html'
 export { default as HtmlToXml } from './HtmlToXml'
 export { default as ManifestItemProperties } from './ManifestItemProperties'
 export type {
+  BlockDirective,
+  BlockRender,
   BlockRule,
   BlockState,
+  ClosedBy,
   ContainerPluginOptions,
   CoreRule,
   CoreState,
+  DirectiveRenderArgs,
   DirectiveToken,
   DocumentEnv,
   DocumentInput,
@@ -24,12 +28,23 @@ export type {
   FigurePluginOptions,
   FigureToken,
   FootnoteNumbering,
+  InlineDirective,
+  InlineRender,
   InlineRule,
   InlineState,
   MarkdownItHost,
   MarkdownToken,
   RendererInstance,
   RendererReference,
+  XhtmlAttributes,
+  XhtmlBuilder,
+  XhtmlChild,
+  XhtmlComment,
+  XhtmlElement,
+  XhtmlFragment,
+  XhtmlNode,
+  XhtmlRaw,
+  XhtmlText,
 } from './markdown'
 export { nestedEnv, nextFigure } from './markdown'
 export type { MediaMap, Metadata, Project } from './Project'
