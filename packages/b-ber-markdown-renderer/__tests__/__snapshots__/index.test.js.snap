@@ -52,7 +52,7 @@ spanning lines.</p>
 </blockquote>
 </blockquote>
 <h2>Dialogue</h2>
-<section id="fixture-dialogue"  class=" dialogue"><p class="interlocutor-parent"><span class="interlocutor">Alice</span> Hello there.</p>
+<section id="fixture-dialogue" class=" dialogue"><p class="interlocutor-parent"><span class="interlocutor">Alice</span> Hello there.</p>
 <p class="interlocutor-parent"><span class="interlocutor">Bob</span> Hi, <em>Alice</em>.</p>
 <p>A line without a speaker.</p>
 </section>

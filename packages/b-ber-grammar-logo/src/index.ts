@@ -3,7 +3,11 @@ import {
   attributesString,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import type { DocumentEnv, FigureToken } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type DocumentEnv,
+  type FigureToken,
+  Html,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
@@ -59,7 +63,7 @@ export default {
       )
 
       return `<figure id="${htmlId(id)}" class="logo">
-                    <img style="width:120px;" src="${outputImagePath}" ${attrString}/>
+                    <img style="width:120px;" src="${Html.escape(outputImagePath)}"${attrString}/>
                     </figure>`
     },
   }),

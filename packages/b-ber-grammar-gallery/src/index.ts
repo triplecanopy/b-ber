@@ -40,12 +40,12 @@ const render = (
 
   if (env.document.target.features.fullbleedContainers) {
     return `
-                <section id="${htmlId(id)}" ${attrsString}>
+                <section id="${htmlId(id)}"${attrsString}>
                 <div class="figure__large figure__inline figure__fullbleed figure__gallery">
                 <figure>
                 <div class="figure__items">`
   }
-  return `<section id="${htmlId(id)}" ${attrsString}>`
+  return `<section id="${htmlId(id)}"${attrsString}>`
 }
 
 export default {

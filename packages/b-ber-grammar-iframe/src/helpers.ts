@@ -146,13 +146,13 @@ export function createIframeInline(data: IframeArgs): string {
     },
     []
   )
-  const iframeAttrsString = iframeAttrs.join(' ')
+  const iframeAttrsString = iframeAttrs.map((a) => ` ${a}`).join('')
 
   return `
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
         <div id="${id}"${containerAttrsString}>
-          <iframe src="${Html.escape(source)}" ${iframeAttrsString}>
+          <iframe src="${Html.escape(source)}"${iframeAttrsString}>
           </iframe>
         </div>
         ${renderCaption(caption, mediaType)}

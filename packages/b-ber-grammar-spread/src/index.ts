@@ -45,10 +45,10 @@ const render = (
 
   if (env.document.target.features.fullbleedContainers) {
     return `
-        <div ${attrsString}>
+        <div${attrsString}>
           <div id="${htmlId(id)}" class="spread__content">`
   }
-  return `<section id="${htmlId(id)}" ${attrsString}>`
+  return `<section id="${htmlId(id)}"${attrsString}>`
 }
 
 export default {

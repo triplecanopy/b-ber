@@ -1,4 +1,4 @@
-import type { DocumentEnv } from '@canopycanopycanopy/b-ber-lib'
+import { type DocumentEnv, Html } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isUndefined from 'lodash/isUndefined'
@@ -143,18 +143,10 @@ export function createVimeoInline(
 ): string {
   return `
     ${commentStart}
-      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
+      <section class="${Html.escape(`${mediaType} ${aspectRatioClassName} figure__large figure__inline`)}">
         <div id="${id}"${attrString}>
           ${env.document.target.features.readerRuntime ? '' : renderPosterImage(poster)}
-          <iframe
-            data-vimeo="true"
-            data-vimeo-poster="${poster}"
-            data-aspect-ratio="${aspectRatio}"
-            src="https://player.vimeo.com/video/${source}${attrQuery}"
-            webkitallowfullscreen="webkitallowfullscreen"
-            mozallowfullscreen="mozallowfullscreen"
-            allowfullscreen="allowfullscreen"
-            frameborder="0">
+          <iframe data-vimeo="true" data-vimeo-poster="${poster}" data-aspect-ratio="${Html.escape(aspectRatio)}" src="https://player.vimeo.com/video/${Html.escape(source)}${attrQuery}" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" allowfullscreen="allowfullscreen" frameborder="0">
           </iframe>
         </div>
         ${renderCaption(caption, mediaType)}
@@ -186,7 +178,7 @@ export function createUnsupportedInline({
   return `
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
-        <div id="${id}" ${attrString}>
+        <div id="${id}"${attrString}>
           <div class="media__fallback media__fallback__${mediaType} media__fallback--image">
             <figure>
               ${renderPosterImage(poster)}

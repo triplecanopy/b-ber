@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { toAlias } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { type DocumentEnv, Url } from '@canopycanopycanopy/b-ber-lib'
+import { type DocumentEnv, Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import mime from 'mime-types'
@@ -56,7 +56,7 @@ export const createLocalMediaSources = (sources: string[]): string =>
   sources.reduce(
     (acc, curr) =>
       acc.concat(
-        `<source src="../media/${path.basename(curr)}" type="${mime.lookup(
+        `<source src="${Html.escape(`../media/${path.basename(curr)}`)}" type="${mime.lookup(
           curr
         )}"/>`
       ),
@@ -64,7 +64,7 @@ export const createLocalMediaSources = (sources: string[]): string =>
   )
 
 export const createRemoteMediaSource = (sources: string[]): string =>
-  `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
+  `<source src="${Html.escape(sources[0])}" type="${mime.lookup(sources[0])}"/>`
 
 export function getWebOnlyAttributesString(env: DocumentEnv): string {
   return env.document.target.features.liveEmbeds
@@ -109,7 +109,7 @@ export function createIFrame({
   return `
     ${commentStart}
       <section id="${id}">
-        <iframe src="${Url.encodeQueryString(source)}" />
+        <iframe src="${Html.escape(Url.encodeQueryString(source))}"></iframe>
           ${
             caption
               ? `<p class="caption caption__${mediaType}">${caption}</p>`
@@ -148,7 +148,7 @@ export function createMediaInline({
 }: MediaInlineArgs): string {
   return `
     ${commentStart}
-      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__large__controls--${controls} figure__inline">
+      <section class="${Html.escape(`${mediaType} ${aspectRatioClassName} figure__large figure__large__controls--${controls} figure__inline`)}">
         <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
           ${sourceElements}
           ${

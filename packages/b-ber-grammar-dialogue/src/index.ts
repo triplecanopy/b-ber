@@ -14,7 +14,7 @@ const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 function handleOpen(token: RegExpMatchArray) {
   const [, type, id, attrs] = token
   const attrsString = attributes(attrs, type)
-  return `<section id="${htmlId(id)}" ${attrsString}>`
+  return `<section id="${htmlId(id)}"${attrsString}>`
 }
 
 function handleClose() {
