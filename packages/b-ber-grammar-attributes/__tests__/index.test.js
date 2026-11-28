@@ -88,6 +88,25 @@ describe('b-ber-grammar-attributes', () => {
     })
   })
 
+  // pullquote is in both the draft and the misc sets. It used to be
+  // draft-substituted with `chapter`, whose attributes do not include
+  // `citation`, so its citation was dropped (TASK-161)
+  it('keeps pullquote as a misc block, with its citation', () => {
+    const spyWarn = jest.spyOn(log, 'warn')
+
+    expect(attributesObject('citation:"Jane Doe"', 'pullquote')).toEqual({
+      citation: 'Jane Doe',
+      classes: ' pullquote',
+    })
+    expect(spyWarn).not.toHaveBeenCalled()
+
+    // credits and seriespage are still draft-substituted
+    expect(attributesObject('', 'credits')).toEqual({
+      classes: 'credits backmatter chapter',
+      epubTypes: 'backmatter chapter',
+    })
+  })
+
   it('logs errors on invalid attributes object', () => {
     const spyError = jest.spyOn(log, 'error')
     const spyWarn = jest.spyOn(log, 'warn')
