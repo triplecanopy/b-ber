@@ -38,10 +38,6 @@ interface PrepareArgs extends RendererReference {
   lineNumber: number | null
 }
 
-function supported(build: string): boolean {
-  return build === 'reader' || build === 'web'
-}
-
 function prepare({
   token,
   marker,
@@ -72,7 +68,7 @@ function prepare({
 
   // Add mediaType to classes
   if (!attrsObject.classes) attrsObject.classes = ''
-  const supportedPrefix = supported(state.build) ? '' : 'un'
+  const supportedPrefix = state.target.features.liveEmbeds ? '' : 'un'
   attrsObject.classes += ` embed ${supportedPrefix}supported`
 
   // Ensure an aspect ratio is set, default to 16:9
@@ -94,7 +90,10 @@ function prepare({
   const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
 
   const page = `figure-${figureId}.xhtml`
-  const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+  const href =
+    state.target.features.figuresOn === 'titlepage'
+      ? 'figures-titlepage.xhtml'
+      : page
 
   return {
     id: figureId,
@@ -143,10 +142,10 @@ const render =
         state.add('figures', args)
         return createVimeo(args)
 
-      // Render an inline Vimeo embed, or an unsupported message if not running a
-      // reader or web build
+      // Render an inline Vimeo embed, or an unsupported message where the
+      // target has no live embeds
       case 'vimeo-inline':
-        return supported(state.build)
+        return state.target.features.liveEmbeds
           ? createVimeoInline(args)
           : createUnsupportedInline(args)
 

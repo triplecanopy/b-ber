@@ -420,7 +420,7 @@ describe('Navigation', () => {
     test('createSpineStringsFromTemplate moves generated entries to the end', () => {
       const generated = new SpineItem({
         fileName: 'generated',
-        buildType: 'epub',
+        dist: 'project-epub',
         generated: true,
       })
       state.spine.flattened.unshift(generated)
@@ -438,7 +438,11 @@ describe('Navigation', () => {
 
     test('createSpineStringsFromTemplate drops a generated duplicate of a declared entry', () => {
       state.spine.flattened.push(
-        new SpineItem({ fileName: 'one', buildType: 'epub', generated: true })
+        new SpineItem({
+          fileName: 'one',
+          dist: 'project-epub',
+          generated: true,
+        })
       )
 
       expect(Navigation.createSpineStringsFromTemplate()).toBe(

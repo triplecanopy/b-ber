@@ -39,6 +39,7 @@ const createMockState = () => {
 const createMockBuildApi = () => {
   const { default: Config } = require('../../../b-ber-lib/src/Config')
   const { mergeConfig } = jest.requireActual('../../../b-ber-lib/src/Project')
+  const { getTarget } = jest.requireActual('../../../b-ber-lib/src/Target')
   return {
     mergeConfig,
     readConfig: jest.fn(() => new Config()),
@@ -49,7 +50,8 @@ const createMockBuildApi = () => {
     })),
     runBuild: jest.fn((project, targets, build) =>
       targets.reduce(
-        (previous, target) => previous.then(() => build({ project, target })),
+        (previous, target) =>
+          previous.then(() => build({ project, target: getTarget(target) })),
         Promise.resolve()
       )
     ),

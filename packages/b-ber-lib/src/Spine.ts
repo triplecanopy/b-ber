@@ -13,22 +13,23 @@ export type NavigationEntry =
 
 interface SpineOptions {
   src: string
-  buildType: string
+  // The build's output directory, which the items' paths are in
+  dist: string
   navigationConfigFile: string
 }
 
 class Spine {
   src: string
-  buildType: string
+  dist: string
   frontMatter: Map<string, Record<string, unknown>>
   navigationConfigFile: string
   entries: NavigationEntry[]
   nested: SpineItem[]
   flattened: Omit<SpineItem, 'nodes'>[]
 
-  constructor({ src, buildType, navigationConfigFile }: SpineOptions) {
+  constructor({ src, dist, navigationConfigFile }: SpineOptions) {
     this.src = src
-    this.buildType = buildType
+    this.dist = dist
     this.frontMatter = new Map()
     this.navigationConfigFile = navigationConfigFile
 
@@ -38,7 +39,7 @@ class Spine {
   }
 
   build(entries: NavigationEntry[] = []): SpineItem[] {
-    const { buildType } = this
+    const { dist } = this
     return entries.reduce((acc: SpineItem[], curr, index: number) => {
       // create new spine item
       let node: SpineItem
@@ -67,13 +68,13 @@ class Spine {
         ]
         // also set frontmatter for easy access later
         this.frontMatter.set(fileName, {})
-        node = new SpineItem({ fileName, buildType, ...options })
+        node = new SpineItem({ fileName, dist, ...options })
       } else {
         // just a plain file name
         const fileName = curr as string
         // also set frontmatter for easy access later
         this.frontMatter.set(fileName, {})
-        node = new SpineItem({ fileName, buildType })
+        node = new SpineItem({ fileName, dist })
       }
 
       return acc.concat(node)

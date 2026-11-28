@@ -9,7 +9,8 @@ interface SpineItemOptions {
   linear?: boolean
   generated?: boolean
   pageOrder?: number
-  buildType: string
+  // The build's output directory, e.g. `project-epub`: `state.distDir`
+  dist: string
   nodes?: SpineItem[]
   ref?: string | null
   title?: string
@@ -41,7 +42,7 @@ class SpineItem {
     linear,
     generated,
     pageOrder,
-    buildType,
+    dist,
     nodes,
     ref,
     title,
@@ -65,11 +66,7 @@ class SpineItem {
     this.relativePath = SpineItem.isNavigationDocument(this.fileName) // relative to OPS
       ? this.fileName
       : path.join('text', this.fileName)
-    this.absolutePath = path.resolve(
-      `project-${buildType}`,
-      'OPS',
-      this.relativePath
-    )
+    this.absolutePath = path.resolve(dist, 'OPS', this.relativePath)
     this.extension = path.extname(this.fileName)
     this.name = path.basename(this.fileName, this.extension)
     this.remotePath = ''

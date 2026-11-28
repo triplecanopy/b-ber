@@ -46,6 +46,13 @@ export type {
   ThemeModule,
 } from './State'
 export { default as State } from './State'
+export type {
+  FigureTemplateSet,
+  Target,
+  TargetFeatures,
+  TargetName,
+} from './Target'
+export { getTarget, isTargetName, targets } from './Target'
 export { default as Template } from './Template'
 export { default as Theme } from './Theme'
 export { default as Url } from './Url'

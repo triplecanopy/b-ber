@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body><nav><h2>Table of Contents</h2>
+<ol><li><a href="text/kitchen-sink-title-page.xhtml">Kitchen Sink</a>
+</li>
+<li><a href="text/kitchen-sink-copyright.xhtml">Copyright</a>
+</li>
+<li><a href="text/kitchen-sink-chapter-01.xhtml">Chapter One</a>
+</li>
+<li><a href="text/kitchen-sink-chapter-02.xhtml">Chapter Two</a>
+</li>
+<li><a href="text/kitchen-sink-chapter-03.xhtml">Chapter Three</a>
+</li>
+<li><a href="text/kitchen-sink-spread-single.xhtml">Spread — Single</a>
+</li>
+<li><a href="text/kitchen-sink-spread-consecutive.xhtml">Spread — Consecutive</a>
+</li>
+<li><a href="text/kitchen-sink-spread-edges.xhtml">Spread — Edges</a>
+</li>
+<li><a href="text/kitchen-sink-colophon.xhtml">Colophon</a>
+</li>
+</ol>
+</nav>
+<pagebreak></pagebreak><section class="cover"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="../images/__bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg"></image>
+</svg></section>
+<pagebreak></pagebreak><frontmatter class="frontmatter titlepage"><h1>Kitchen Sink</h1>
+<p><em>by Triple Canopy</em></p>
+</frontmatter>
+<pagebreak></pagebreak><frontmatter class="frontmatter acknowledgments"><p><em>Kitchen Sink</em> is a b-ber test fixture.</p>
+<p>© 2026 Triple Canopy</p>
+<p>Published by Triple Canopy</p>
+</frontmatter>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Chapter One</h1>
+<epigraph class="frontmatter epigraph"><p>The beginning is the most important part of the work.</p>
+<p>Plato</p>
+</epigraph>
+<subchapter class="subchapter bodymatter chapter"><h2>Section One</h2>
+<p>This is the body text of section one.<a class="footnote-ref" href="notes.xhtml#fn-1-{id:9}">1</a>
+ It demonstrates basic prose content
+alongside directive markup.</p>
+<p>A second paragraph follows with <strong>bold</strong> and <em>italic</em> text, plus a
+<a href="https://example.com">link</a>
+.</p>
+<pullquote class="pullquote  chapter"><p><em>The quick brown fox jumps over the lazy dog.</em></p>
+</pullquote>
+<div class="figure__small figure__small--landscape"><figure><a href="figurech-01-figure-01.xhtml#ch-01-figure-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+</figure>
+</div>
+<p>Figure one caption text.</p>
+</subchapter>
+<subchapter class="highlighted subchapter  chapter"><h2>Section Two — Attributes</h2>
+<p>This paragraph uses an inline attribute block to inject a class name.{.callout}</p>
+</subchapter>
+</section>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Chapter Two</h1>
+<subchapter class="subchapter bodymatter chapter"><h2>Dialogue</h2>
+<dialogue class=" dialogue"><p><strong>Speaker A:</strong> Hello, world.</p>
+<p><strong>Speaker B:</strong> Hello back.</p>
+</dialogue>
+</subchapter>
+<subchapter class="subchapter bodymatter chapter"><h2>Gallery</h2>
+<gallery class=" gallery"><div class="figure__small figure__small--square"><figure><a href="figurech-02-gallery-figure-01.xhtml#ch-02-gallery-figure-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-01.png"></img>
+</a>
+</figure>
+</div>
+</gallery>
+</subchapter>
+<subchapter class="subchapter bodymatter chapter"><h2>Spread</h2>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurech-02-spread-figure-01.xhtml#ch-02-spread-figure-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+</subchapter>
+<subchapter class="subchapter bodymatter chapter"><h2>Iframe</h2>
+<div class="figure__small figure__small--landscape"><figure><a href="figure-ch-02-iframe-01.xhtml#ch-02-iframe-01"></a>
+</figure>
+</div>
+<p>An embedded iframe.</p>
+</subchapter>
+</section>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Chapter Three</h1>
+<subchapter class="subchapter bodymatter chapter"><h2>Audio</h2>
+<div class="figure__small figure__small--landscape"><figure><a href="figure-ch-03-audio-01.xhtml#ch-03-audio-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+</figure>
+</div>
+<p>Sample audio track.</p>
+</subchapter>
+<subchapter class="subchapter bodymatter chapter"><h2>Video</h2>
+<div class="figure__small figure__small--landscape"><figure><a href="figure-ch-03-video-01.xhtml#ch-03-video-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+</figure>
+</div>
+<p>Sample video clip.</p>
+</subchapter>
+<subchapter class="subchapter bodymatter chapter"><h2>Vimeo</h2>
+<div class="figure__small figure__small--landscape"><figure><a href="figure-ch-03-vimeo-01.xhtml#ch-03-vimeo-01"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+</figure>
+</div>
+<p>A Vimeo embed.</p>
+</subchapter>
+</section>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Single-Spread Chapter</h1>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-single-f1.xhtml#spread-single-f1"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+</section>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Consecutive Spreads Chapter</h1>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-consec-f1.xhtml#spread-consec-f1"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-consec-f2.xhtml#spread-consec-f2"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-consec-f3.xhtml#spread-consec-f3"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+</section>
+<pagebreak></pagebreak><section class="bodymatter chapter"><h1>Spread at Chapter Edges</h1>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-edges-f1.xhtml#spread-edges-f1"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+<subchapter class="subchapter bodymatter chapter"><h2>Body Between Spreads</h2>
+<p>Lorem ipsum dolor sit amet.</p>
+</subchapter>
+<spread class=" spread"><div class="figure__small figure__small--landscape"><figure><a href="figurespread-edges-f2.xhtml#spread-edges-f2"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+</figure>
+</div>
+</spread>
+</section>
+<pagebreak></pagebreak><colophon class="backmatter colophon"><p><em>Kitchen Sink</em> by Triple Canopy</p>
+<p>Published by Triple Canopy, 2026</p>
+<subchapter class="subchapter bodymatter chapter"><p>© 2026 <em>Kitchen Sink</em>, by Triple Canopy.</p>
+</subchapter>
+<figure class="logo"><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-logo.png"></img>
+</figure>
+<p>Triple Canopy</p>
+</colophon>
+<pagebreak></pagebreak><section class="chapter figures"><header><h1>Figures</h1>
+</header>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-chapter-01.xhtml#refch-01-figure-01"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--square"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-gallery-figure-01"><img class="square" href="file://{fixture}/_builds-xml/OPS/images/placeholder-square-01.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small">: figure:ch-02-gallery-figure-02 source:placeholder-square-02.png alt:&quot;Gallery image two&quot;
+</p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-chapter-02.xhtml#refch-02-spread-figure-01"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--iframe"><figure><div class="figure__items"><div class="iframe"><iframe src="https://example.com/embed"></iframe>
+</div>
+<figcaption class="figcaption"><p class="small"><a href="kitchen-sink-chapter-02.xhtml#refch-02-iframe-01">Return</a>
+</p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--media figure__inline--square"><figure><div class="figure__items"><div class="audio"><source href="file://{fixture}/_builds-xml/OPS/media/sample.mp3"></source>
+<div class="media__fallback__audio media__fallback--image"><figure><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</figure>
+</div>
+<p class="media__fallback__audio media__fallback--text">Your device does not support the HTML5 audio API.</p>
+</div>
+</div>
+<figcaption class="figcaption"><p class="small"><a href="kitchen-sink-chapter-03.xhtml#refch-03-audio-01">Return</a>
+</p>
+</figcaption>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--media figure__inline--square"><figure><div class="figure__items"><div class="video"><source href="file://{fixture}/_builds-xml/OPS/media/sample.mp4"></source>
+<div class="media__fallback__video media__fallback--image"><figure><img href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</figure>
+</div>
+<p class="media__fallback__video media__fallback--text">Your device does not support the HTML5 video API.</p>
+</div>
+</div>
+<figcaption class="figcaption"><p class="small"><a href="kitchen-sink-chapter-03.xhtml#refch-03-video-01">Return</a>
+</p>
+</figcaption>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-chapter-03.xhtml#refch-03-vimeo-01"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-landscape.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small">Your device does not support embedded media.</p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-single.xhtml#refspread-single-f1"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-consecutive.xhtml#refspread-consec-f1"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-consecutive.xhtml#refspread-consec-f2"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-consecutive.xhtml#refspread-consec-f3"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-edges.xhtml#refspread-edges-f1"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="chapter figures"><div class="figure__large figure__large--landscape"><figure><div class="figure__items"><a href="kitchen-sink-spread-edges.xhtml#refspread-edges-f2"><img class="landscape" href="file://{fixture}/_builds-xml/OPS/images/placeholder-spread.png"></img>
+</a>
+<figcaption class="figcaption"><p class="small"></p>
+</figcaption>
+</div>
+</figure>
+</div>
+</section>
+<pagebreak></pagebreak><section class="footnotes break-after"><h1>
+Kitchen Sink Chapter 01</h1>
+<ol class="footnotes"><li class="footnote"><p>This is a footnote attached to the first sentence of section one.<span class="hidden-backlink"><a href="kitchen-sink-chapter-01.xhtml#fnref-1-{id:9}">↵</a>
+</span></p>
+</li>
+</ol>
+</section>
+</body>

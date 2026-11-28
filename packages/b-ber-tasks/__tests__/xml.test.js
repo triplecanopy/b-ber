@@ -111,12 +111,10 @@ describe('task: xml', () => {
     )
   })
 
-  // Defect: when the TOC does not list `figures-titlepage`, the loi task adds
-  // one to `spine.flattened` as a plain object, not a SpineItem
-  // (src/loi/index.ts:52), so it has no `absolutePath`. The xml task reads
-  // `undefined.xhtml` for it, and an xml build of any project with figures
-  // fails unless its TOC names the title page. Related to #757.
-  test('fails for figures when the TOC has no figures title page (defect)', async () => {
+  // When the TOC does not list `figures-titlepage`, the loi task adds one. It
+  // used to add a plain object to `spine.flattened`, with no `absolutePath`,
+  // and the xml task read `undefined.xhtml` for it (#757)
+  test("includes a figures title page the TOC doesn't list (#757)", async () => {
     await build({
       toc: ['one'],
       markdown: { one: '::: figure:fig-1 source:a.png\n' },
@@ -124,23 +122,21 @@ describe('task: xml', () => {
     })
     await loi()
 
-    await expect(xml()).rejects.toMatchObject({
-      code: 'ENOENT',
-      path: 'undefined.xhtml',
-    })
+    await xml()
+
+    expect(await readXml()).toContain('<h1>Figures</h1>')
   })
 
-  // Defect: SpineItem's `absolutePath` is `project-<build>/OPS/...`, resolved
-  // against the working directory (b-ber-lib/src/SpineItem.ts:68), whatever
-  // `dist` config.yml sets. With `dist: _builds`, as the kitchen-sink fixture
-  // has, render writes to `_builds-xml/` and xml reads from `project-xml/`.
-  test('reads the pages from project-<build>, ignoring `dist` (defect)', async () => {
+  // SpineItem's `absolutePath` used to be `project-<build>/OPS/...` whatever
+  // `dist` config.yml set (#766). With `dist: _builds`, as the kitchen-sink
+  // fixture has, render wrote to `_builds-xml/` and xml read from
+  // `project-xml/`, so `bber build xml` failed
+  test('reads the pages from the build directory `dist` names (#766)', async () => {
     await build({ dist: '_builds', toc: ['one'], markdown: { one: 'One' } })
     expect(fs.existsSync(path.join('_builds-xml', 'OPS', 'text'))).toBe(true)
 
-    await expect(xml()).rejects.toMatchObject({
-      code: 'ENOENT',
-      path: path.join(project.root, 'project-xml', 'OPS', 'text', 'one.xhtml'),
-    })
+    await xml()
+
+    expect(await readXml()).toContain('<p>One</p>')
   })
 })

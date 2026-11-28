@@ -93,7 +93,7 @@ const handler = exitOnFailure(async (argv: Arguments) => {
 
   await ensure({ files, src: src as string })
   await runBuild(project, sequence, ({ target }) =>
-    serialize(sequences[target])
+    serialize(sequences[target.name])
   )
 })
 

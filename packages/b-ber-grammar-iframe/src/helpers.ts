@@ -32,10 +32,6 @@ interface PrepareArgs extends RendererReference {
   lineNumber: number | null
 }
 
-export function supported(build: string): boolean {
-  return build === 'reader' || build === 'web'
-}
-
 export function prepare({
   token,
   marker,
@@ -61,7 +57,7 @@ export function prepare({
 
   ensureSource(attrsObject, type, fileName, lineNumber)
   ensurePoster(attrsObject, type)
-  ensureSupportedClassNames(attrsObject, supported)
+  ensureSupportedClassNames(attrsObject)
 
   return {
     ...attrsObject,
@@ -69,7 +65,10 @@ export function prepare({
     attrString: attributesString(attrsObject, { classes: true }),
     commentStart: Html.comment(`START: ${mediaType}:${type}#${figureId};`),
     commentEnd: Html.comment(`END: ${mediaType}:${type}#${figureId};`),
-    href: state.build === 'reader' ? 'figures-titlepage.xhtml' : page,
+    href:
+      state.target.features.figuresOn === 'titlepage'
+        ? 'figures-titlepage.xhtml'
+        : page,
     ref: context.fileName,
     caption: token.children ? instance.renderInline(token.children) : '',
     page,

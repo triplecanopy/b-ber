@@ -37,7 +37,10 @@ export function createFigure({
   const classes_ = classes ? classes.concat(` ${classNames}`) : classNames
 
   const page = `figure${id}.xhtml`
-  const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+  const href =
+    state.target.features.figuresOn === 'titlepage'
+      ? 'figures-titlepage.xhtml'
+      : page
 
   state.add('figures', {
     ...rest,
@@ -95,6 +98,6 @@ export function createFigureInline({
       inline,
       mime,
     },
-    state.build
+    state.target
   )
 }

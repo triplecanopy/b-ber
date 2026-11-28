@@ -21,9 +21,15 @@ import {
 } from './golden/normalize'
 import { expect, runBber, test } from './helpers'
 
-// mobi and pdf need Calibre and wkhtmltopdf, which CI does not have. xml is
-// broken on main (#766)
-const FORMATS = ['epub', 'web', 'reader', 'sample'] as const
+// mobi and pdf need Calibre and wkhtmltopdf, which CI does not have
+const FORMATS = ['epub', 'web', 'reader', 'sample', 'xml'] as const
+
+// Output a format writes to the project root rather than its build directory:
+// xml's document, `<identifier>.xml`. Its snapshot is under `<format>/_root/`
+const packagedFiles = (format: (typeof FORMATS)[number], root: string) =>
+  format === 'xml'
+    ? fs.readdirSync(root).filter((name) => name.endsWith('.xml'))
+    : []
 
 const listFiles = (dir: string, prefix = ''): string[] =>
   fs
@@ -78,6 +84,19 @@ for (const format of FORMATS) {
       } else {
         inventory.push(`${rel}  sha256:${sha256(data)}`)
       }
+    }
+
+    for (const name of packagedFiles(format, fixtureCopy)) {
+      inventory.push(`_root/${name}  text`)
+      expect
+        .soft(
+          normalizer.text(
+            name,
+            fs.readFileSync(path.join(fixtureCopy, name), 'utf8')
+          ),
+          name
+        )
+        .toMatchSnapshot([format, '_root', name])
     }
 
     expect

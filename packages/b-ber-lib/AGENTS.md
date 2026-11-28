@@ -10,6 +10,7 @@
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `src/State.ts`                  | Central build state singleton; holds config, spine, metadata, figures, footnotes, path helpers |
 | `src/Project.ts`                | Reads a project explicitly: `loadProject`, the loaders `State` shares, config layering (`resolveConfig`, `mergeConfig`) |
+| `src/Target.ts`                 | The seven targets: each one's `features`, which render code branches on, and the figure template table it uses |
 | `src/BuildContext.ts`           | One build of one target (`createBuildContext`, `runBuild`), held in an `AsyncLocalStorage` while it runs |
 | `src/Config.ts`                 | Constructs project config by deep-merging `config.yml` over defaults                           |
 | `src/Spine.ts`                  | Reads `toc.yml`; builds nested + flattened page-flow for each build type                       |
@@ -52,7 +53,8 @@ Additional standards for this package:
   `theme`, `video`, `audio`) read and write the context instead of the
   instance, so targets stay apart. `reset()` in a context re-resolves the
   target's config and never changes the target. Outside a context `State`
-  behaves as it always has. New code should take the context
+  behaves as it always has. `state.target` is the current `Target`, and
+  `state.build` its name. New code should take the context
   (`currentBuildContext()`, or passed in) rather than read `State`; the shim
   goes when nothing imports `State` (TASK-173).
 - **Config resolves in layers:** defaults ← `config.yml` ← its `<target>:`

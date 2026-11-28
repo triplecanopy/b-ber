@@ -1,4 +1,8 @@
-import { utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type FigureTemplateSet,
+  type Target,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import epub from './epub'
 import mobi from './mobi'
@@ -8,7 +12,12 @@ import web from './web'
 
 const { getImageOrientation } = utils
 
-const figures: Record<string, FigureTemplates> = { epub, mobi, reader, web }
+const figures: Record<FigureTemplateSet, FigureTemplates> = {
+  epub,
+  mobi,
+  reader,
+  web,
+}
 
 type Mime = FigureData['mime']
 
@@ -20,9 +29,13 @@ const isVideo = (mime: Mime) => /^video/.test(String(mime))
 const isIframe = (type: string | undefined) => type === 'iframe'
 const isVimeo = (type: string | undefined) => type === 'vimeo'
 
-const figure = (data: FigureData, buildType?: string): string => {
+// Renders a figure with the target's own table. pdf, sample and xml name
+// epub's, where they used to fall back on it silently
+const figure = (
+  data: FigureData,
+  target: Pick<Target, 'figureTemplates'>
+): string => {
   const { width, height, mime, type } = data
-  const build = !buildType || !figures[buildType] ? 'epub' : buildType
 
   let format: string | null = null
 
@@ -47,7 +60,7 @@ const figure = (data: FigureData, buildType?: string): string => {
   // `format` is derived from the data's own MIME type or directive, so the
   // template it selects is the one that accepts this data
   return (
-    figures[build][format as keyof FigureTemplates] as (
+    figures[target.figureTemplates][format as keyof FigureTemplates] as (
       data: FigureData
     ) => string
   )(data)

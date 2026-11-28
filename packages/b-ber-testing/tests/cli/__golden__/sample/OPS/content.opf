@@ -89,7 +89,7 @@
 <itemref idref="_kitchen-sink-spread-consecutive_xhtml" linear="yes"/>
 <itemref idref="_kitchen-sink-spread-edges_xhtml" linear="yes"/>
 <itemref idref="_kitchen-sink-colophon_xhtml" linear="yes"/>
-<itemref idref="_figures-titlepage_xhtml" linear="no"/>
+<itemref idref="_figures-titlepage_xhtml" linear="yes"/>
 <itemref idref="_figurech-01-figure-01_xhtml" linear="yes"/>
 <itemref idref="_figurech-02-gallery-figure-01_xhtml" linear="yes"/>
 <itemref idref="_figurech-02-spread-figure-01_xhtml" linear="yes"/>

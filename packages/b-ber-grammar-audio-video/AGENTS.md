@@ -24,5 +24,5 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - All transforms are synchronous
-- Build-target branching (`state.build`) is done at render time; do not cache build type
-- `controls` attribute defaults to `controls="controls"` for EPUB validity; only `reader`/`web` builds allow custom values
+- Branch on the target's features (`state.target.features`) at render time, never on its name; do not cache them
+- `controls` attribute defaults to `controls="controls"` for EPUB validity; only targets with `liveEmbeds` (reader, web) allow custom values

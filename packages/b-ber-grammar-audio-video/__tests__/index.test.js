@@ -2,6 +2,12 @@ import audioVideo from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
+  // The real target of `build`, as State gives it
+  get target() {
+    return jest
+      .requireActual('../../b-ber-lib/src/Target')
+      .getTarget(this.build)
+  },
   // The attributes mock gives every directive this source, which must exist
   audio: ['media.mp4'],
   video: ['media.mp4'],

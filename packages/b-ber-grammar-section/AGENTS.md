@@ -25,5 +25,5 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - All transforms are synchronous
-- Special-case exit handling for `gallery` and `spread` in reader/web builds must stay in sync with the opening HTML emitted by those packages
+- Special-case exit handling for `gallery` and `spread`, where the target has `fullbleedContainers`, must stay in sync with the opening HTML emitted by those packages. The spread marker `<div>` follows `readerRuntime`
 - The `containers` variable is built dynamically from `BLOCK_DIRECTIVES` — do not hardcode directive names here

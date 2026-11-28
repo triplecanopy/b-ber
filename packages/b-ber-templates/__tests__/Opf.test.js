@@ -3,6 +3,12 @@ import { Guide, Manifest, Metadata, Pkg, Spine } from '../src/Opf'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
+  // The real target of `build`, as State gives it
+  get target() {
+    return jest
+      .requireActual('../../b-ber-lib/src/Target')
+      .getTarget(this.build)
+  },
   loi: [],
 }))
 

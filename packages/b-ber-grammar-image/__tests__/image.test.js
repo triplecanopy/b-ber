@@ -4,6 +4,12 @@ import { createFigure, createFigureInline } from '../src/image'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
+  // The real target of `build`, as State gives it
+  get target() {
+    return jest
+      .requireActual('../../b-ber-lib/src/Target')
+      .getTarget(this.build)
+  },
   figures: [],
   add: jest.fn(),
   src: {
@@ -149,7 +155,7 @@ describe('b-ber-grammar-image / image', () => {
           inline: true,
           mime: 'image/jpeg',
         }),
-        state.build
+        state.target
       )
       expect(result).toBe('<figure class="inline">inline figure</figure>')
     })
@@ -169,7 +175,7 @@ describe('b-ber-grammar-image / image', () => {
 
       expect(figureTemplate).toHaveBeenCalledWith(
         expect.objectContaining({ classes: 'custom-class' }),
-        state.build
+        state.target
       )
     })
 

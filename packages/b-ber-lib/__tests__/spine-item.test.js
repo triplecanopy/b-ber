@@ -1,7 +1,7 @@
 import path from 'node:path'
 import SpineItem from '../src/SpineItem'
 
-const defaults = { fileName: 'chapter-01', buildType: 'epub' }
+const defaults = { fileName: 'chapter-01', dist: 'project-epub' }
 
 describe('SpineItem.isNavigationDocument', () => {
   it('returns true for "toc"', () => {
@@ -84,18 +84,23 @@ describe('SpineItem constructor', () => {
   })
 
   it('sets relativePath to just fileName for navigation documents', () => {
-    const item = new SpineItem({ fileName: 'toc', buildType: 'epub' })
+    const item = new SpineItem({ fileName: 'toc', dist: 'project-epub' })
     expect(item.relativePath).toBe('toc')
   })
 
-  it('includes the buildType in absolutePath', () => {
-    expect(new SpineItem(defaults).absolutePath).toContain('project-epub')
+  it("resolves absolutePath in the build's dist directory (#757)", () => {
+    expect(new SpineItem(defaults).absolutePath).toBe(
+      path.resolve('project-epub', 'OPS', 'text', 'chapter-01')
+    )
+    expect(
+      new SpineItem({ fileName: 'toc', dist: '_builds-xml' }).absolutePath
+    ).toBe(path.resolve('_builds-xml', 'OPS', 'toc'))
   })
 
   it('parses extension from fileName', () => {
     const item = new SpineItem({
       fileName: 'chapter-01.xhtml',
-      buildType: 'epub',
+      dist: 'project-epub',
     })
     expect(item.extension).toBe('.xhtml')
     expect(item.name).toBe('chapter-01')

@@ -283,7 +283,7 @@ describe('task: web', () => {
     })
     // The loi task names figure pages with their extension
     state.loi = [
-      new SpineItem({ fileName: 'figure-1.xhtml', buildType: 'web' }),
+      new SpineItem({ fileName: 'figure-1.xhtml', dist: state.distDir }),
     ]
     await web()
 
@@ -304,7 +304,7 @@ describe('task: web', () => {
     await setup()
     await writeEpubBuild({ 'figure-1': page('Figure 1', '') })
     state.loi = [
-      new SpineItem({ fileName: 'figure-1.xhtml', buildType: 'web' }),
+      new SpineItem({ fileName: 'figure-1.xhtml', dist: state.distDir }),
     ]
     await web()
 

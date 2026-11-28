@@ -37,7 +37,7 @@ function isGallery(directive: CursorEntry | undefined) {
   return (
     directive &&
     directive.type === 'gallery' &&
-    (state.build === 'web' || state.build === 'reader')
+    state.target.features.fullbleedContainers
   )
 }
 
@@ -45,7 +45,7 @@ function isSpread(directive: CursorEntry | undefined) {
   return (
     directive &&
     directive.type === 'spread' &&
-    (state.build === 'web' || state.build === 'reader')
+    state.target.features.fullbleedContainers
   )
 }
 
@@ -72,7 +72,7 @@ function handleExitDirective(token: RegExpMatchArray) {
             </div>
 
             ${
-              state.build === 'reader'
+              state.target.features.readerRuntime
                 ? `<!-- Empty node required for spread markers -->
                    <div></div>`
                 : ''

@@ -371,11 +371,9 @@ export function ensurePoster(obj: { poster?: string }, type: string): void {
   obj.poster = `../images/${encodeURIComponent(path.basename(obj.poster))}`
 }
 
-// Add mediaType to classes
-export function ensureSupportedClassNames(
-  obj: { classes?: string },
-  supported: (build: string) => boolean
-): void {
+// Marks an embed as live or not in the target being built
+export function ensureSupportedClassNames(obj: { classes?: string }): void {
+  const { liveEmbeds } = state.target.features
   // eslint-disable-next-line no-param-reassign
-  obj.classes += ` embed ${supported(state.build) ? '' : 'un'}supported`
+  obj.classes += ` embed ${liveEmbeds ? '' : 'un'}supported`
 }

@@ -402,6 +402,13 @@ These apply to all JavaScript/TypeScript in the monorepo.
 - **No magic numbers without a comment** explaining why the value is what it is.
 - **No polling.** Use observers, event listeners, or promise chains.
 - **No deprecated Node.js APIs.** Keep compatibility with the engine range in `package.json`.
+- **Render code branches on what a target supports, never on its name.**
+  Grammar, parser, renderer and template code reads `state.target.features`
+  (b-ber-lib's `Target.ts`, TASK-164), not `state.build === 'reader'`.
+  `npm run check:targets`, part of `npm test`, fails on a comparison with a
+  target's name there. The names are still public in four places, so they are
+  frozen: config.yml's `<target>:` sections, media.yml's keys, SCSS `$build`
+  and `window.bber.env`.
 - Comments should explain the WHY, not the WHAT. Do not restate the code.
 - Do not add error handling for scenarios that cannot happen. Only validate at
   system boundaries (CLI input, external API responses, file system reads).
@@ -757,7 +764,7 @@ and commit it with the change, so the PR shows the output diff.
 
 **Run tests before committing.** Always run `npm test` (or the affected
 package's test suite) before creating a commit. `npm test` runs `biome check .`,
-then `check:tasks`, then `deps:dedupe` (syncpack), then the Jest suite. Pre-commit hooks via Husky should enforce this
+then `check:tasks`, then `check:targets`, then `deps:dedupe` (syncpack), then the Jest suite. Pre-commit hooks via Husky should enforce this
 automatically, but hooks are not always reliable — treat manual verification as
 the primary gate, not the hook. Do not commit code that has not passed its tests.
 
@@ -848,7 +855,8 @@ npm run bootstrap:clean
 # Build all packages
 npm run build
 
-# Run all tests (biome check, task-hierarchy check, specifier check, then jest)
+# Run all tests (biome check, task-hierarchy check, target-name check,
+# specifier check, then jest)
 npm test
 
 # Validate task files against the declared epics (offline, part of npm test)
@@ -860,6 +868,9 @@ npm run check:tasks:remote
 # Check every specifier against .syncpackrc: one version per dependency, exact
 # for dev deps, ^ for published runtime deps (part of npm test)
 npm run deps:dedupe
+
+# Fail on a comparison with a target's name in render code (part of npm test)
+npm run check:targets
 
 # Lint and format check only (no tests)
 npm run check

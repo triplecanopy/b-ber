@@ -17,12 +17,12 @@ import {
   resolveConfig,
 } from './Project'
 import type { BuildSettings } from './State'
+import { getTarget, type Target } from './Target'
 
 export interface BuildContext {
   project: Project
-  // The target's name: epub, mobi, pdf, web, reader, sample or xml.
-  // TASK-164 replaces it with a Target that carries feature flags
-  target: string
+  // What the build produces, and what that format supports
+  target: Target
   config: ConfigOptions
   settings: BuildSettings
   // Names the production stylesheet; one per build, as `State.reset` made it
@@ -39,7 +39,7 @@ export function createBuildContext(
   const config = resolveConfig(project.config, target, project.overrides)
   return {
     project,
-    target,
+    target: getTarget(target),
     config,
     settings: readBuildSettings(config, target),
     hash: randomHash(),
