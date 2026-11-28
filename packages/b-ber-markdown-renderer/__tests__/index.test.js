@@ -164,6 +164,23 @@ describe('b-ber-markdown-renderer: structural blocks', () => {
     expect(html).toContain('<p>body</p>')
   })
 
+  // b-ber-grammar-renderer's `validateOpen` recorded dialogue, gallery and
+  // spread ids in silent mode too, so these threw `Duplicate [id]` until
+  // TASK-175
+  it.each([
+    ['dialogue', '<section id="b"'],
+    ['gallery', '<section id="b"'],
+    ['spread', '<section id="b"'],
+  ])('renders a %s straight after a paragraph line', (name, open) => {
+    const html = markdownRenderer.render(
+      'test',
+      `para\n::: ${name}:b\n\nbody\n\n::: exit:b\n`
+    )
+    expect(html).toContain('<p>para</p>')
+    expect(html).toContain(open)
+    expect(html).toContain('<p>body</p>')
+  })
+
   it('still throws on a real duplicate id', () => {
     expect(() =>
       markdownRenderer.render(
