@@ -141,7 +141,7 @@ class MarkdownRenderer {
     const inline = [
       { family: 'figure', ...markdownItImage.renderer(reference) },
       legacy('audio-video', markdownItAudioVideo.renderer(reference)),
-      legacy('vimeo', markdownItVimeo.renderer(reference)),
+      { family: 'vimeo', ...markdownItVimeo.renderer(reference) },
       { family: 'iframe', ...markdownItIframe.renderer(reference) },
       { family: 'logo', ...markdownItLogo.renderer() },
     ] as const

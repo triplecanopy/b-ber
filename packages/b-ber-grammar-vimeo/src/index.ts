@@ -1,14 +1,17 @@
 import path from 'node:path'
 import {
+  attributesList,
   attributesObject,
+  attributesQuery,
   attributesQueryString,
   attributesString,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
   type DocumentEnv,
-  type FigureToken,
   Html,
+  type InlineDirective,
+  type InlineRender,
   nextFigure,
   type RendererReference,
 } from '@canopycanopycanopy/b-ber-lib'
@@ -34,14 +37,14 @@ const DIRECTIVE_RE = /(vimeo(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 interface PrepareArgs extends RendererReference {
   env: DocumentEnv
-  token: FigureToken
+  node: InlineDirective
   marker: RegExpMatchArray
   fileName: string
   lineNumber: number | null
 }
 
 function prepare({
-  token,
+  node,
   marker,
   env,
   instance,
@@ -51,9 +54,7 @@ function prepare({
   const [, type, id, attrs] = marker
   const mediaType = getMediaType(type)
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
-  const caption = token.children
-    ? instance.renderInline(token.children, env)
-    : ''
+  const caption = node.caption ? instance.renderInline(node.caption, env) : ''
 
   if (!attrsObject.source)
     throw log.error(
@@ -99,7 +100,10 @@ function prepare({
       ? 'figures-titlepage.xhtml'
       : page
 
-  return {
+  // The figure collected for the list of illustrations, and what the inline
+  // embed's elements are built with besides: its class and its player query
+  // string, unescaped, for the serializer to escape
+  const data = {
     id: figureId,
     attrString,
     attrQuery,
@@ -118,25 +122,26 @@ function prepare({
     aspectRatioClassName,
     type,
   }
+  return {
+    data,
+    element: {
+      attributes: attributesList(attrsObject, bBerAttributes),
+      query: attributesQuery(vimeoAttributesObject),
+    },
+  }
 }
 
 const render =
-  ({ instance }: RendererReference) =>
-  (
-    tokens: FigureToken[],
-    index: number,
-    _options: unknown,
-    env: DocumentEnv
-  ): string => {
-    const token = tokens[index]
-    const marker = token.info.trim().match(DIRECTIVE_RE)
-    if (!marker) return ''
+  ({ instance }: RendererReference): InlineRender =>
+  ({ node, env, h }) => {
+    const marker = node.info.trim().match(DIRECTIVE_RE)
+    if (!marker) return h.fragment([])
 
     const fileName = `_markdown/${env.document.fileName}.md`
-    const lineNumber = token.map ? token.map[0] : null
+    const lineNumber = node.line
     const type = marker[1]
-    const args = prepare({
-      token,
+    const { data, element } = prepare({
+      node,
       marker,
       env,
       instance,
@@ -148,19 +153,19 @@ const render =
       // Render the linked image and collect the figure so that it's rendered
       // in the LOI
       case 'vimeo':
-        env.result.figures.push(args)
-        return createVimeo(args)
+        env.result.figures.push(data)
+        return createVimeo(data, h)
 
       // Render an inline Vimeo embed, or an unsupported message where the
       // target has no live embeds
       case 'vimeo-inline':
         return env.document.target.features.liveEmbeds
-          ? createVimeoInline(args, env)
-          : createUnsupportedInline(args)
+          ? createVimeoInline(data, element, env, h)
+          : createUnsupportedInline(data, element, h)
 
       default:
         throw new Error(
-          `Something went wrong parsing [${args.source}] in [${env.document.fileName}]`
+          `Something went wrong parsing [${data.source}] in [${env.document.fileName}]`
         )
     }
   }

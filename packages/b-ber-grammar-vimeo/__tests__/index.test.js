@@ -1,5 +1,8 @@
 import { getTarget } from '../../b-ber-lib/src/Target'
+import { h, serialize } from '../../b-ber-markdown-renderer/src/xhtml'
 import vimeo from '../src'
+
+const render = (config, node) => serialize(config.render({ node, env, h }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   // Returns an Error, as the real log.error does, so that a site's
@@ -14,6 +17,10 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesQueryString: jest.fn(() => ''),
   attributesString: jest.fn(() => ''),
+  attributesList: jest.fn(() => []),
+  attributesQuery: jest.fn(() => ''),
+  commentLines: jest.requireActual('../../b-ber-grammar-attributes/src')
+    .commentLines,
   attributesObject: jest.fn(() => ({ source: '12345' })),
   htmlId: jest.fn((id) => id),
 }))
@@ -76,8 +83,8 @@ describe('b-ber-grammar-vimeo', () => {
 
   it('render returns empty string when token info does not match DIRECTIVE_RE', () => {
     const config = vimeo.renderer({ instance, context })
-    const tokens = [{ info: 'not-matching', map: [0, 1], children: null }]
-    expect(config.render(tokens, 0, {}, env)).toBe('')
+    const node = { info: 'not-matching', line: 0 }
+    expect(render(config, node)).toBe('')
   })
 
   it('validate returns truthy for vimeo-inline directive', () => {
@@ -87,20 +94,16 @@ describe('b-ber-grammar-vimeo', () => {
 
   it('render calls prepare and dispatches to createVimeo for vimeo type', () => {
     const config = vimeo.renderer({ instance, context })
-    const tokens = [
-      { info: 'vimeo:my-id source="12345"', map: [0, 1], children: null },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'vimeo:my-id source="12345"', line: 0 }
+    const result = render(config, node)
     expect(typeof result).toBe('string')
     expect(result.length).toBeGreaterThan(0)
   })
 
   it('render returns HTML containing figure id for vimeo type', () => {
     const config = vimeo.renderer({ instance, context })
-    const tokens = [
-      { info: 'vimeo:my-id source="12345"', map: [0, 1], children: null },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'vimeo:my-id source="12345"', line: 0 }
+    const result = render(config, node)
     expect(result).toContain('refmy-id')
     expect(env.result.figures).toEqual([
       expect.objectContaining({ id: 'my-id', pageOrder: 0, ref: 'test' }),
@@ -109,36 +112,20 @@ describe('b-ber-grammar-vimeo', () => {
 
   it('render dispatches to createUnsupportedInline for vimeo-inline on non-reader build', () => {
     const config = vimeo.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'vimeo-inline:my-id source="12345"',
-        map: [0, 1],
-        children: null,
-      },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = { info: 'vimeo-inline:my-id source="12345"', line: 0 }
+    const result = render(config, node)
     expect(typeof result).toBe('string')
     expect(result).toContain('media__fallback')
   })
 
-  it('render handles token with null map (lineNumber becomes null)', () => {
-    const config = vimeo.renderer({ instance, context })
-    const tokens = [
-      { info: 'vimeo:no-map source="12345"', map: null, children: null },
-    ]
-    expect(() => config.render(tokens, 0, {}, env)).not.toThrow()
-  })
-
   it('render handles token with children (caption rendered via renderInline)', () => {
     const config = vimeo.renderer({ instance, context })
-    const tokens = [
-      {
-        info: 'vimeo:cap-id source="12345"',
-        map: [0, 1],
-        children: 'caption text',
-      },
-    ]
-    const result = config.render(tokens, 0, {}, env)
+    const node = {
+      info: 'vimeo:cap-id source="12345"',
+      line: 0,
+      caption: 'caption text',
+    }
+    const result = render(config, node)
     expect(typeof result).toBe('string')
     expect(instance.renderInline).toHaveBeenCalledWith('caption text', env)
   })
